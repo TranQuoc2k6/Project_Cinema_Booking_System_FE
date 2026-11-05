@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cinema Booking System</title>
+</head>
+
+<body>
+
+    <h1>Danh sách phim</h1>
+
+    <div id="movie-list"></div>
+
+    <script>
+        async function loadMovies() {
+            const response = await fetch(
+                "http://127.0.0.1:8000/api/movies"
+            );
+
+            const movies = await response.json();
+
+            document.getElementById("movie-list").innerHTML =
+                movies.map(movie => `
+                    <div>
+                        <h3>${movie.title}</h3>
+                        <p>${movie.duration} phút</p>
+                    </div>
+                `).join("");
+        }
+
+        loadMovies();
+    </script>
+
+</body>
+
+</html>
