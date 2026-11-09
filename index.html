@@ -4,35 +4,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cinema Booking System</title>
+    <title>Cinema Booking System - Hệ Thống Đặt Vé Xem Phim</title>
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/global.css">
+    <style>
+        .home-navbar {
+            background-color: var(--bg-sidebar);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .home-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .movie-card-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-md);
+            padding: 1.25rem;
+            transition: transform 0.2s ease;
+        }
+        .movie-card-item:hover {
+            transform: translateY(-4px);
+            border-color: var(--color-primary);
+        }
+    </style>
 </head>
 
 <body>
+    <header class="home-navbar">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="font-size: 24px;">🎬</div>
+            <div>
+                <strong style="font-size: 18px; color: #fff;">CINEMA STAR</strong>
+                <span style="font-size: 12px; color: var(--color-primary); display: block;">HỆ THỐNG ĐẶT VÉ TRỰC TUYẾN</span>
+            </div>
+        </div>
 
-    <h1>Danh sách phim</h1>
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <a href="pages/admin/dashboard.html" class="btn btn-outline-primary btn-sm">
+                <span>🛡️</span> Khu vực Quản trị (Admin Portal)
+            </a>
+            <a href="pages/login.html" class="btn btn-primary btn-sm">
+                <span>🔐</span> Đăng nhập
+            </a>
+        </div>
+    </header>
 
-    <div id="movie-list"></div>
+    <main class="home-container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2>Danh sách phim đang chiếu tại rạp</h2>
+            <span class="badge badge-success">Cập nhật hôm nay</span>
+        </div>
+
+        <div id="movie-list" class="movie-grid"></div>
+    </main>
 
     <script>
         async function loadMovies() {
-            const response = await fetch(
-                "http://127.0.0.1:8000/api/movies"
-            );
+            try {
+                const response = await fetch("http://127.0.0.1:8000/api/movies");
+                if (response.ok) {
+                    const movies = await response.json();
+                    document.getElementById("movie-list").innerHTML =
+                        movies.map(movie => `
+                            <div class="movie-card-item">
+                                <h3 style="font-size: 18px; color: #fff; margin-bottom: 6px;">${movie.title}</h3>
+                                <p style="font-size: 14px; color: var(--text-muted);">${movie.duration} phút</p>
+                                <div style="margin-top: 12px;">
+                                    <span class="badge badge-info">2D / Digital</span>
+                                </div>
+                            </div>
+                        `).join("");
+                    return;
+                }
+            } catch (e) {
+                console.log("Dùng danh sách phim tĩnh dự phòng.");
+            }
 
-            const movies = await response.json();
+            // Fallback nếu API backend chưa bật
+            const defaultMovies = [
+                { title: "Mai (18+)", duration: 131 },
+                { title: "Lật Mặt 7: Một Điều Ước", duration: 138 },
+                { title: "Dune: Hành Tinh Cát 2", duration: 166 },
+                { title: "Kung Fu Panda 4", duration: 94 }
+            ];
 
             document.getElementById("movie-list").innerHTML =
-                movies.map(movie => `
-                    <div>
-                        <h3>${movie.title}</h3>
-                        <p>${movie.duration} phút</p>
+                defaultMovies.map(movie => `
+                    <div class="movie-card-item">
+                        <h3 style="font-size: 18px; color: #fff; margin-bottom: 6px;">${movie.title}</h3>
+                        <p style="font-size: 14px; color: var(--text-muted);">${movie.duration} phút</p>
+                        <div style="margin-top: 12px;">
+                            <span class="badge badge-info">Đang công chiếu</span>
+                        </div>
                     </div>
                 `).join("");
         }
 
         loadMovies();
     </script>
-
 </body>
 
 </html>

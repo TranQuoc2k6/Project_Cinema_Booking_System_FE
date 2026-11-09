@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý Người dùng & Phân quyền - Cinema Admin Portal</title>
+  
+  <link rel="stylesheet" href="../../css/variables.css">
+  <link rel="stylesheet" href="../../css/reset.css">
+  <link rel="stylesheet" href="../../css/global.css">
+  <link rel="stylesheet" href="../../css/layout.css">
+  <link rel="stylesheet" href="../../css/components.css">
+
+  <script src="../../js/utils/auth-guard.js"></script>
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-logo-icon">🎬</div>
+        <div class="brand-text">
+          <span class="brand-title">CINEMA</span>
+          <span class="brand-subtitle">Admin Portal</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <span class="nav-section-label">Quản trị cốt lõi</span>
+        <a href="dashboard.html" class="nav-item">
+          <span class="nav-icon">📊</span>
+          <span>Dashboard</span>
+        </a>
+        <a href="movies.html" class="nav-item">
+          <span class="nav-icon">🎬</span>
+          <span>Quản lý Phim</span>
+        </a>
+        <a href="cinemas.html" class="nav-item">
+          <span class="nav-icon">🏛️</span>
+          <span>Rạp / Phòng chiếu</span>
+        </a>
+        <a href="showtimes.html" class="nav-item">
+          <span class="nav-icon">🕒</span>
+          <span>Lịch / Suất chiếu</span>
+        </a>
+        <a href="bookings.html" class="nav-item">
+          <span class="nav-icon">🎟️</span>
+          <span>Quản lý Đơn vé</span>
+        </a>
+        <span class="nav-section-label">Hệ thống</span>
+        <a href="users.html" class="nav-item active">
+          <span class="nav-icon">👥</span>
+          <span>Người dùng & Phân quyền</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="../../index.html" class="btn-sidebar-action">
+          <span>🌐</span>
+          <span>Về trang chủ đặt vé</span>
+        </a>
+        <button class="btn-sidebar-action btn-sidebar-logout">
+          <span>🚪</span>
+          <span>Đăng xuất Quản trị</span>
+        </button>
+      </div>
+    </aside>
+
+    <div class="admin-main">
+      <header class="admin-header">
+        <div class="header-left">
+          <button class="mobile-menu-toggle" aria-label="Toggle menu">☰</button>
+          <div class="page-breadcrumb">
+            <span>Admin</span>
+            <span>/</span>
+            <span class="current">Người dùng & Phân quyền</span>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="header-profile-widget">
+            <img src="" alt="Admin" class="admin-avatar">
+            <div class="admin-meta">
+              <span class="admin-name admin-display-name">Quản trị viên</span>
+              <span class="admin-role-badge">Admin</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="admin-content">
+        <div class="page-title-bar">
+          <div class="page-title-group">
+            <h1>Quản trị Người dùng & Phân quyền Tài khoản</h1>
+            <p class="page-subtitle">Quản lý danh sách thành viên, kiểm tra vai trò bảo mật và khóa/mở tài khoản gian lận</p>
+          </div>
+        </div>
+
+        <!-- SEARCH & FILTER TOOLBAR (SRS 1.3 & Task 8) -->
+        <div class="toolbar-bar">
+          <div class="search-input-group">
+            <span class="search-icon-inside">🔍</span>
+            <input type="text" id="user-search-input" class="form-control" placeholder="Tìm kiếm theo Họ tên, Email, SĐT...">
+          </div>
+
+          <div class="filter-actions">
+            <select id="user-role-filter" class="form-select" style="width: auto;">
+              <option value="all">Tất cả vai trò</option>
+              <option value="admin">Quản trị viên (Admin)</option>
+              <option value="customer">Khách hàng (Customer)</option>
+            </select>
+
+            <select id="user-status-filter" class="form-select" style="width: auto;">
+              <option value="all">Tất cả trạng thái</option>
+              <option value="active">Đang hoạt động</option>
+              <option value="blocked">Đã bị khóa</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- USERS TABLE -->
+        <div class="table-card">
+          <div class="table-responsive">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th style="width: 60px;">Ảnh</th>
+                  <th>Họ và tên</th>
+                  <th>Email</th>
+                  <th>Số điện thoại</th>
+                  <th>Vai trò (Role)</th>
+                  <th>Trạng thái tài khoản</th>
+                  <th>Ngày đăng ký</th>
+                  <th style="text-align: right;">Hành động</th>
+                </tr>
+              </thead>
+              <tbody id="users-table-tbody">
+                <!-- Nạp từ users.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="../../js/utils/admin-layout.js"></script>
+  <script src="../../js/pages/admin/users.js"></script>
+</body>
+</html>

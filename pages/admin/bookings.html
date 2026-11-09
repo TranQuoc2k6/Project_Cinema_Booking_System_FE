@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý Đơn vé & Giao dịch - Cinema Admin Portal</title>
+  
+  <link rel="stylesheet" href="../../css/variables.css">
+  <link rel="stylesheet" href="../../css/reset.css">
+  <link rel="stylesheet" href="../../css/global.css">
+  <link rel="stylesheet" href="../../css/layout.css">
+  <link rel="stylesheet" href="../../css/components.css">
+
+  <script src="../../js/utils/auth-guard.js"></script>
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-logo-icon">🎬</div>
+        <div class="brand-text">
+          <span class="brand-title">CINEMA</span>
+          <span class="brand-subtitle">Admin Portal</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <span class="nav-section-label">Quản trị cốt lõi</span>
+        <a href="dashboard.html" class="nav-item">
+          <span class="nav-icon">📊</span>
+          <span>Dashboard</span>
+        </a>
+        <a href="movies.html" class="nav-item">
+          <span class="nav-icon">🎬</span>
+          <span>Quản lý Phim</span>
+        </a>
+        <a href="cinemas.html" class="nav-item">
+          <span class="nav-icon">🏛️</span>
+          <span>Rạp / Phòng chiếu</span>
+        </a>
+        <a href="showtimes.html" class="nav-item">
+          <span class="nav-icon">🕒</span>
+          <span>Lịch / Suất chiếu</span>
+        </a>
+        <a href="bookings.html" class="nav-item active">
+          <span class="nav-icon">🎟️</span>
+          <span>Quản lý Đơn vé</span>
+        </a>
+        <span class="nav-section-label">Hệ thống</span>
+        <a href="users.html" class="nav-item">
+          <span class="nav-icon">👥</span>
+          <span>Người dùng & Phân quyền</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="../../index.html" class="btn-sidebar-action">
+          <span>🌐</span>
+          <span>Về trang chủ đặt vé</span>
+        </a>
+        <button class="btn-sidebar-action btn-sidebar-logout">
+          <span>🚪</span>
+          <span>Đăng xuất Quản trị</span>
+        </button>
+      </div>
+    </aside>
+
+    <div class="admin-main">
+      <header class="admin-header">
+        <div class="header-left">
+          <button class="mobile-menu-toggle" aria-label="Toggle menu">☰</button>
+          <div class="page-breadcrumb">
+            <span>Admin</span>
+            <span>/</span>
+            <span class="current">Quản lý Đơn vé</span>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="header-profile-widget">
+            <img src="" alt="Admin" class="admin-avatar">
+            <div class="admin-meta">
+              <span class="admin-name admin-display-name">Quản trị viên</span>
+              <span class="admin-role-badge">Admin</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="admin-content">
+        <div class="page-title-bar">
+          <div class="page-title-group">
+            <h1>Tra cứu & Quản lý Đơn vé</h1>
+            <p class="page-subtitle">Kiểm soát đơn đặt vé toàn hệ thống, tra cứu mã vé, số điện thoại và hỗ trợ hủy vé</p>
+          </div>
+        </div>
+
+        <!-- SEARCH & FILTER TOOLBAR (SRS 1.3) -->
+        <div class="toolbar-bar">
+          <div class="search-input-group">
+            <span class="search-icon-inside">🔍</span>
+            <input type="text" id="booking-search-input" class="form-control" placeholder="Tìm theo Mã đơn vé (#BK-...) hoặc SĐT khách...">
+          </div>
+
+          <div class="filter-actions">
+            <select id="booking-status-filter" class="form-select" style="width: auto;">
+              <option value="all">Tất cả trạng thái</option>
+              <option value="confirmed">Đã thanh toán (confirmed)</option>
+              <option value="pending">Chờ thanh toán (pending)</option>
+              <option value="cancelled">Đã hủy vé (cancelled)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- BOOKINGS TABLE -->
+        <div class="table-card">
+          <div class="table-responsive">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Mã đơn vé</th>
+                  <th>Khách hàng</th>
+                  <th>Số điện thoại</th>
+                  <th>Phim & Suất chiếu</th>
+                  <th>Rạp & Phòng</th>
+                  <th>Ghế đặt</th>
+                  <th>Tổng tiền</th>
+                  <th>Trạng thái</th>
+                  <th style="text-align: right;">Hành động</th>
+                </tr>
+              </thead>
+              <tbody id="bookings-table-tbody">
+                <!-- Nạp từ bookings.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL XEM CHI TIẾT ĐƠN VÉ -->
+  <div class="modal-overlay" id="booking-detail-modal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title" id="booking-detail-title">Chi tiết đơn vé</h3>
+        <button class="modal-close-btn" onclick="closeBookingModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="booking-detail-content">
+        <!-- Nạp nội dung động -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeBookingModal()">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/utils/admin-layout.js"></script>
+  <script src="../../js/pages/admin/bookings.js"></script>
+</body>
+</html>
