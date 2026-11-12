@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng ký tài khoản - Cinema Booking System</title>
+  
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+
+  <style>
+    .register-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--spacing-lg);
+      background: radial-gradient(circle at 50% 20%, rgba(229, 9, 20, 0.15) 0%, rgba(11, 17, 32, 1) 70%);
+    }
+
+    .register-card {
+      width: 100%;
+      max-width: 500px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius-lg);
+      padding: var(--spacing-2xl) var(--spacing-xl);
+      box-shadow: var(--shadow-lg), var(--shadow-glow);
+    }
+
+    .register-header {
+      text-align: center;
+      margin-bottom: var(--spacing-xl);
+    }
+
+    .register-logo {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, #e50914, #990000);
+      border-radius: var(--border-radius-md);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin-bottom: var(--spacing-md);
+      box-shadow: 0 4px 12px rgba(229, 9, 20, 0.4);
+    }
+
+    .form-group {
+      margin-bottom: var(--spacing-md);
+      position: relative;
+    }
+
+    .form-control.is-invalid {
+      border-color: #ef4444 !important;
+      background-color: rgba(239, 68, 68, 0.05);
+    }
+
+    .password-wrapper {
+      position: relative;
+    }
+
+    .toggle-password-btn {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 14px;
+      padding: 4px;
+    }
+
+    .toggle-password-btn:hover {
+      color: var(--text-white);
+    }
+
+    .auth-alert-box {
+      display: none;
+      padding: 0.75rem 1rem;
+      background: var(--color-danger-bg);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+      border-radius: var(--border-radius-md);
+      font-size: var(--font-sm);
+      margin-bottom: var(--spacing-md);
+    }
+
+    .auth-alert-box.success {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #6ee7b7;
+    }
+
+    .terms-box {
+      font-size: var(--font-xs);
+      color: var(--text-muted);
+      margin-top: var(--spacing-sm);
+      margin-bottom: var(--spacing-md);
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="register-container">
+    <div class="register-card">
+      <div class="register-header">
+        <div class="register-logo">🎬</div>
+        <h1 style="font-size: 1.6rem; color: #fff; margin-bottom: 0.25rem;">TẠO TÀI KHOẢN MỚI</h1>
+        <p style="font-size: 13px; color: var(--text-muted);">Trở thành thành viên Cinema Booking để nhận ưu đãi</p>
+      </div>
+
+      <!-- HỘP THÔNG BÁO LỖI / THÀNH CÔNG -->
+      <div class="auth-alert-box" id="auth-alert"></div>
+
+      <form id="register-form" novalidate onsubmit="handleRegisterSubmit(event)">
+        <div class="form-group">
+          <label class="form-label" for="reg-fullname">Họ và tên <span style="color: var(--color-primary)">*</span></label>
+          <input type="text" id="reg-fullname" class="form-control" placeholder="Nguyễn Văn A" autocomplete="name">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="reg-email">Email <span style="color: var(--color-primary)">*</span></label>
+          <input type="email" id="reg-email" class="form-control" placeholder="nguyenvana@gmail.com" autocomplete="email">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="reg-phone">Số điện thoại <span style="font-size: 11px; color: var(--text-muted)">(Không bắt buộc)</span></label>
+          <input type="tel" id="reg-phone" class="form-control" placeholder="0987654321" autocomplete="tel">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="reg-password">Mật khẩu <span style="color: var(--color-primary)">*</span></label>
+          <div class="password-wrapper">
+            <input type="password" id="reg-password" class="form-control" placeholder="Tối thiểu 6 ký tự" autocomplete="new-password">
+            <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('reg-password', this)">👁️</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="reg-confirm-password">Xác nhận mật khẩu <span style="color: var(--color-primary)">*</span></label>
+          <div class="password-wrapper">
+            <input type="password" id="reg-confirm-password" class="form-control" placeholder="Nhập lại mật khẩu trên" autocomplete="new-password">
+            <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('reg-confirm-password', this)">👁️</button>
+          </div>
+        </div>
+
+        <div class="terms-box">
+          <input type="checkbox" id="reg-terms" checked required style="margin-top: 2px;">
+          <label for="reg-terms" style="cursor: pointer;">
+            Tôi đồng ý với <a href="#" style="color: var(--color-primary); text-decoration: none;">Điều khoản sử dụng</a> & <a href="#" style="color: var(--color-primary); text-decoration: none;">Chính sách bảo mật</a> của Cinema Booking.
+          </label>
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="btn-register-submit" style="width: 100%; margin-top: var(--spacing-sm);">
+          <span>✨</span> Đăng ký tài khoản
+        </button>
+      </form>
+
+      <div style="text-align: center; margin-top: var(--spacing-lg); font-size: 13px; color: var(--text-muted);">
+        Đã có tài khoản? <a href="login.html" style="color: var(--color-primary); font-weight: 600; text-decoration: none;">Đăng nhập</a>
+      </div>
+
+      <div style="text-align: center; margin-top: var(--spacing-md); font-size: 13px;">
+        <a href="../index.html" style="color: var(--text-muted); text-decoration: none;">← Quay về trang chủ</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- AXIOS & SCRIPTS -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="../js/utils/storage.js"></script>
+  <script src="../js/config/api.js"></script>
+  <script src="../js/utils/validation.js"></script>
+  <script src="../js/services/auth.service.js"></script>
+  <script src="../js/pages/register.js"></script>
+</body>
+</html>

@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="css/variables.css">
     <link rel="stylesheet" href="css/reset.css">
     <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/components.css">
     <style>
         .home-navbar {
             background-color: var(--bg-sidebar);
@@ -43,24 +44,8 @@
 </head>
 
 <body>
-    <header class="home-navbar">
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <div style="font-size: 24px;">🎬</div>
-            <div>
-                <strong style="font-size: 18px; color: #fff;">CINEMA STAR</strong>
-                <span style="font-size: 12px; color: var(--color-primary); display: block;">HỆ THỐNG ĐẶT VÉ TRỰC TUYẾN</span>
-            </div>
-        </div>
-
-        <div style="display: flex; align-items: center; gap: 12px;">
-            <a href="pages/admin/dashboard.html" class="btn btn-outline-primary btn-sm">
-                <span>🛡️</span> Khu vực Quản trị (Admin Portal)
-            </a>
-            <a href="pages/login.html" class="btn btn-primary btn-sm">
-                <span>🔐</span> Đăng nhập
-            </a>
-        </div>
-    </header>
+    <!-- HEADER ĐƯỢC RENDER ĐỘNG TỪ js/components/header.js -->
+    <header class="home-navbar" id="app-header"></header>
 
     <main class="home-container">
         <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -71,23 +56,33 @@
         <div id="movie-list" class="movie-grid"></div>
     </main>
 
+    <!-- AXIOS & SCRIPTS -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="js/utils/storage.js"></script>
+    <script src="js/config/api.js"></script>
+    <script src="js/services/auth.service.js"></script>
+    <script src="js/components/header.js"></script>
+
     <script>
         async function loadMovies() {
             try {
-                const response = await fetch("http://127.0.0.1:8000/api/movies");
+                const response = await fetch("http://127.0.0.1:8000/api/v1/movies");
                 if (response.ok) {
-                    const movies = await response.json();
-                    document.getElementById("movie-list").innerHTML =
-                        movies.map(movie => `
-                            <div class="movie-card-item">
-                                <h3 style="font-size: 18px; color: #fff; margin-bottom: 6px;">${movie.title}</h3>
-                                <p style="font-size: 14px; color: var(--text-muted);">${movie.duration} phút</p>
-                                <div style="margin-top: 12px;">
-                                    <span class="badge badge-info">2D / Digital</span>
+                    const data = await response.json();
+                    const movies = Array.isArray(data) ? data : (data.items || []);
+                    if (movies.length > 0) {
+                        document.getElementById("movie-list").innerHTML =
+                            movies.map(movie => `
+                                <div class="movie-card-item">
+                                    <h3 style="font-size: 18px; color: #fff; margin-bottom: 6px;">${movie.title}</h3>
+                                    <p style="font-size: 14px; color: var(--text-muted);">${movie.duration_minutes || movie.duration || 120} phút</p>
+                                    <div style="margin-top: 12px;">
+                                        <span class="badge badge-info">${movie.status || 'NOW_SHOWING'}</span>
+                                    </div>
                                 </div>
-                            </div>
-                        `).join("");
-                    return;
+                            `).join("");
+                        return;
+                    }
                 }
             } catch (e) {
                 console.log("Dùng danh sách phim tĩnh dự phòng.");
