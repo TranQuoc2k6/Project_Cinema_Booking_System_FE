@@ -6,8 +6,8 @@
  * Script này được nạp ngay ở đầu trang (<head>) của toàn bộ các trang Admin.
  * Tác dụng:
  * 1. Ngăn chặn tuyệt đối việc người dùng thường hoặc khách vãng lai truy cập.
- * 2. Kiểm tra JWT Token và Vai trò (Role) trong localStorage.
- * 3. Nếu không phải Admin -> Ngay lập tức redirect về trang Đăng nhập kèm cảnh báo.
+ * 2. Kiểm tra JWT Token và Vai trò (Role) trong localStorage/sessionStorage.
+ * 3. Nếu không phải Admin -> Ngay lập tức redirect về trang Đăng nhập kèm thông báo.
  */
 
 (function () {
@@ -30,27 +30,28 @@
   function blockAndRedirect(errorMessage) {
     console.warn('[FE ROUTE GUARD] Access Denied:', errorMessage);
     
-    // Lưu thông báo vào sessionStorage để trang login hiển thị cảnh báo đẹp mắt
+    // Lưu thông báo vào sessionStorage để trang login hiển thị alert box đẹp mắt
     sessionStorage.setItem('auth_error', errorMessage);
 
-    // Hiển thị alert chặn trực tiếp
-    alert('🚫 CẢNH BÁO PHÂN QUYỀN:\n' + errorMessage);
-
-    // Chuyển hướng ngay lập tức bằng replace để không lưu trang admin vào history
+    // Chuyển hướng ngay lập tức (KHÔNG dùng alert() chặn luồng để tránh vòng lặp popup của trình duyệt)
     window.location.replace(getLoginUrl());
   }
 
   // 1. Kiểm tra Token
   const token =
+    (window.StorageService && window.StorageService.getToken()) ||
+    localStorage.getItem('cinema_access_token') ||
     localStorage.getItem('token') ||
     localStorage.getItem('access_token') ||
-    localStorage.getItem('cinema_token');
+    sessionStorage.getItem('cinema_access_token');
 
   // 2. Kiểm tra thông tin User
   const userJson =
+    (window.StorageService && JSON.stringify(window.StorageService.getUser())) ||
+    localStorage.getItem('cinema_user_info') ||
     localStorage.getItem('user') ||
     localStorage.getItem('cinema_user') ||
-    localStorage.getItem('current_user');
+    sessionStorage.getItem('cinema_user_info');
 
   if (!token || !userJson) {
     blockAndRedirect('Vui lòng đăng nhập với tài khoản Quản trị viên (Admin) để tiếp tục!');
@@ -59,10 +60,9 @@
 
   let user = null;
   try {
-    user = JSON.parse(userJson);
+    user = typeof userJson === 'object' ? userJson : JSON.parse(userJson);
   } catch (err) {
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
+    if (window.StorageService) window.StorageService.clearAuth();
     blockAndRedirect('Dữ liệu phiên đăng nhập bị lỗi. Vui lòng đăng nhập lại.');
     return;
   }
@@ -86,17 +86,16 @@
   // 4. Chặn tuyệt đối nếu không phải admin (FE Chặn Non-Admin)
   if (!isAdmin) {
     blockAndRedirect(
-      'Quyền truy cập bị từ chối!\nTài khoản "' +
+      'Quyền truy cập bị từ chối! Tài khoản "' +
         (user.email || 'này') +
-        '" là Khách hàng (User), không có quyền truy cập vào Khu vực Quản trị hệ thống (Admin Portal).'
+        '" không có quyền truy cập vào Khu vực Quản trị hệ thống (Admin Portal).'
     );
     return;
   }
 
   // 5. Kiểm tra tài khoản có bị khóa không
   if (user.is_active === false) {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    if (window.StorageService) window.StorageService.clearAuth();
     blockAndRedirect('Tài khoản Quản trị viên này hiện đang bị khóa.');
     return;
   }
@@ -111,16 +110,18 @@
 window.AdminAuth = {
   getToken: function () {
     return (
+      (window.StorageService && window.StorageService.getToken()) ||
+      localStorage.getItem('cinema_access_token') ||
       localStorage.getItem('token') ||
-      localStorage.getItem('access_token') ||
-      localStorage.getItem('cinema_token')
+      localStorage.getItem('access_token')
     );
   },
   getUser: function () {
+    if (window.StorageService && window.StorageService.getUser()) {
+      return window.StorageService.getUser();
+    }
     try {
-      const u =
-        localStorage.getItem('user') ||
-        localStorage.getItem('cinema_user');
+      const u = localStorage.getItem('cinema_user_info') || localStorage.getItem('user');
       return u ? JSON.parse(u) : null;
     } catch (e) {
       return null;
@@ -128,12 +129,12 @@ window.AdminAuth = {
   },
   logout: function () {
     if (confirm('Bạn có chắc chắn muốn đăng xuất khỏi trang Quản trị viên?')) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('cinema_token');
-      localStorage.removeItem('user');
-      localStorage.removeItem('cinema_user');
-      localStorage.removeItem('current_user');
+      if (window.StorageService) {
+        window.StorageService.clearAuth();
+      } else {
+        localStorage.clear();
+        sessionStorage.clear();
+      }
       window.location.replace('../login.html');
     }
   }

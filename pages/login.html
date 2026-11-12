@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Đăng nhập Hệ thống - Cinema Booking System</title>
+  <title>Đăng nhập - Cinema Booking System</title>
   
   <link rel="stylesheet" href="../css/variables.css">
   <link rel="stylesheet" href="../css/reset.css">
@@ -75,6 +75,52 @@
       font-size: var(--font-sm);
       margin-bottom: var(--spacing-md);
     }
+
+    .auth-alert-box.success {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #6ee7b7;
+    }
+
+    .form-group {
+      margin-bottom: var(--spacing-md);
+      position: relative;
+    }
+
+    .form-control.is-invalid {
+      border-color: #ef4444 !important;
+      background-color: rgba(239, 68, 68, 0.05);
+    }
+
+    .password-wrapper {
+      position: relative;
+    }
+
+    .toggle-password-btn {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 14px;
+      padding: 4px;
+    }
+
+    .toggle-password-btn:hover {
+      color: var(--text-white);
+    }
+
+    .remember-forgot-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: var(--spacing-sm);
+      margin-bottom: var(--spacing-md);
+      font-size: var(--font-xs);
+    }
   </style>
 </head>
 <body>
@@ -83,52 +129,73 @@
       <div class="login-header">
         <div class="login-logo">🎬</div>
         <h1 style="font-size: 1.6rem; color: #fff; margin-bottom: 0.25rem;">CINEMA BOOKING</h1>
-        <p style="font-size: 13px; color: var(--text-muted);">Đăng nhập tài khoản để tiếp tục</p>
+        <p style="font-size: 13px; color: var(--text-muted);">Đăng nhập tài khoản để đặt vé và quản lý</p>
       </div>
 
-      <!-- HỘP THÔNG BÁO TỪ ROUTE GUARD (NẾU BỊ CHẶN) -->
+      <!-- HỘP THÔNG BÁO LỖI / THÀNH CÔNG -->
       <div class="auth-alert-box" id="auth-alert"></div>
 
-      <form id="login-form" onsubmit="handleLoginSubmit(event)">
+      <form id="login-form" novalidate onsubmit="handleLoginSubmit(event)">
         <div class="form-group">
-          <label class="form-label" for="login-email">Email đăng nhập</label>
-          <input type="email" id="login-email" class="form-control" required placeholder="admin@cinema.com">
+          <label class="form-label" for="login-email">Email đăng nhập <span style="color: var(--color-primary)">*</span></label>
+          <input type="email" id="login-email" class="form-control" placeholder="name@example.com" autocomplete="email">
         </div>
 
         <div class="form-group">
-          <label class="form-label" for="login-password">Mật khẩu</label>
-          <input type="password" id="login-password" class="form-control" required placeholder="••••••••">
+          <label class="form-label" for="login-password">Mật khẩu <span style="color: var(--color-primary)">*</span></label>
+          <div class="password-wrapper">
+            <input type="password" id="login-password" class="form-control" placeholder="••••••••" autocomplete="current-password">
+            <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('login-password', this)">👁️</button>
+          </div>
         </div>
 
-        <button type="submit" class="btn btn-primary" id="btn-login-submit" style="width: 100%; margin-top: var(--spacing-md);">
+        <div class="remember-forgot-row">
+          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; color: var(--text-muted);">
+            <input type="checkbox" id="login-remember" checked>
+            <span>Ghi nhớ đăng nhập</span>
+          </label>
+          <a href="#" style="color: var(--color-primary); text-decoration: none;" onclick="alert('Tính năng quên mật khẩu đang được phát triển!')">Quên mật khẩu?</a>
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="btn-login-submit" style="width: 100%; margin-top: var(--spacing-sm);">
           <span>🔐</span> Đăng nhập
         </button>
       </form>
 
-      <!-- TEST ROUTE GUARD: TÀI KHOẢN MẪU SPRINT 1 -->
+      <div style="text-align: center; margin-top: var(--spacing-lg); font-size: 13px; color: var(--text-muted);">
+        Chưa có tài khoản? <a href="register.html" style="color: var(--color-primary); font-weight: 600; text-decoration: none;">Đăng ký ngay</a>
+      </div>
+
+      <!-- TÀI KHOẢN MẪU ĐỂ TEST NHANH -->
       <div class="demo-accounts-box">
         <div style="font-weight: 700; color: #fff; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
-          <span>🧪</span> KIỂM THỬ PHÂN QUYỀN (FE ROUTE GUARD & BE REQUIRE_ADMIN):
+          <span>🧪</span> TÀI KHOẢN MẪU KIỂM THỬ:
         </div>
         <p style="color: var(--text-sub); margin-bottom: 8px;">
-          Bấm 1 chạm để điền tài khoản mẫu đã seed trong CSDL:
+          Bấm 1 chạm để điền tài khoản mẫu có sẵn trong hệ thống:
         </p>
         <div class="demo-btn-group">
           <button type="button" class="btn btn-secondary btn-sm" onclick="quickFillAdmin()">
-            <span>👑</span> Admin (Hợp lệ)
+            <span>👑</span> Admin (Quản trị)
           </button>
           <button type="button" class="btn btn-secondary btn-sm" onclick="quickFillCustomer()">
-            <span>👤</span> Khách (Test Chặn)
+            <span>👤</span> Khách (Customer)
           </button>
         </div>
       </div>
 
       <div style="text-align: center; margin-top: var(--spacing-lg); font-size: 13px;">
-        <a href="../index.html" style="color: var(--text-muted); hover: color: #fff;">← Quay về trang chủ đặt vé</a>
+        <a href="../index.html" style="color: var(--text-muted); text-decoration: none;">← Quay về trang chủ đặt vé</a>
       </div>
     </div>
   </div>
 
+  <!-- AXIOS & SCRIPTS -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="../js/utils/storage.js"></script>
+  <script src="../js/config/api.js"></script>
+  <script src="../js/utils/validation.js"></script>
+  <script src="../js/services/auth.service.js"></script>
   <script src="../js/pages/login.js"></script>
 </body>
 </html>

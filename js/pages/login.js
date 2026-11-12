@@ -1,144 +1,184 @@
 /**
  * ==========================================================================
- * LOGIN PAGE CONTROLLER
- * Xử lý xác thực người dùng, lưu trữ token/role và điều hướng phân quyền
+ * LOGIN PAGE CONTROLLER (js/pages/login.js)
+ * Xử lý xác thực đăng nhập, validate FE, hiện lỗi server, lưu token và redirect
  * ==========================================================================
  */
 
 document.addEventListener('DOMContentLoaded', function () {
-  checkAuthErrorFromGuard();
+  // 1. Kiểm tra nếu đã đăng nhập thì tự động điều hướng
+  if (window.StorageService && window.StorageService.isAuthenticated()) {
+    const user = window.StorageService.getUser();
+    if (user) {
+      redirectAfterLogin(user);
+      return;
+    }
+  }
+
+  // 2. Kiểm tra thông báo từ URL query hoặc session (như thông báo hết hạn token 401)
+  checkURLAndSessionNotices();
+
+  // 3. Lắng nghe sự kiện input để xóa lỗi tức thì
+  setupRealtimeValidation();
 });
 
-// Kiểm tra xem có thông báo bị chặn từ FE Route Guard chuyển sang không
-function checkAuthErrorFromGuard() {
-  const errorMsg = sessionStorage.getItem('auth_error');
-  if (errorMsg) {
-    const alertBox = document.getElementById('auth-alert');
-    if (alertBox) {
-      alertBox.textContent = errorMsg;
-      alertBox.style.display = 'block';
+function checkURLAndSessionNotices() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const alertBox = document.getElementById('auth-alert');
+
+  if (urlParams.get('expired') === '1') {
+    showAlert('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.', 'error');
+  } else if (urlParams.get('registered') === '1') {
+    showAlert('Đăng ký tài khoản thành công! Vui lòng đăng nhập.', 'success');
+  } else {
+    const errorMsg = sessionStorage.getItem('auth_error');
+    if (errorMsg) {
+      showAlert(errorMsg, 'error');
+      sessionStorage.removeItem('auth_error');
     }
-    sessionStorage.removeItem('auth_error');
   }
 }
+
+function setupRealtimeValidation() {
+  const emailInput = document.getElementById('login-email');
+  const passwordInput = document.getElementById('login-password');
+
+  if (emailInput) {
+    emailInput.addEventListener('input', () => window.Validation.clearError(emailInput));
+  }
+  if (passwordInput) {
+    passwordInput.addEventListener('input', () => window.Validation.clearError(passwordInput));
+  }
+}
+
+// Ẩn/Hiện mật khẩu
+window.togglePasswordVisibility = function (inputId, btn) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+  if (input.type === 'password') {
+    input.type = 'text';
+    btn.textContent = '🙈';
+  } else {
+    input.type = 'password';
+    btn.textContent = '👁️';
+  }
+};
 
 // Điền nhanh tài khoản Admin mẫu
 window.quickFillAdmin = function () {
   document.getElementById('login-email').value = 'admin@cinema.com';
   document.getElementById('login-password').value = 'admin123';
+  window.Validation.clearAllErrors('login-form');
 };
 
-// Điền nhanh tài khoản Khách hàng mẫu để test chặn quyền
+// Điền nhanh tài khoản Khách hàng mẫu
 window.quickFillCustomer = function () {
   document.getElementById('login-email').value = 'customer@cinema.com';
   document.getElementById('login-password').value = 'user123';
+  window.Validation.clearAllErrors('login-form');
 };
 
-// Xử lý gửi biểu mẫu đăng nhập
+// Xử lý nộp form đăng nhập
 window.handleLoginSubmit = async function (e) {
   e.preventDefault();
-  const email = document.getElementById('login-email').value.trim();
-  const password = document.getElementById('login-password').value.trim();
+
+  const emailInput = document.getElementById('login-email');
+  const passwordInput = document.getElementById('login-password');
+  const rememberCheckbox = document.getElementById('login-remember');
   const btn = document.getElementById('btn-login-submit');
 
+  const email = emailInput.value.trim();
+  const password = passwordInput.value;
+  const rememberMe = rememberCheckbox ? rememberCheckbox.checked : true;
+
+  // Clear previous errors
+  window.Validation.clearAllErrors('login-form');
+  hideAlert();
+
+  // Validate FE
+  let hasError = false;
+
+  if (window.Validation.isEmpty(email)) {
+    window.Validation.showError(emailInput, 'Vui lòng nhập email');
+    hasError = true;
+  } else if (!window.Validation.isValidEmail(email)) {
+    window.Validation.showError(emailInput, 'Email không đúng định dạng (vd: user@example.com)');
+    hasError = true;
+  }
+
+  if (window.Validation.isEmpty(password)) {
+    window.Validation.showError(passwordInput, 'Vui lòng nhập mật khẩu');
+    hasError = true;
+  } else if (password.length < 6) {
+    window.Validation.showError(passwordInput, 'Mật khẩu phải có ít nhất 6 ký tự');
+    hasError = true;
+  }
+
+  if (hasError) return;
+
+  // Bắt đầu gọi API đăng nhập
   btn.disabled = true;
-  btn.innerHTML = '<span>⏳</span> Đang xác thực...';
+  btn.innerHTML = '<span>⏳</span> Đang đăng nhập...';
 
   try {
-    // 1. Thử gọi API Backend thực tế
-    const response = await fetch('http://127.0.0.1:8000/api/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ email, password })
-    });
+    const result = await window.AuthService.login(email, password, rememberMe);
 
-    if (response.ok) {
-      const data = await response.json();
-      saveAuthSession(data.access_token, data.user);
-      handleRoleRedirect(data.user);
-      return;
+    if (result.success) {
+      showAlert('Đăng nhập thành công! Đang chuyển hướng...', 'success');
+      setTimeout(() => {
+        redirectAfterLogin(result.data.user);
+      }, 700);
     } else {
-      const errData = await response.json().catch(() => null);
-      if (response.status === 401) {
-        showError(errData?.detail || 'Email hoặc mật khẩu không chính xác!');
-        btn.disabled = false;
-        btn.innerHTML = '<span>🔐</span> Đăng nhập';
-        return;
+      // Hiển thị lỗi từ server
+      let errorMessage = 'Đăng nhập không thành công.';
+      if (result.status === 401) {
+        errorMessage = 'Email hoặc mật khẩu không chính xác!';
+      } else if (result.status === 403) {
+        errorMessage = 'Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.';
+      } else if (result.message) {
+        errorMessage = result.message;
       }
+      showAlert(errorMessage, 'error');
+      btn.disabled = false;
+      btn.innerHTML = '<span>🔐</span> Đăng nhập';
     }
-  } catch (error) {
-    console.warn('[Login] API Backend chưa bật hoặc CORS. Chuyển sang xác thực thông minh dự phòng.');
+  } catch (err) {
+    showAlert('Đã có lỗi xảy ra. Vui lòng thử lại sau!', 'error');
+    btn.disabled = false;
+    btn.innerHTML = '<span>🔐</span> Đăng nhập';
   }
-
-  // 2. Fallback mô phỏng xác thực tài khoản mẫu nếu backend chưa khởi chạy
-  if (email === 'admin@cinema.com' && password === 'admin123') {
-    const adminUser = {
-      id: 1,
-      full_name: 'Quan Tri Vien He Thong',
-      email: 'admin@cinema.com',
-      phone: '0901234567',
-      role: 'admin',
-      role_id: 1,
-      is_active: true,
-      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80'
-    };
-    saveAuthSession('mock_jwt_token_admin_cinema_2026', adminUser);
-    handleRoleRedirect(adminUser);
-    return;
-  }
-
-  if (email === 'customer@cinema.com' && password === 'user123') {
-    const customerUser = {
-      id: 2,
-      full_name: 'Nguyen Van Khach Hang',
-      email: 'customer@cinema.com',
-      phone: '0987654321',
-      role: 'customer',
-      role_id: 2,
-      is_active: true,
-      avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80'
-    };
-    saveAuthSession('mock_jwt_token_customer_cinema_2026', customerUser);
-    handleRoleRedirect(customerUser);
-    return;
-  }
-
-  showError('Email hoặc mật khẩu không đúng! Hãy dùng tài khoản mẫu bên dưới.');
-  btn.disabled = false;
-  btn.innerHTML = '<span>🔐</span> Đăng nhập';
 };
 
-function saveAuthSession(token, user) {
-  localStorage.setItem('token', token);
-  localStorage.setItem('access_token', token);
-  localStorage.setItem('cinema_token', token);
+function redirectAfterLogin(user) {
+  // Kiểm tra xem có URL redirect trước đó không
+  const redirectUrl = window.StorageService ? window.StorageService.getAndClearRedirectUrl() : null;
+  if (redirectUrl) {
+    window.location.href = redirectUrl;
+    return;
+  }
 
-  localStorage.setItem('user', JSON.stringify(user));
-  localStorage.setItem('cinema_user', JSON.stringify(user));
-}
-
-function handleRoleRedirect(user) {
-  const role = typeof user.role === 'string' ? user.role.toLowerCase() : (user.role?.name || '').toLowerCase();
-  const isAdmin = role === 'admin' || user.role_id === 1;
+  const roleName = (typeof user.role === 'string' ? user.role : user.role?.name || '').toUpperCase();
+  const isAdmin = roleName === 'ADMIN' || user.role_id === 1;
 
   if (isAdmin) {
-    // Quản trị viên -> chuyển thẳng tới Dashboard
     window.location.replace('admin/dashboard.html');
   } else {
-    // Khách hàng thường -> thông báo và chuyển hướng
-    alert('Đăng nhập thành công với vai trò Khách hàng (User)!\nBạn sẽ được đưa về Trang chủ.\nNếu cố tình truy cập /pages/admin/*, FE Route Guard sẽ lập tức chặn quyền truy cập!');
     window.location.replace('../index.html');
   }
 }
 
-function showError(msg) {
+function showAlert(msg, type = 'error') {
   const alertBox = document.getElementById('auth-alert');
   if (alertBox) {
     alertBox.textContent = msg;
+    alertBox.className = 'auth-alert-box ' + (type === 'success' ? 'success' : '');
     alertBox.style.display = 'block';
-  } else {
-    alert(msg);
+  }
+}
+
+function hideAlert() {
+  const alertBox = document.getElementById('auth-alert');
+  if (alertBox) {
+    alertBox.style.display = 'none';
   }
 }
