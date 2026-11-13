@@ -1,196 +1,111 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Đăng nhập - Cinema Booking System</title>
-  
-  <link rel="stylesheet" href="../css/variables.css">
-  <link rel="stylesheet" href="../css/reset.css">
-  <link rel="stylesheet" href="../css/global.css">
-  <link rel="stylesheet" href="../css/layout.css">
-  <link rel="stylesheet" href="../css/components.css">
-
+  <title>Đăng Nhập - CINEMA 3D</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: { dark: '#070a12', card: '#0f172a', cyan: '#06b6d4', rose: '#f43f5e' }
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    .login-container {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: var(--spacing-lg);
-      background: radial-gradient(circle at 50% 20%, rgba(229, 9, 20, 0.15) 0%, rgba(11, 17, 32, 1) 70%);
-    }
-
-    .login-card {
-      width: 100%;
-      max-width: 460px;
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: var(--border-radius-lg);
-      padding: var(--spacing-2xl) var(--spacing-xl);
-      box-shadow: var(--shadow-lg), var(--shadow-glow);
-    }
-
-    .login-header {
-      text-align: center;
-      margin-bottom: var(--spacing-xl);
-    }
-
-    .login-logo {
-      width: 56px;
-      height: 56px;
-      background: linear-gradient(135deg, #e50914, #990000);
-      border-radius: var(--border-radius-md);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2rem;
-      margin-bottom: var(--spacing-md);
-      box-shadow: 0 4px 12px rgba(229, 9, 20, 0.4);
-    }
-
-    .demo-accounts-box {
-      margin-top: var(--spacing-xl);
-      padding: var(--spacing-md);
-      background: rgba(15, 23, 42, 0.7);
-      border: 1px dashed var(--border-light);
-      border-radius: var(--border-radius-md);
-      font-size: var(--font-xs);
-    }
-
-    .demo-btn-group {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: var(--spacing-sm);
-      margin-top: var(--spacing-sm);
-    }
-
-    .auth-alert-box {
-      display: none;
-      padding: 0.75rem 1rem;
-      background: var(--color-danger-bg);
-      border: 1px solid rgba(239, 68, 68, 0.4);
-      color: #fca5a5;
-      border-radius: var(--border-radius-md);
-      font-size: var(--font-sm);
-      margin-bottom: var(--spacing-md);
-    }
-
-    .auth-alert-box.success {
-      background: rgba(16, 185, 129, 0.1);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      color: #6ee7b7;
-    }
-
-    .form-group {
-      margin-bottom: var(--spacing-md);
-      position: relative;
-    }
-
-    .form-control.is-invalid {
-      border-color: #ef4444 !important;
-      background-color: rgba(239, 68, 68, 0.05);
-    }
-
-    .password-wrapper {
-      position: relative;
-    }
-
-    .toggle-password-btn {
-      position: absolute;
-      right: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      cursor: pointer;
-      font-size: 14px;
-      padding: 4px;
-    }
-
-    .toggle-password-btn:hover {
-      color: var(--text-white);
-    }
-
-    .remember-forgot-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: var(--spacing-sm);
-      margin-bottom: var(--spacing-md);
-      font-size: var(--font-xs);
-    }
+    body { font-family: 'Inter', sans-serif; background-color: #070a12; color: #f8fafc; }
+    .glass-panel { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); }
+    .glass-card { background: rgba(30, 41, 59, 0.5); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+    .form-control.is-invalid { border-color: #ef4444 !important; background-color: rgba(239, 68, 68, 0.05); }
+    .auth-alert-box { display: none; padding: 0.75rem 1rem; border-radius: 0.75rem; font-size: 13px; margin-bottom: 1rem; }
+    .auth-alert-box.error { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; }
+    .auth-alert-box.success { background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: #6ee7b7; }
   </style>
 </head>
-<body>
-  <div class="login-container">
-    <div class="login-card">
-      <div class="login-header">
-        <div class="login-logo">🎬</div>
-        <h1 style="font-size: 1.6rem; color: #fff; margin-bottom: 0.25rem;">CINEMA BOOKING</h1>
-        <p style="font-size: 13px; color: var(--text-muted);">Đăng nhập tài khoản để đặt vé và quản lý</p>
-      </div>
+<body class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+  
+  <!-- Glow backgrounds -->
+  <div class="absolute -top-32 -left-32 w-96 h-96 bg-cyan-500/15 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-rose-500/15 rounded-full blur-3xl pointer-events-none"></div>
 
-      <!-- HỘP THÔNG BÁO LỖI / THÀNH CÔNG -->
-      <div class="auth-alert-box" id="auth-alert"></div>
-
-      <form id="login-form" novalidate onsubmit="handleLoginSubmit(event)">
-        <div class="form-group">
-          <label class="form-label" for="login-email">Email đăng nhập <span style="color: var(--color-primary)">*</span></label>
-          <input type="email" id="login-email" class="form-control" placeholder="name@example.com" autocomplete="email">
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" for="login-password">Mật khẩu <span style="color: var(--color-primary)">*</span></label>
-          <div class="password-wrapper">
-            <input type="password" id="login-password" class="form-control" placeholder="••••••••" autocomplete="current-password">
-            <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('login-password', this)">👁️</button>
+  <div class="glass-panel w-full max-w-md p-8 sm:p-10 rounded-3xl border border-slate-700/80 shadow-2xl relative z-10">
+    <div class="text-center mb-8">
+      <a href="../index.html" class="inline-flex items-center gap-3 mb-3">
+        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-rose-500 to-cyan-400 p-[2px]">
+          <div class="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center">
+            <i class="fa-solid fa-cube text-cyan-400 text-2xl"></i>
           </div>
         </div>
+      </a>
+      <h1 class="text-2xl font-black text-white uppercase tracking-wider">ĐĂNG NHẬP 3D</h1>
+      <p class="text-xs text-slate-400 mt-1">Hệ Thống Đặt Vé Điện Ảnh Cinema 3D</p>
+    </div>
 
-        <div class="remember-forgot-row">
-          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; color: var(--text-muted);">
-            <input type="checkbox" id="login-remember" checked>
-            <span>Ghi nhớ đăng nhập</span>
-          </label>
-          <a href="#" style="color: var(--color-primary); text-decoration: none;" onclick="alert('Tính năng quên mật khẩu đang được phát triển!')">Quên mật khẩu?</a>
+    <!-- Alert Box -->
+    <div class="auth-alert-box error" id="auth-alert"></div>
+
+    <form id="login-form" novalidate onsubmit="handleLoginSubmit(event)" class="space-y-4">
+      <div>
+        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5" for="login-email">Email đăng nhập</label>
+        <div class="relative">
+          <input type="email" id="login-email" class="form-control w-full bg-slate-900/90 border border-slate-700 text-slate-200 text-xs rounded-xl py-3 pl-10 pr-4 focus:outline-none focus:border-cyan-500 transition-colors" placeholder="user@example.com" autocomplete="email">
+          <i class="fa-solid fa-envelope absolute left-3.5 top-3.5 text-xs text-slate-500"></i>
         </div>
+      </div>
 
-        <button type="submit" class="btn btn-primary" id="btn-login-submit" style="width: 100%; margin-top: var(--spacing-sm);">
-          <span>🔐</span> Đăng nhập
+      <div>
+        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5" for="login-password">Mật khẩu</label>
+        <div class="relative">
+          <input type="password" id="login-password" class="form-control w-full bg-slate-900/90 border border-slate-700 text-slate-200 text-xs rounded-xl py-3 pl-10 pr-10 focus:outline-none focus:border-cyan-500 transition-colors" placeholder="••••••••" autocomplete="current-password">
+          <i class="fa-solid fa-lock absolute left-3.5 top-3.5 text-xs text-slate-500"></i>
+          <button type="button" class="absolute right-3 top-3 text-xs text-slate-500 hover:text-slate-300" onclick="togglePasswordVisibility('login-password', this)">👁️</button>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between text-xs pt-1">
+        <label class="flex items-center gap-2 text-slate-400 cursor-pointer">
+          <input type="checkbox" id="login-remember" checked class="rounded text-cyan-500 focus:ring-0">
+          <span>Ghi nhớ đăng nhập</span>
+        </label>
+        <a href="#" onclick="alert('Vui lòng liên hệ Admin để khôi phục mật khẩu!')" class="text-cyan-400 hover:underline">Quên mật khẩu?</a>
+      </div>
+
+      <button type="submit" id="btn-login-submit" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 via-teal-400 to-emerald-400 text-slate-950 font-black text-xs uppercase tracking-wider shadow-lg shadow-cyan-500/25 hover:brightness-110 transition-all mt-4">
+        🔐 ĐĂNG NHẬP
+      </button>
+    </form>
+
+    <!-- Test Quick Fill -->
+    <div class="mt-6 p-4 rounded-2xl bg-slate-900/70 border border-slate-800 text-[11px]">
+      <span class="font-bold text-slate-300 block mb-2">⚡ Điền tài khoản mẫu có sẵn:</span>
+      <div class="grid grid-cols-2 gap-2">
+        <button type="button" onclick="quickFillAdmin()" class="py-1.5 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold border border-slate-700">
+          👑 Admin
         </button>
-      </form>
-
-      <div style="text-align: center; margin-top: var(--spacing-lg); font-size: 13px; color: var(--text-muted);">
-        Chưa có tài khoản? <a href="register.html" style="color: var(--color-primary); font-weight: 600; text-decoration: none;">Đăng ký ngay</a>
+        <button type="button" onclick="quickFillCustomer()" class="py-1.5 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold border border-slate-700">
+          👤 Khách hàng
+        </button>
       </div>
+    </div>
 
-      <!-- TÀI KHOẢN MẪU ĐỂ TEST NHANH -->
-      <div class="demo-accounts-box">
-        <div style="font-weight: 700; color: #fff; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
-          <span>🧪</span> TÀI KHOẢN MẪU KIỂM THỬ:
-        </div>
-        <p style="color: var(--text-sub); margin-bottom: 8px;">
-          Bấm 1 chạm để điền tài khoản mẫu có sẵn trong hệ thống:
-        </p>
-        <div class="demo-btn-group">
-          <button type="button" class="btn btn-secondary btn-sm" onclick="quickFillAdmin()">
-            <span>👑</span> Admin (Quản trị)
-          </button>
-          <button type="button" class="btn btn-secondary btn-sm" onclick="quickFillCustomer()">
-            <span>👤</span> Khách (Customer)
-          </button>
-        </div>
-      </div>
+    <div class="text-center mt-6 text-xs text-slate-400">
+      Chưa có tài khoản? <a href="register.html" class="text-cyan-400 font-bold hover:underline">Đăng ký ngay</a>
+    </div>
 
-      <div style="text-align: center; margin-top: var(--spacing-lg); font-size: 13px;">
-        <a href="../index.html" style="color: var(--text-muted); text-decoration: none;">← Quay về trang chủ đặt vé</a>
-      </div>
+    <div class="text-center mt-4">
+      <a href="../index.html" class="text-xs text-slate-500 hover:text-slate-300">← Quay về Trang chủ</a>
     </div>
   </div>
 
-  <!-- AXIOS & SCRIPTS -->
+  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script src="../js/utils/storage.js"></script>
   <script src="../js/config/api.js"></script>
