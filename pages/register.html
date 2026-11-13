@@ -1,180 +1,121 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Đăng ký tài khoản - Cinema Booking System</title>
-  
-  <link rel="stylesheet" href="../css/variables.css">
-  <link rel="stylesheet" href="../css/reset.css">
-  <link rel="stylesheet" href="../css/global.css">
-  <link rel="stylesheet" href="../css/layout.css">
-  <link rel="stylesheet" href="../css/components.css">
-
+  <title>Đăng Ký Tài Khoản - CINEMA 3D</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: { dark: '#070a12', card: '#0f172a', cyan: '#06b6d4', rose: '#f43f5e' }
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    .register-container {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: var(--spacing-lg);
-      background: radial-gradient(circle at 50% 20%, rgba(229, 9, 20, 0.15) 0%, rgba(11, 17, 32, 1) 70%);
-    }
-
-    .register-card {
-      width: 100%;
-      max-width: 500px;
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: var(--border-radius-lg);
-      padding: var(--spacing-2xl) var(--spacing-xl);
-      box-shadow: var(--shadow-lg), var(--shadow-glow);
-    }
-
-    .register-header {
-      text-align: center;
-      margin-bottom: var(--spacing-xl);
-    }
-
-    .register-logo {
-      width: 56px;
-      height: 56px;
-      background: linear-gradient(135deg, #e50914, #990000);
-      border-radius: var(--border-radius-md);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2rem;
-      margin-bottom: var(--spacing-md);
-      box-shadow: 0 4px 12px rgba(229, 9, 20, 0.4);
-    }
-
-    .form-group {
-      margin-bottom: var(--spacing-md);
-      position: relative;
-    }
-
-    .form-control.is-invalid {
-      border-color: #ef4444 !important;
-      background-color: rgba(239, 68, 68, 0.05);
-    }
-
-    .password-wrapper {
-      position: relative;
-    }
-
-    .toggle-password-btn {
-      position: absolute;
-      right: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      cursor: pointer;
-      font-size: 14px;
-      padding: 4px;
-    }
-
-    .toggle-password-btn:hover {
-      color: var(--text-white);
-    }
-
-    .auth-alert-box {
-      display: none;
-      padding: 0.75rem 1rem;
-      background: var(--color-danger-bg);
-      border: 1px solid rgba(239, 68, 68, 0.4);
-      color: #fca5a5;
-      border-radius: var(--border-radius-md);
-      font-size: var(--font-sm);
-      margin-bottom: var(--spacing-md);
-    }
-
-    .auth-alert-box.success {
-      background: rgba(16, 185, 129, 0.1);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      color: #6ee7b7;
-    }
-
-    .terms-box {
-      font-size: var(--font-xs);
-      color: var(--text-muted);
-      margin-top: var(--spacing-sm);
-      margin-bottom: var(--spacing-md);
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
-    }
+    body { font-family: 'Inter', sans-serif; background-color: #070a12; color: #f8fafc; }
+    .glass-panel { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); }
+    .glass-card { background: rgba(30, 41, 59, 0.5); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+    .form-control.is-invalid { border-color: #ef4444 !important; background-color: rgba(239, 68, 68, 0.05); }
+    .auth-alert-box { display: none; padding: 0.75rem 1rem; border-radius: 0.75rem; font-size: 13px; margin-bottom: 1rem; }
+    .auth-alert-box.error { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; }
+    .auth-alert-box.success { background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: #6ee7b7; }
   </style>
 </head>
-<body>
-  <div class="register-container">
-    <div class="register-card">
-      <div class="register-header">
-        <div class="register-logo">🎬</div>
-        <h1 style="font-size: 1.6rem; color: #fff; margin-bottom: 0.25rem;">TẠO TÀI KHOẢN MỚI</h1>
-        <p style="font-size: 13px; color: var(--text-muted);">Trở thành thành viên Cinema Booking để nhận ưu đãi</p>
-      </div>
+<body class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+  
+  <div class="absolute -top-32 -left-32 w-96 h-96 bg-cyan-500/15 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-rose-500/15 rounded-full blur-3xl pointer-events-none"></div>
 
-      <!-- HỘP THÔNG BÁO LỖI / THÀNH CÔNG -->
-      <div class="auth-alert-box" id="auth-alert"></div>
-
-      <form id="register-form" novalidate onsubmit="handleRegisterSubmit(event)">
-        <div class="form-group">
-          <label class="form-label" for="reg-fullname">Họ và tên <span style="color: var(--color-primary)">*</span></label>
-          <input type="text" id="reg-fullname" class="form-control" placeholder="Nguyễn Văn A" autocomplete="name">
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" for="reg-email">Email <span style="color: var(--color-primary)">*</span></label>
-          <input type="email" id="reg-email" class="form-control" placeholder="nguyenvana@gmail.com" autocomplete="email">
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" for="reg-phone">Số điện thoại <span style="font-size: 11px; color: var(--text-muted)">(Không bắt buộc)</span></label>
-          <input type="tel" id="reg-phone" class="form-control" placeholder="0987654321" autocomplete="tel">
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" for="reg-password">Mật khẩu <span style="color: var(--color-primary)">*</span></label>
-          <div class="password-wrapper">
-            <input type="password" id="reg-password" class="form-control" placeholder="Tối thiểu 6 ký tự" autocomplete="new-password">
-            <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('reg-password', this)">👁️</button>
+  <div class="glass-panel w-full max-w-lg p-8 sm:p-10 rounded-3xl border border-slate-700/80 shadow-2xl relative z-10">
+    <div class="text-center mb-6">
+      <a href="../index.html" class="inline-flex items-center gap-3 mb-3">
+        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-rose-500 to-cyan-400 p-[2px]">
+          <div class="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center">
+            <i class="fa-solid fa-cube text-cyan-400 text-2xl"></i>
           </div>
         </div>
+      </a>
+      <h1 class="text-2xl font-black text-white uppercase tracking-wider">TẠO TÀI KHOẢN MỚI</h1>
+      <p class="text-xs text-slate-400 mt-1">Trở thành thành viên Cinema 3D để nhận ưu đãi</p>
+    </div>
 
-        <div class="form-group">
-          <label class="form-label" for="reg-confirm-password">Xác nhận mật khẩu <span style="color: var(--color-primary)">*</span></label>
-          <div class="password-wrapper">
-            <input type="password" id="reg-confirm-password" class="form-control" placeholder="Nhập lại mật khẩu trên" autocomplete="new-password">
-            <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('reg-confirm-password', this)">👁️</button>
-          </div>
+    <!-- Alert Box -->
+    <div class="auth-alert-box error" id="auth-alert"></div>
+
+    <form id="register-form" novalidate onsubmit="handleRegisterSubmit(event)" class="space-y-3.5">
+      <div>
+        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1" for="reg-fullname">Họ và tên <span class="text-rose-500">*</span></label>
+        <div class="relative">
+          <input type="text" id="reg-fullname" class="form-control w-full bg-slate-900/90 border border-slate-700 text-slate-200 text-xs rounded-xl py-3 pl-10 pr-4 focus:outline-none focus:border-cyan-500" placeholder="Nguyễn Văn A">
+          <i class="fa-solid fa-user absolute left-3.5 top-3.5 text-xs text-slate-500"></i>
         </div>
-
-        <div class="terms-box">
-          <input type="checkbox" id="reg-terms" checked required style="margin-top: 2px;">
-          <label for="reg-terms" style="cursor: pointer;">
-            Tôi đồng ý với <a href="#" style="color: var(--color-primary); text-decoration: none;">Điều khoản sử dụng</a> & <a href="#" style="color: var(--color-primary); text-decoration: none;">Chính sách bảo mật</a> của Cinema Booking.
-          </label>
-        </div>
-
-        <button type="submit" class="btn btn-primary" id="btn-register-submit" style="width: 100%; margin-top: var(--spacing-sm);">
-          <span>✨</span> Đăng ký tài khoản
-        </button>
-      </form>
-
-      <div style="text-align: center; margin-top: var(--spacing-lg); font-size: 13px; color: var(--text-muted);">
-        Đã có tài khoản? <a href="login.html" style="color: var(--color-primary); font-weight: 600; text-decoration: none;">Đăng nhập</a>
       </div>
 
-      <div style="text-align: center; margin-top: var(--spacing-md); font-size: 13px;">
-        <a href="../index.html" style="color: var(--text-muted); text-decoration: none;">← Quay về trang chủ</a>
+      <div>
+        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1" for="reg-email">Email <span class="text-rose-500">*</span></label>
+        <div class="relative">
+          <input type="email" id="reg-email" class="form-control w-full bg-slate-900/90 border border-slate-700 text-slate-200 text-xs rounded-xl py-3 pl-10 pr-4 focus:outline-none focus:border-cyan-500" placeholder="user@example.com">
+          <i class="fa-solid fa-envelope absolute left-3.5 top-3.5 text-xs text-slate-500"></i>
+        </div>
       </div>
+
+      <div>
+        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1" for="reg-phone">Số điện thoại (Không bắt buộc)</label>
+        <div class="relative">
+          <input type="tel" id="reg-phone" class="form-control w-full bg-slate-900/90 border border-slate-700 text-slate-200 text-xs rounded-xl py-3 pl-10 pr-4 focus:outline-none focus:border-cyan-500" placeholder="0987654321">
+          <i class="fa-solid fa-phone absolute left-3.5 top-3.5 text-xs text-slate-500"></i>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1" for="reg-password">Mật khẩu <span class="text-rose-500">*</span></label>
+        <div class="relative">
+          <input type="password" id="reg-password" class="form-control w-full bg-slate-900/90 border border-slate-700 text-slate-200 text-xs rounded-xl py-3 pl-10 pr-10 focus:outline-none focus:border-cyan-500" placeholder="Tối thiểu 6 ký tự">
+          <i class="fa-solid fa-lock absolute left-3.5 top-3.5 text-xs text-slate-500"></i>
+          <button type="button" class="absolute right-3 top-3 text-xs text-slate-500 hover:text-slate-300" onclick="togglePasswordVisibility('reg-password', this)">👁️</button>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1" for="reg-confirm-password">Xác nhận mật khẩu <span class="text-rose-500">*</span></label>
+        <div class="relative">
+          <input type="password" id="reg-confirm-password" class="form-control w-full bg-slate-900/90 border border-slate-700 text-slate-200 text-xs rounded-xl py-3 pl-10 pr-10 focus:outline-none focus:border-cyan-500" placeholder="Nhập lại mật khẩu trên">
+          <i class="fa-solid fa-shield-halved absolute left-3.5 top-3.5 text-xs text-slate-500"></i>
+          <button type="button" class="absolute right-3 top-3 text-xs text-slate-500 hover:text-slate-300" onclick="togglePasswordVisibility('reg-confirm-password', this)">👁️</button>
+        </div>
+      </div>
+
+      <div class="flex items-start gap-2 text-xs text-slate-400 pt-1">
+        <input type="checkbox" id="reg-terms" checked class="mt-0.5 rounded text-cyan-500 focus:ring-0">
+        <label for="reg-terms" class="cursor-pointer">
+          Tôi đồng ý với <a href="#" class="text-cyan-400 hover:underline">Điều khoản dịch vụ</a> và <a href="#" class="text-cyan-400 hover:underline">Chính sách bảo mật</a>
+        </label>
+      </div>
+
+      <button type="submit" id="btn-register-submit" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 via-teal-400 to-emerald-400 text-slate-950 font-black text-xs uppercase tracking-wider shadow-lg shadow-cyan-500/25 hover:brightness-110 transition-all mt-4">
+        ✨ TẠO TÀI KHOẢN
+      </button>
+    </form>
+
+    <div class="text-center mt-6 text-xs text-slate-400">
+      Đã có tài khoản? <a href="login.html" class="text-cyan-400 font-bold hover:underline">Đăng nhập ngay</a>
+    </div>
+
+    <div class="text-center mt-3">
+      <a href="../index.html" class="text-xs text-slate-500 hover:text-slate-300">← Quay về Trang chủ</a>
     </div>
   </div>
 
-  <!-- AXIOS & SCRIPTS -->
+  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script src="../js/utils/storage.js"></script>
   <script src="../js/config/api.js"></script>
