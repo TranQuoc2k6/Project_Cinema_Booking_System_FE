@@ -172,26 +172,47 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="../js/utils/storage.js"></script>
+    <script src="../js/utils/format.js"></script>
     <script src="../js/config/api.js"></script>
     <script src="../js/services/auth.service.js"></script>
+    <script src="../js/services/showtime.service.js"></script>
 
     <script>
         const urlParams = new URLSearchParams(window.location.search);
-        const movieId = urlParams.get('movieId') || '1';
-        const cinema = urlParams.get('cinema') || 'CGV Landmark 81';
-        const time = urlParams.get('time') || '18:30';
+        const showtimeId = urlParams.get('showtimeId');
+        let movieId = urlParams.get('movieId') || '1';
+        let cinema = urlParams.get('cinema') || 'CGV Landmark 81';
+        let time = urlParams.get('time') || '18:30';
+
+        let showtimeData = null;
+        try {
+            const cached = sessionStorage.getItem('selected_showtime');
+            if (cached) {
+                showtimeData = JSON.parse(cached);
+            }
+        } catch (e) {}
+
+        if (showtimeData) {
+            movieId = showtimeData.movie_id || movieId;
+            cinema = showtimeData.cinema_name || cinema;
+            time = showtimeData.start_time ? (window.FormatUtil ? window.FormatUtil.extractTime(showtimeData.start_time) : showtimeData.start_time.split(' ')[1]) : time;
+        }
 
         let selectedSeats = [];
         let totalAmount = 0;
 
         function renderSeats() {
             const grid = document.getElementById('seat-layout-grid');
+            const basePrice = showtimeData?.price || 90000;
+            const vipPrice = Math.round(basePrice * 1.35);
+            const couplePrice = Math.round(basePrice * 2.2);
+
             const rows = [
-                { name: 'A', type: 'standard', price: 90000 },
-                { name: 'B', type: 'standard', price: 90000 },
-                { name: 'C', type: 'vip', price: 130000 },
-                { name: 'D', type: 'vip', price: 130000 },
-                { name: 'E', type: 'couple', price: 250000 }
+                { name: 'A', type: 'standard', price: basePrice },
+                { name: 'B', type: 'standard', price: basePrice },
+                { name: 'C', type: 'vip', price: vipPrice },
+                { name: 'D', type: 'vip', price: vipPrice },
+                { name: 'E', type: 'couple', price: couplePrice }
             ];
 
             grid.innerHTML = rows.map(r => {
@@ -255,6 +276,7 @@
 
             // Lưu thông tin đặt vé vào session để chuyển sang payment.html
             sessionStorage.setItem('current_booking', JSON.stringify({
+                showtimeId: showtimeId,
                 movieTitle: document.getElementById('booking-movie-title').innerText,
                 cinema: cinema,
                 showtime: time,
@@ -284,6 +306,17 @@
         }
 
         window.onload = function() {
+            if (showtimeData) {
+                if (document.getElementById('booking-movie-title')) {
+                    document.getElementById('booking-movie-title').innerText = (showtimeData.movie_title || 'Phim').toUpperCase();
+                }
+                if (document.getElementById('summary-movie')) {
+                    document.getElementById('summary-movie').innerText = showtimeData.movie_title || 'Phim';
+                }
+                if (document.getElementById('booking-hall-info')) {
+                    document.getElementById('booking-hall-info').innerText = `${showtimeData.cinema_name} • ${showtimeData.room_name || 'Phòng Chiếu 01'} (${showtimeData.format || '2D'}) • Suất: ${time}`;
+                }
+            }
             document.getElementById('summary-cinema').innerText = cinema;
             document.getElementById('summary-showtime').innerText = `${time} (Hôm nay)`;
             renderSeats();
