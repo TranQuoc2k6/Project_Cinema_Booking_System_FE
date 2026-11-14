@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hồ Sơ Cá Nhân - Cinema Booking System</title>
+    <title>Hồ Sơ Cá Nhân & Đổi Mật Khẩu - Cinema 3D</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -34,6 +34,13 @@
         body { font-family: 'Inter', sans-serif; background-color: #070a12; color: #f8fafc; }
         .glass-panel { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); }
         .glass-card { background: rgba(30, 41, 59, 0.5); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .form-control.is-invalid { border-color: #ef4444 !important; background-color: rgba(239, 68, 68, 0.05); }
+        .tab-btn.active {
+            background-color: #06b6d4;
+            color: #020617;
+            font-weight: 800;
+            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -57,7 +64,7 @@
                 <a href="showtimes.html" class="text-sm font-medium text-slate-300 hover:text-cyan-400">Lịch Chiếu</a>
                 <a href="booking.html" class="text-sm font-medium text-slate-300 hover:text-cyan-400">Đặt Vé</a>
             </nav>
-            <button onclick="window.AuthService.logout('login.html')" class="px-4 py-2 rounded-full glass-panel text-xs text-rose-400 hover:bg-rose-500/10 flex items-center gap-2">
+            <button onclick="handleLogout()" class="px-4 py-2 rounded-full glass-panel text-xs text-rose-400 hover:bg-rose-500/10 flex items-center gap-2">
                 <i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng Xuất
             </button>
         </div>
@@ -67,13 +74,13 @@
     <main class="flex-1 max-w-5xl mx-auto px-4 py-10 w-full">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             
-            <!-- Left: User Card -->
-            <div class="glass-panel p-6 rounded-3xl border border-slate-800/80 text-center flex flex-col items-center">
-                <div class="relative mb-4">
+            <!-- Left: User Profile Summary Card -->
+            <div class="glass-panel p-6 rounded-3xl border border-slate-800/80 text-center flex flex-col items-center h-fit">
+                <div class="relative mb-4 group">
                     <img id="user-avatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150" class="w-24 h-24 rounded-full border-2 border-cyan-400 object-cover shadow-lg shadow-cyan-400/20">
                 </div>
-                <h2 id="user-name" class="text-lg font-black text-white">Nguyễn Văn Khách Hàng</h2>
-                <p id="user-email" class="text-xs text-cyan-400 mt-0.5">customer@cinema.com</p>
+                <h2 id="user-display-name" class="text-lg font-black text-white">Đang tải...</h2>
+                <p id="user-display-email" class="text-xs text-cyan-400 mt-0.5">...</p>
                 <span id="user-role-badge" class="mt-3 px-3 py-1 rounded-full text-[10px] font-bold bg-cyan-950 text-cyan-400 border border-cyan-500/30 uppercase">
                     Thành viên Cinema 3D
                 </span>
@@ -81,50 +88,144 @@
                 <div class="w-full border-t border-slate-800 mt-6 pt-6 space-y-3 text-xs text-left">
                     <div class="flex justify-between">
                         <span class="text-slate-400">Số điện thoại:</span>
-                        <span class="font-bold text-slate-200" id="user-phone">0987654321</span>
+                        <span class="font-bold text-slate-200" id="user-display-phone">Chưa có</span>
                     </div>
                     <div class="flex justify-between">
-                        <span class="text-slate-400">Ngày tham gia:</span>
-                        <span class="font-bold text-slate-200">12/11/2026</span>
+                        <span class="text-slate-400">Trạng thái:</span>
+                        <span class="font-bold text-emerald-400 flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400"></span> Hoạt động
+                        </span>
                     </div>
+                </div>
+
+                <!-- Navigation Tabs inside Left Card -->
+                <div class="w-full mt-6 space-y-2">
+                    <button onclick="switchTab('profile')" id="tab-btn-profile" class="tab-btn active w-full py-2.5 px-4 rounded-xl text-xs font-bold transition-all text-left flex items-center gap-2">
+                        <i class="fa-solid fa-user-pen"></i> Chỉnh Sửa Thông Tin
+                    </button>
+                    <button onclick="switchTab('password')" id="tab-btn-password" class="tab-btn w-full py-2.5 px-4 rounded-xl text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-800/60 transition-all text-left flex items-center gap-2">
+                        <i class="fa-solid fa-key"></i> Đổi Mật Khẩu
+                    </button>
+                    <button onclick="switchTab('tickets')" id="tab-btn-tickets" class="tab-btn w-full py-2.5 px-4 rounded-xl text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-800/60 transition-all text-left flex items-center gap-2">
+                        <i class="fa-solid fa-ticket"></i> Lịch Sử Đặt Vé
+                    </button>
                 </div>
             </div>
 
-            <!-- Right: Booking History -->
+            <!-- Right: Tab Contents -->
             <div class="md:col-span-2 glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800/80">
-                <h3 class="text-lg font-black text-white uppercase tracking-wider mb-6 flex items-center gap-3">
-                    <i class="fa-solid fa-ticket text-cyan-400"></i> Lịch Sử Đặt Vé Của Bạn
-                </h3>
+                
+                <!-- TAB 1: SỬA HỒ SƠ -->
+                <div id="tab-profile" class="tab-content">
+                    <h3 class="text-lg font-black text-white uppercase tracking-wider mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-user-pen text-cyan-400"></i> Cập Nhật Hồ Sơ Cá Nhân
+                    </h3>
+                    <p class="text-xs text-slate-400 mb-6">Quản lý và thay đổi thông tin liên hệ của bạn trên hệ thống</p>
 
-                <div class="space-y-4">
-                    <!-- Ticket Item 1 -->
-                    <div class="glass-card p-4 rounded-2xl border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                        <div>
-                            <span class="text-[10px] font-black px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 uppercase">ĐÃ THANH TOÁN</span>
-                            <h4 class="text-base font-bold text-white mt-1">Dune: Hành Tinh Cát 2 (IMAX 3D)</h4>
-                            <p class="text-xs text-slate-400 mt-0.5">CGV Landmark 81 • Phòng 01 • Ghế: <b class="text-cyan-400">C05, C06</b></p>
-                            <span class="text-[11px] text-slate-500">Suất: 18:30 Ngày 14/11/2026</span>
-                        </div>
-                        <div class="text-right">
-                            <span class="text-base font-black text-emerald-400">260.000 đ</span>
-                            <button onclick="alert('Mã QR vé: 3D-DUNE-89421')" class="block mt-2 text-xs text-cyan-400 hover:underline">Xem mã QR vé</button>
-                        </div>
-                    </div>
+                    <div id="profile-alert" class="hidden p-3 rounded-xl text-xs mb-4"></div>
 
-                    <!-- Ticket Item 2 -->
-                    <div class="glass-card p-4 rounded-2xl border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <form id="profile-form" onsubmit="handleUpdateProfile(event)" class="space-y-4">
                         <div>
-                            <span class="text-[10px] font-black px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 uppercase">ĐÃ THANH TOÁN</span>
-                            <h4 class="text-base font-bold text-white mt-1">Mai (18+) (2D Digital)</h4>
-                            <p class="text-xs text-slate-400 mt-0.5">CGV Bà Triệu • Phòng 02 • Ghế: <b class="text-cyan-400">A01</b></p>
-                            <span class="text-[11px] text-slate-500">Suất: 20:00 Ngày 10/11/2026</span>
+                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Email (Không thể thay đổi)</label>
+                            <input type="email" id="edit-email" disabled class="w-full bg-slate-900/60 border border-slate-800 text-slate-500 text-xs rounded-xl p-3 cursor-not-allowed">
                         </div>
-                        <div class="text-right">
-                            <span class="text-base font-black text-emerald-400">90.000 đ</span>
-                            <button onclick="alert('Mã QR vé: 3D-MAI-10294')" class="block mt-2 text-xs text-cyan-400 hover:underline">Xem mã QR vé</button>
+
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5" for="edit-fullname">Họ và tên <span class="text-rose-500">*</span></label>
+                            <input type="text" id="edit-fullname" required class="w-full bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-xl p-3 focus:outline-none focus:border-cyan-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5" for="edit-phone">Số điện thoại</label>
+                            <input type="tel" id="edit-phone" placeholder="0987654321" class="w-full bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-xl p-3 focus:outline-none focus:border-cyan-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5" for="edit-avatar">Link Ảnh Đại Diện (Avatar URL)</label>
+                            <input type="url" id="edit-avatar" placeholder="https://example.com/avatar.jpg" class="w-full bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-xl p-3 focus:outline-none focus:border-cyan-500">
+                        </div>
+
+                        <button type="submit" id="btn-save-profile" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 font-black text-xs uppercase tracking-wider shadow-lg shadow-cyan-500/25 hover:brightness-110 transition-all mt-4">
+                            💾 LƯU THAY ĐỔI HỒ SƠ
+                        </button>
+                    </form>
+                </div>
+
+                <!-- TAB 2: ĐỔI MẬT KHẨU -->
+                <div id="tab-password" class="tab-content hidden">
+                    <h3 class="text-lg font-black text-white uppercase tracking-wider mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-key text-cyan-400"></i> Đổi Mật Khẩu
+                    </h3>
+                    <p class="text-xs text-slate-400 mb-6">Bảo vệ tài khoản của bạn bằng cách sử dụng mật khẩu mạnh tối thiểu 6 ký tự</p>
+
+                    <div id="password-alert" class="hidden p-3 rounded-xl text-xs mb-4"></div>
+
+                    <form id="password-form" onsubmit="handleChangePassword(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5" for="pwd-old">Mật khẩu hiện tại <span class="text-rose-500">*</span></label>
+                            <div class="relative">
+                                <input type="password" id="pwd-old" required placeholder="••••••••" class="w-full bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-xl p-3 pr-10 focus:outline-none focus:border-cyan-500">
+                                <button type="button" onclick="togglePasswordVisibility('pwd-old', this)" class="absolute right-3 top-3 text-slate-500 hover:text-slate-300 text-xs">👁️</button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5" for="pwd-new">Mật khẩu mới <span class="text-rose-500">*</span></label>
+                            <div class="relative">
+                                <input type="password" id="pwd-new" required placeholder="Tối thiểu 6 ký tự" class="w-full bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-xl p-3 pr-10 focus:outline-none focus:border-cyan-500">
+                                <button type="button" onclick="togglePasswordVisibility('pwd-new', this)" class="absolute right-3 top-3 text-slate-500 hover:text-slate-300 text-xs">👁️</button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5" for="pwd-confirm">Xác nhận mật khẩu mới <span class="text-rose-500">*</span></label>
+                            <div class="relative">
+                                <input type="password" id="pwd-confirm" required placeholder="Nhập lại mật khẩu mới" class="w-full bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-xl p-3 pr-10 focus:outline-none focus:border-cyan-500">
+                                <button type="button" onclick="togglePasswordVisibility('pwd-confirm', this)" class="absolute right-3 top-3 text-slate-500 hover:text-slate-300 text-xs">👁️</button>
+                            </div>
+                        </div>
+
+                        <button type="submit" id="btn-change-pwd" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-rose-500 to-purple-600 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-rose-500/25 hover:brightness-110 transition-all mt-4">
+                            🔒 XÁC NHẬN ĐỔI MẬT KHẨU
+                        </button>
+                    </form>
+                </div>
+
+                <!-- TAB 3: LỊCH SỬ VÉ -->
+                <div id="tab-tickets" class="tab-content hidden">
+                    <h3 class="text-lg font-black text-white uppercase tracking-wider mb-6 flex items-center gap-3">
+                        <i class="fa-solid fa-ticket text-cyan-400"></i> Lịch Sử Đặt Vé Của Bạn
+                    </h3>
+
+                    <div class="space-y-4">
+                        <div class="glass-card p-4 rounded-2xl border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                            <div>
+                                <span class="text-[10px] font-black px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 uppercase">ĐÃ THANH TOÁN</span>
+                                <h4 class="text-base font-bold text-white mt-1">Dune: Hành Tinh Cát 2 (IMAX 3D)</h4>
+                                <p class="text-xs text-slate-400 mt-0.5">CGV Landmark 81 • Phòng 01 • Ghế: <b class="text-cyan-400">C05, C06</b></p>
+                                <span class="text-[11px] text-slate-500">Suất: 18:30 Ngày 14/11/2026</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-base font-black text-emerald-400">260.000 đ</span>
+                                <button onclick="alert('Mã QR vé: 3D-DUNE-89421')" class="block mt-2 text-xs text-cyan-400 hover:underline">Xem mã QR vé</button>
+                            </div>
+                        </div>
+
+                        <div class="glass-card p-4 rounded-2xl border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                            <div>
+                                <span class="text-[10px] font-black px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 uppercase">ĐÃ THANH TOÁN</span>
+                                <h4 class="text-base font-bold text-white mt-1">Mai (18+) (2D Digital)</h4>
+                                <p class="text-xs text-slate-400 mt-0.5">CGV Bà Triệu • Phòng 02 • Ghế: <b class="text-cyan-400">A01</b></p>
+                                <span class="text-[11px] text-slate-500">Suất: 20:00 Ngày 10/11/2026</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-base font-black text-emerald-400">90.000 đ</span>
+                                <button onclick="alert('Mã QR vé: 3D-MAI-10294')" class="block mt-2 text-xs text-cyan-400 hover:underline">Xem mã QR vé</button>
+                            </div>
                         </div>
                     </div>
                 </div>
+
             </div>
 
         </div>
@@ -134,26 +235,164 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="../js/utils/storage.js"></script>
     <script src="../js/config/api.js"></script>
+    <script src="../js/utils/validation.js"></script>
     <script src="../js/services/auth.service.js"></script>
+    <script src="../js/services/user.service.js"></script>
 
     <script>
-        window.onload = function() {
-            if (window.StorageService && window.StorageService.isAuthenticated()) {
-                const user = window.StorageService.getUser();
-                if (user) {
-                    document.getElementById('user-name').innerText = user.full_name || 'Khách Hàng';
-                    document.getElementById('user-email').innerText = user.email || '';
-                    document.getElementById('user-phone').innerText = user.phone || 'Chưa cập nhật';
-                    if (user.avatar) document.getElementById('user-avatar').src = user.avatar;
-                    if (window.StorageService.isAdmin()) {
-                        document.getElementById('user-role-badge').innerText = 'Quản trị viên (Admin)';
-                        document.getElementById('user-role-badge').className = 'mt-3 px-3 py-1 rounded-full text-[10px] font-bold bg-rose-950 text-rose-400 border border-rose-500/30 uppercase';
-                    }
-                }
+        // 1. Chuyển Tab
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.className = 'tab-btn w-full py-2.5 px-4 rounded-xl text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-800/60 transition-all text-left flex items-center gap-2';
+            });
+
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+            activeBtn.className = 'tab-btn active w-full py-2.5 px-4 rounded-xl text-xs font-bold transition-all text-left flex items-center gap-2';
+        }
+
+        // Ẩn/Hiện password
+        function togglePasswordVisibility(id, btn) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            if (el.type === 'password') {
+                el.type = 'text';
+                btn.textContent = '🙈';
             } else {
-                window.location.replace('login.html');
+                el.type = 'password';
+                btn.textContent = '👁️';
             }
-        };
+        }
+
+        // 2. Tải thông tin Profile ban đầu
+        async function loadProfile() {
+            if (!window.StorageService || !window.StorageService.isAuthenticated()) {
+                window.location.replace('login.html');
+                return;
+            }
+
+            // Gọi API Backend qua UserService
+            const res = await window.UserService.getProfile();
+            const user = res.success ? res.data : window.StorageService.getUser();
+
+            if (user) {
+                // Điền thẻ bên trái
+                document.getElementById('user-display-name').innerText = user.full_name || 'Khách Hàng';
+                document.getElementById('user-display-email').innerText = user.email || '';
+                document.getElementById('user-display-phone').innerText = user.phone || 'Chưa cập nhật';
+                if (user.avatar) document.getElementById('user-avatar').src = user.avatar;
+
+                if (window.StorageService.isAdmin()) {
+                    const badge = document.getElementById('user-role-badge');
+                    badge.innerText = 'Quản trị viên (Admin)';
+                    badge.className = 'mt-3 px-3 py-1 rounded-full text-[10px] font-bold bg-rose-950 text-rose-400 border border-rose-500/30 uppercase';
+                }
+
+                // Điền form sửa thông tin
+                document.getElementById('edit-email').value = user.email || '';
+                document.getElementById('edit-fullname').value = user.full_name || '';
+                document.getElementById('edit-phone').value = user.phone || '';
+                document.getElementById('edit-avatar').value = user.avatar || '';
+            }
+        }
+
+        // 3. Xử lý Cập nhật Hồ Sơ
+        async function handleUpdateProfile(e) {
+            e.preventDefault();
+            const alertEl = document.getElementById('profile-alert');
+            const btn = document.getElementById('btn-save-profile');
+
+            const fullName = document.getElementById('edit-fullname').value.trim();
+            const phone = document.getElementById('edit-phone').value.trim();
+            const avatar = document.getElementById('edit-avatar').value.trim();
+
+            if (!fullName || fullName.length < 2) {
+                showAlert(alertEl, 'Họ và tên phải có ít nhất 2 ký tự!', 'error');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<span>⏳</span> Đang lưu...';
+
+            const payload = {
+                full_name: fullName,
+                phone: phone || null,
+                avatar: avatar || null
+            };
+
+            const result = await window.UserService.updateProfile(payload);
+
+            btn.disabled = false;
+            btn.innerHTML = '💾 LƯU THAY ĐỔI HỒ SƠ';
+
+            if (result.success) {
+                showAlert(alertEl, 'Cập nhật thông tin hồ sơ thành công!', 'success');
+                // Cập nhật lại giao diện
+                loadProfile();
+            } else {
+                showAlert(alertEl, result.message || 'Cập nhật thất bại!', 'error');
+            }
+        }
+
+        // 4. Xử lý Đổi Mật Khẩu
+        async function handleChangePassword(e) {
+            e.preventDefault();
+            const alertEl = document.getElementById('password-alert');
+            const btn = document.getElementById('btn-change-pwd');
+
+            const oldPassword = document.getElementById('pwd-old').value;
+            const newPassword = document.getElementById('pwd-new').value;
+            const confirmPassword = document.getElementById('pwd-confirm').value;
+
+            if (newPassword.length < 6) {
+                showAlert(alertEl, 'Mật khẩu mới phải có ít nhất 6 ký tự!', 'error');
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                showAlert(alertEl, 'Mật khẩu xác nhận không khớp với mật khẩu mới!', 'error');
+                return;
+            }
+
+            if (oldPassword === newPassword) {
+                showAlert(alertEl, 'Mật khẩu mới không được trùng với mật khẩu hiện tại!', 'error');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<span>⏳</span> Đang xác thực...';
+
+            const result = await window.UserService.changePassword(oldPassword, newPassword);
+
+            btn.disabled = false;
+            btn.innerHTML = '🔒 XÁC NHẬN ĐỔI MẬT KHẨU';
+
+            if (result.success) {
+                showAlert(alertEl, 'Đổi mật khẩu thành công! Vui lòng đăng nhập lại.', 'success');
+                document.getElementById('password-form').reset();
+                setTimeout(() => {
+                    window.AuthService.logout('login.html');
+                }, 1500);
+            } else {
+                showAlert(alertEl, result.message || 'Đổi mật khẩu thất bại!', 'error');
+            }
+        }
+
+        function showAlert(el, msg, type = 'error') {
+            el.className = type === 'success'
+                ? 'p-3 rounded-xl text-xs mb-4 bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 block'
+                : 'p-3 rounded-xl text-xs mb-4 bg-rose-500/20 text-rose-400 border border-rose-500/40 block';
+            el.innerText = msg;
+        }
+
+        function handleLogout() {
+            if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
+                window.AuthService.logout('login.html');
+            }
+        }
+
+        window.onload = loadProfile;
     </script>
 </body>
 </html>
