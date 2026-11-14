@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="../../css/global.css">
   <link rel="stylesheet" href="../../css/layout.css">
   <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/pages/admin.css">
 
   <script src="../../js/utils/auth-guard.js"></script>
 </head>
@@ -92,7 +93,7 @@
         <div class="page-title-bar">
           <div class="page-title-group">
             <h1>Hệ thống Cụm rạp & Phòng chiếu</h1>
-            <p class="page-subtitle">Quản lý các cụm rạp đối tác, danh sách phòng chiếu và quy mô số lượng ghế</p>
+            <p class="page-subtitle">Quản lý các cụm rạp đối tác, phòng chiếu, cấu hình sơ đồ ghế và loại ghế phòng chiếu</p>
           </div>
           <div class="d-flex gap-sm">
             <button class="btn btn-secondary" onclick="openRoomModal()">
@@ -107,9 +108,26 @@
         <!-- CINEMAS LIST -->
         <div class="table-card" style="margin-bottom: var(--spacing-xl);">
           <div class="table-header-bar">
-            <h3>Danh sách các Cụm rạp</h3>
-            <span class="badge badge-info" id="cinema-count-badge">3 cụm rạp</span>
+            <div>
+              <h3>Danh sách các Cụm rạp</h3>
+              <p style="font-size: 12px; color: var(--text-muted);">Thông tin địa chỉ, khu vực và quy mô số phòng chiếu của từng rạp</p>
+            </div>
+            <span class="badge badge-info" id="cinema-count-badge">0 cụm rạp</span>
           </div>
+
+          <!-- Toolbar lọc rạp -->
+          <div class="admin-filter-bar" style="padding: 0 var(--spacing-lg) var(--spacing-md);">
+            <div class="filter-group-inputs">
+              <div class="search-input-group" style="max-width: 320px;">
+                <span class="search-icon-inside">🔍</span>
+                <input type="text" id="cinema-search-input" class="form-control" placeholder="Tìm tên cụm rạp hoặc địa chỉ...">
+              </div>
+              <select id="cinema-city-filter" class="form-select" style="max-width: 200px;">
+                <option value="all">Tất cả thành phố</option>
+              </select>
+            </div>
+          </div>
+
           <div class="table-responsive">
             <table class="admin-table">
               <thead>
@@ -134,9 +152,31 @@
           <div class="table-header-bar">
             <div>
               <h3>Danh sách Phòng chiếu</h3>
-              <p style="font-size: 12px; color: var(--text-muted);">Quy mô phòng chiếu, định dạng công nghệ (IMAX, 3D, VIP, Standard)</p>
+              <p style="font-size: 12px; color: var(--text-muted);">Quy mô phòng chiếu, định dạng công nghệ và cấu hình sơ đồ ghế (Standard / VIP / Couple)</p>
+            </div>
+            <span class="badge badge-info" id="room-count-badge">0 phòng</span>
+          </div>
+
+          <!-- Toolbar lọc phòng -->
+          <div class="admin-filter-bar" style="padding: 0 var(--spacing-lg) var(--spacing-md);">
+            <div class="filter-group-inputs">
+              <div class="search-input-group" style="max-width: 280px;">
+                <span class="search-icon-inside">🔍</span>
+                <input type="text" id="room-search-input" class="form-control" placeholder="Tìm tên phòng chiếu...">
+              </div>
+              <select id="room-cinema-filter" class="form-select" style="max-width: 240px;">
+                <option value="all">Tất cả cụm rạp</option>
+              </select>
+              <select id="room-type-filter" class="form-select" style="max-width: 180px;">
+                <option value="all">Tất cả định dạng</option>
+                <option value="2D">2D</option>
+                <option value="3D">3D</option>
+                <option value="IMAX">IMAX</option>
+                <option value="VIP">VIP</option>
+              </select>
             </div>
           </div>
+
           <div class="table-responsive">
             <table class="admin-table">
               <thead>
@@ -159,50 +199,52 @@
     </div>
   </div>
 
-  <!-- MODAL THÊM CỤM RẠP -->
+  <!-- MODAL THÊM / SỬA CỤM RẠP -->
   <div class="modal-overlay" id="cinema-modal">
     <div class="modal-dialog">
       <div class="modal-header">
-        <h3 class="modal-title">Thêm Cụm rạp mới</h3>
+        <h3 class="modal-title" id="modal-cinema-title">Thêm Cụm rạp mới</h3>
         <button class="modal-close-btn" onclick="closeCinemaModal()">&times;</button>
       </div>
       <form onsubmit="handleCinemaSubmit(event)">
+        <input type="hidden" id="cinema-edit-id" value="">
         <div class="modal-body">
           <div class="form-group">
             <label class="form-label">Tên cụm rạp <span class="text-danger">*</span></label>
-            <input type="text" id="cinema-name" class="form-control" required placeholder="VD: Cinema Star Bà Triệu">
+            <input type="text" id="cinema-name" class="form-control" required placeholder="VD: Cinema Star Vincom Bà Triệu">
           </div>
           <div class="form-group">
-            <label class="form-label">Địa chỉ <span class="text-danger">*</span></label>
-            <input type="text" id="cinema-address" class="form-control" required placeholder="VD: 191 Bà Triệu, Hai Bà Trưng, Hà Nội">
+            <label class="form-label">Địa chỉ chi tiết <span class="text-danger">*</span></label>
+            <input type="text" id="cinema-address" class="form-control" required placeholder="VD: 191 Bà Triệu, Phường Lê Đại Hành, Quận Hai Bà Trưng">
           </div>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md);">
             <div class="form-group">
               <label class="form-label">Thành phố <span class="text-danger">*</span></label>
-              <input type="text" id="cinema-city" class="form-control" required placeholder="Hà Nội, TP.HCM...">
+              <input type="text" id="cinema-city" class="form-control" required placeholder="Hà Nội, TP. Hồ Chí Minh...">
             </div>
             <div class="form-group">
               <label class="form-label">Hotline</label>
-              <input type="text" id="cinema-phone" class="form-control" placeholder="024.1234.5678">
+              <input type="text" id="cinema-phone" class="form-control" placeholder="024.3974.8888">
             </div>
           </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" onclick="closeCinemaModal()">Hủy</button>
-          <button type="submit" class="btn btn-primary">Lưu cụm rạp</button>
+          <button type="submit" class="btn btn-primary" id="cinema-submit-btn">Lưu cụm rạp</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- MODAL THÊM PHÒNG CHIẾU -->
+  <!-- MODAL THÊM / SỬA PHÒNG CHIẾU -->
   <div class="modal-overlay" id="room-modal">
     <div class="modal-dialog">
       <div class="modal-header">
-        <h3 class="modal-title">Thêm Phòng chiếu mới</h3>
+        <h3 class="modal-title" id="modal-room-title">Thêm Phòng chiếu mới</h3>
         <button class="modal-close-btn" onclick="closeRoomModal()">&times;</button>
       </div>
       <form onsubmit="handleRoomSubmit(event)">
+        <input type="hidden" id="room-edit-id" value="">
         <div class="modal-body">
           <div class="form-group">
             <label class="form-label">Chọn cụm rạp <span class="text-danger">*</span></label>
@@ -218,26 +260,210 @@
             <div class="form-group">
               <label class="form-label">Định dạng chiếu</label>
               <select id="room-type" class="form-select">
-                <option value="2D Standard">2D Tiêu chuẩn</option>
-                <option value="3D Digital">3D Kỹ thuật số</option>
+                <option value="2D Standard">2D Standard</option>
+                <option value="3D Digital">3D Digital</option>
                 <option value="IMAX Laser">IMAX Laser</option>
                 <option value="VIP Gold Class">VIP Gold Class</option>
               </select>
             </div>
           </div>
           <div class="form-group">
-            <label class="form-label">Tổng số ghế ngồi <span class="text-danger">*</span></label>
-            <input type="number" id="room-seats" class="form-control" min="20" max="500" value="120" required>
+            <label class="form-label">Quy mô số ghế dự kiến <span class="text-danger">*</span></label>
+            <input type="number" id="room-seats" class="form-control" min="1" max="1000" value="120" required>
+            <p style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Số ghế thực tế sẽ được cập nhật chính xác sau khi sinh cấu hình sơ đồ ghế.</p>
           </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" onclick="closeRoomModal()">Hủy</button>
-          <button type="submit" class="btn btn-primary">Lưu phòng chiếu</button>
+          <button type="submit" class="btn btn-primary" id="room-submit-btn">Lưu phòng chiếu</button>
         </div>
       </form>
     </div>
   </div>
 
+  <!-- MODAL CẤU HÌNH SƠ ĐỒ GHẾ VÀ LOẠI GHẾ PHÒNG CHIẾU -->
+  <div class="modal-overlay" id="seat-map-modal">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title" id="seat-modal-title">Cấu hình Sơ đồ & Loại ghế</h3>
+          <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;" id="seat-modal-subtitle">Phòng chiếu</p>
+        </div>
+        <button class="modal-close-btn" onclick="closeSeatMapModal()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Thống kê loại ghế -->
+        <div class="seat-stats-bar">
+          <div class="seat-stat-item">
+            <span>Tổng số ghế:</span>
+            <strong id="stat-total-seats">0</strong>
+          </div>
+          <div class="seat-stat-item">
+            <span style="color: #94a3b8;">Standard:</span>
+            <strong id="stat-std-seats" style="color: #cbd5e1;">0</strong>
+          </div>
+          <div class="seat-stat-item">
+            <span style="color: #fbbf24;">VIP:</span>
+            <strong id="stat-vip-seats" style="color: #fbbf24;">0</strong>
+          </div>
+          <div class="seat-stat-item">
+            <span style="color: #f43f5e;">Couple:</span>
+            <strong id="stat-cpl-seats" style="color: #f43f5e;">0</strong>
+          </div>
+          <div class="seat-stat-item">
+            <span style="color: #ef4444;">Khóa / Bảo trì:</span>
+            <strong id="stat-disabled-seats" style="color: #ef4444;">0</strong>
+          </div>
+        </div>
+
+        <!-- Tab chuyển đổi -->
+        <div class="seat-config-tabs">
+          <button class="seat-tab-btn active" id="tab-btn-visual" onclick="switchSeatTab('visual')">
+            <span>🎨</span> Sơ đồ trực quan & Đổi loại ghế
+          </button>
+          <button class="seat-tab-btn" id="tab-btn-generator" onclick="switchSeatTab('generator')">
+            <span>⚙️</span> Sinh sơ đồ ghế tự động
+          </button>
+        </div>
+
+        <!-- TAB 1: SƠ ĐỒ TRỰC QUAN -->
+        <div id="tab-content-visual">
+          <!-- Thanh công cụ Brush / Chổi đổi loại ghế -->
+          <div class="seat-tool-bar">
+            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+              <span style="font-size: 12px; font-weight: 700; color: #fff;">Công cụ chọn loại:</span>
+              <div class="brush-buttons">
+                <button type="button" class="brush-btn brush-standard active" data-brush="standard" onclick="selectBrush('standard')">
+                  ⚪ Standard
+                </button>
+                <button type="button" class="brush-btn brush-vip" data-brush="vip" onclick="selectBrush('vip')">
+                  ⭐ VIP
+                </button>
+                <button type="button" class="brush-btn brush-couple" data-brush="couple" onclick="selectBrush('couple')">
+                  💖 Couple
+                </button>
+                <button type="button" class="brush-btn brush-disabled" data-brush="disabled" onclick="selectBrush('disabled')">
+                  🚫 Khóa ghế
+                </button>
+              </div>
+            </div>
+
+            <!-- Thao tác hàng loạt -->
+            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="selectAllSeats()">
+                Chọn tất cả
+              </button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="deselectAllSeats()">
+                Bỏ chọn
+              </button>
+              <button type="button" class="btn btn-primary btn-sm" onclick="applyBrushToSelected()">
+                Áp dụng cho ghế đã chọn
+              </button>
+            </div>
+          </div>
+
+          <!-- Màn hình chiếu -->
+          <div class="cinema-screen-container">
+            <div class="cinema-screen-bar"></div>
+            <div class="cinema-screen-label">MÀN HÌNH CHIẾU / SCREEN</div>
+          </div>
+
+          <!-- Lưới hiển thị sơ đồ ghế tương tác -->
+          <div class="seat-matrix-wrapper" id="seat-matrix-container">
+            <!-- Nạp từ cinemas.js -->
+          </div>
+
+          <!-- Chú thích -->
+          <div class="seat-map-legend">
+            <div class="legend-item">
+              <span class="legend-swatch" style="background: #1e293b; border: 1px solid #475569;"></span>
+              <span>Ghế Standard (Tiêu chuẩn)</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-swatch" style="background: #b45309; border: 1px solid #f59e0b;"></span>
+              <span>Ghế VIP (Gold / Trung tâm)</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-swatch" style="background: #be123c; border: 1px solid #f43f5e;"></span>
+              <span>Ghế Đôi (Couple)</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-swatch" style="background: #0f172a; border: 1px dashed #ef4444;"></span>
+              <span>Ghế Khóa / Không khả dụng</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: SINH SƠ ĐỒ GHẾ TỰ ĐỘNG -->
+        <div id="tab-content-generator" style="display: none;">
+          <form onsubmit="handleGenerateSeatMap(event)">
+            <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--border-radius-md); padding: var(--spacing-lg); max-width: 600px; margin: 0 auto;">
+              <h4 style="color: #fff; margin-bottom: var(--spacing-sm);">Cấu hình ma trận số ghế tự động</h4>
+              <p style="font-size: 13px; color: var(--text-muted); margin-bottom: var(--spacing-lg);">
+                Hệ thống sẽ tự động tạo nhãn hàng (A, B, C...) và số cột (01, 02...). Các hàng VIP và ghế đôi sẽ được tự động xếp ở vị trí chuẩn.
+              </p>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md); margin-bottom: var(--spacing-md);">
+                <div class="form-group">
+                  <label class="form-label">Tổng số hàng ghế (Rows) <span class="text-danger">*</span></label>
+                  <input type="number" id="gen-rows" class="form-control" min="1" max="26" value="10" required>
+                  <span style="font-size: 11px; color: var(--text-muted);">Từ 1 đến 26 hàng (A -> Z)</span>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Số ghế mỗi hàng (Columns) <span class="text-danger">*</span></label>
+                  <input type="number" id="gen-cols" class="form-control" min="1" max="30" value="12" required>
+                  <span style="font-size: 11px; color: var(--text-muted);">Tối đa 30 ghế mỗi hàng</span>
+                </div>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md); margin-bottom: var(--spacing-md);">
+                <div class="form-group">
+                  <label class="form-label">Số hàng ghế VIP</label>
+                  <input type="number" id="gen-vip-rows" class="form-control" min="0" max="20" value="3">
+                  <span style="font-size: 11px; color: var(--text-muted);">Nằm ở các hàng trung tâm</span>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Số hàng ghế Đôi (Couple)</label>
+                  <input type="number" id="gen-couple-rows" class="form-control" min="0" max="10" value="1">
+                  <span style="font-size: 11px; color: var(--text-muted);">Nằm ở hàng cuối cùng</span>
+                </div>
+              </div>
+
+              <div class="form-group" style="margin-bottom: var(--spacing-lg);">
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: #fff;">
+                  <input type="checkbox" id="gen-overwrite" checked style="width: 16px; height: 16px; accent-color: var(--color-primary);">
+                  <span>Ghi đè sơ đồ ghế hiện có nếu phòng đã có cấu hình ghế</span>
+                </label>
+              </div>
+
+              <div style="display: flex; justify-content: flex-end; gap: var(--spacing-sm);">
+                <button type="button" class="btn btn-secondary" onclick="switchSeatTab('visual')">Quay lại sơ đồ</button>
+                <button type="submit" class="btn btn-primary" id="btn-submit-generate">⚡ Sinh sơ đồ ghế ngay</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="justify-content: space-between;">
+        <button type="button" class="btn btn-outline-danger btn-sm" onclick="handleClearRoomSeats()">
+          🗑 Xóa toàn bộ sơ đồ ghế
+        </button>
+        <div style="display: flex; gap: var(--spacing-sm);">
+          <button type="button" class="btn btn-secondary" onclick="closeSeatMapModal()">Đóng</button>
+          <button type="button" class="btn btn-primary" onclick="handleSaveSeatChanges()" id="btn-save-seats">
+            💾 Lưu cấu hình loại ghế
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPT LIBRARIES -->
+  <script src="../../js/config/api.js"></script>
+  <script src="../../js/services/cinema.service.js"></script>
+  <script src="../../js/services/seat.service.js"></script>
   <script src="../../js/utils/admin-layout.js"></script>
   <script src="../../js/pages/admin/cinemas.js"></script>
 </body>
