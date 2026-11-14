@@ -3,23 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quản lý Đơn vé & Giao dịch - Cinema Admin Portal</title>
+  <title>Quản lý Đơn vé & Giao dịch - Cinema 3D Admin Portal</title>
   
+  <!-- FontAwesome 6 Icons for Modern 3D Aesthetics -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
   <link rel="stylesheet" href="../../css/variables.css">
   <link rel="stylesheet" href="../../css/reset.css">
   <link rel="stylesheet" href="../../css/global.css">
   <link rel="stylesheet" href="../../css/layout.css">
   <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/responsive.css">
 
   <script src="../../js/utils/auth-guard.js"></script>
 </head>
 <body>
   <div class="admin-layout">
+    <!-- SIDEBAR (3D HOLOGRAPHIC DOCK) -->
     <aside class="admin-sidebar">
       <div class="sidebar-brand">
-        <div class="brand-logo-icon">🎬</div>
+        <div class="brand-logo-icon">
+          <div class="brand-logo-inner">
+            <i class="fa-solid fa-cube"></i>
+          </div>
+        </div>
         <div class="brand-text">
-          <span class="brand-title">CINEMA</span>
+          <span class="brand-title">CINEMA<span class="title-3d">3D</span></span>
           <span class="brand-subtitle">Admin Portal</span>
         </div>
       </div>
@@ -27,60 +36,79 @@
       <nav class="sidebar-nav">
         <span class="nav-section-label">Quản trị cốt lõi</span>
         <a href="dashboard.html" class="nav-item">
-          <span class="nav-icon">📊</span>
-          <span>Dashboard</span>
+          <span class="nav-icon"><i class="fa-solid fa-chart-pie"></i></span>
+          <span>Dashboard Thống kê</span>
         </a>
         <a href="movies.html" class="nav-item">
-          <span class="nav-icon">🎬</span>
+          <span class="nav-icon"><i class="fa-solid fa-film"></i></span>
           <span>Quản lý Phim</span>
         </a>
         <a href="cinemas.html" class="nav-item">
-          <span class="nav-icon">🏛️</span>
+          <span class="nav-icon"><i class="fa-solid fa-couch"></i></span>
           <span>Rạp / Phòng chiếu</span>
         </a>
         <a href="showtimes.html" class="nav-item">
-          <span class="nav-icon">🕒</span>
+          <span class="nav-icon"><i class="fa-solid fa-clock"></i></span>
           <span>Lịch / Suất chiếu</span>
         </a>
         <a href="bookings.html" class="nav-item active">
-          <span class="nav-icon">🎟️</span>
+          <span class="nav-icon"><i class="fa-solid fa-ticket"></i></span>
           <span>Quản lý Đơn vé</span>
         </a>
         <span class="nav-section-label">Hệ thống</span>
         <a href="users.html" class="nav-item">
-          <span class="nav-icon">👥</span>
+          <span class="nav-icon"><i class="fa-solid fa-users-gear"></i></span>
           <span>Người dùng & Phân quyền</span>
         </a>
       </nav>
 
       <div class="sidebar-footer">
         <a href="../../index.html" class="btn-sidebar-action">
-          <span>🌐</span>
+          <i class="fa-solid fa-globe text-primary"></i>
           <span>Về trang chủ đặt vé</span>
         </a>
         <button class="btn-sidebar-action btn-sidebar-logout">
-          <span>🚪</span>
+          <i class="fa-solid fa-arrow-right-from-bracket text-accent"></i>
           <span>Đăng xuất Quản trị</span>
         </button>
       </div>
     </aside>
 
+    <!-- MAIN -->
     <div class="admin-main">
       <header class="admin-header">
         <div class="header-left">
-          <button class="mobile-menu-toggle" aria-label="Toggle menu">☰</button>
+          <button class="mobile-menu-toggle" aria-label="Toggle menu">
+            <i class="fa-solid fa-bars"></i>
+          </button>
           <div class="page-breadcrumb">
+            <i class="fa-solid fa-house text-xs text-muted"></i>
             <span>Admin</span>
             <span>/</span>
-            <span class="current">Quản lý Đơn vé</span>
+            <span class="current"><i class="fa-solid fa-ticket text-xs"></i> Quản lý Đơn vé</span>
           </div>
         </div>
         <div class="header-right">
+          <!-- Live System Status Badge -->
+          <div class="system-status-badge">
+            <span class="status-indicator-dot online"></span>
+            <span>HỆ THỐNG ONLINE</span>
+            <div class="live-equalizer">
+              <div class="eq-bar"></div>
+              <div class="eq-bar"></div>
+              <div class="eq-bar"></div>
+              <div class="eq-bar"></div>
+            </div>
+          </div>
+
           <div class="header-profile-widget">
-            <img src="" alt="Admin" class="admin-avatar">
+            <div class="admin-avatar-wrapper">
+              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Admin" class="admin-avatar">
+              <span class="status-indicator-dot online"></span>
+            </div>
             <div class="admin-meta">
               <span class="admin-name admin-display-name">Quản trị viên</span>
-              <span class="admin-role-badge">Admin</span>
+              <span class="admin-role-badge">Super Admin</span>
             </div>
           </div>
         </div>
@@ -89,29 +117,32 @@
       <main class="admin-content">
         <div class="page-title-bar">
           <div class="page-title-group">
-            <h1>Tra cứu & Quản lý Đơn vé</h1>
-            <p class="page-subtitle">Kiểm soát đơn đặt vé toàn hệ thống, tra cứu mã vé, số điện thoại và hỗ trợ hủy vé</p>
+            <h1>
+              <i class="fa-solid fa-ticket-simple text-gradient"></i>
+              Tra cứu & Quản lý Đơn vé Toàn Hệ Thống
+            </h1>
+            <p class="page-subtitle">Kiểm soát đơn đặt vé thời gian thực, tra cứu mã vé điện tử, lọc số điện thoại khách hàng và hỗ trợ hủy vé</p>
           </div>
         </div>
 
         <!-- SEARCH & FILTER TOOLBAR (SRS 1.3) -->
         <div class="toolbar-bar">
           <div class="search-input-group">
-            <span class="search-icon-inside">🔍</span>
-            <input type="text" id="booking-search-input" class="form-control" placeholder="Tìm theo Mã đơn vé (#BK-...) hoặc SĐT khách...">
+            <span class="search-icon-inside"><i class="fa-solid fa-magnifying-glass"></i></span>
+            <input type="text" id="booking-search-input" class="form-control" placeholder="Tìm theo Mã đơn vé (#BK-...) hoặc SĐT khách hàng...">
           </div>
 
           <div class="filter-actions">
             <select id="booking-status-filter" class="form-select" style="width: auto;">
-              <option value="all">Tất cả trạng thái</option>
-              <option value="confirmed">Đã thanh toán (confirmed)</option>
-              <option value="pending">Chờ thanh toán (pending)</option>
-              <option value="cancelled">Đã hủy vé (cancelled)</option>
+              <option value="all">🎟️ Tất cả trạng thái đơn vé</option>
+              <option value="confirmed">🟢 Đã thanh toán (confirmed)</option>
+              <option value="pending">🟡 Chờ thanh toán (pending)</option>
+              <option value="cancelled">🔴 Đã hủy vé (cancelled)</option>
             </select>
           </div>
         </div>
 
-        <!-- BOOKINGS TABLE -->
+        <!-- BOOKINGS TABLE (3D TABLE) -->
         <div class="table-card">
           <div class="table-responsive">
             <table class="admin-table">
@@ -122,8 +153,8 @@
                   <th>Số điện thoại</th>
                   <th>Phim & Suất chiếu</th>
                   <th>Rạp & Phòng</th>
-                  <th>Ghế đặt</th>
-                  <th>Tổng tiền</th>
+                  <th>Vị trí ghế</th>
+                  <th>Tổng thanh toán</th>
                   <th>Trạng thái</th>
                   <th style="text-align: right;">Hành động</th>
                 </tr>
@@ -142,14 +173,19 @@
   <div class="modal-overlay" id="booking-detail-modal">
     <div class="modal-dialog">
       <div class="modal-header">
-        <h3 class="modal-title" id="booking-detail-title">Chi tiết đơn vé</h3>
+        <h3 class="modal-title" id="booking-detail-title">
+          <i class="fa-solid fa-receipt text-primary"></i>
+          Chi tiết đơn vé điện tử
+        </h3>
         <button class="modal-close-btn" onclick="closeBookingModal()">&times;</button>
       </div>
       <div class="modal-body" id="booking-detail-content">
         <!-- Nạp nội dung động -->
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" onclick="closeBookingModal()">Đóng</button>
+        <button type="button" class="btn btn-secondary" onclick="closeBookingModal()">
+          <i class="fa-solid fa-xmark"></i> Đóng cửa sổ
+        </button>
       </div>
     </div>
   </div>
