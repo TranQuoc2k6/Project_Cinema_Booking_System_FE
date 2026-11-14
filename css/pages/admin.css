@@ -1,0 +1,341 @@
+/* ==========================================================================
+   ADMIN PAGES SPECIFIC STYLES - CINEMAS, ROOMS & SEAT MAP EDITOR
+   ========================================================================== */
+
+/* Large Modal for Seat Map & Configuration */
+.modal-dialog.modal-xl {
+  max-width: 1080px;
+  width: 95vw;
+}
+
+/* Tab navigation inside modal */
+.seat-config-tabs {
+  display: flex;
+  gap: var(--spacing-sm);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
+}
+
+.seat-tab-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: var(--font-sm);
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.seat-tab-btn:hover {
+  color: var(--text-white);
+  background: var(--bg-surface-elevated);
+}
+
+.seat-tab-btn.active {
+  color: #fff;
+  background: var(--color-primary);
+  box-shadow: 0 0 12px rgba(229, 9, 20, 0.4);
+}
+
+/* Filter toolbars for Cinemas & Rooms */
+.admin-filter-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.filter-group-inputs {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+/* Stats Badges in Seat Modal */
+.seat-stats-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-md);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  padding: 0.75rem 1.25rem;
+  margin-bottom: var(--spacing-lg);
+}
+
+.seat-stat-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--font-sm);
+}
+
+.seat-stat-item strong {
+  color: #fff;
+  font-size: 1.1rem;
+}
+
+/* Screen curve representation */
+.cinema-screen-container {
+  text-align: center;
+  margin: 1.5rem auto 2.5rem;
+  max-width: 650px;
+  position: relative;
+}
+
+.cinema-screen-bar {
+  height: 8px;
+  background: linear-gradient(90deg, transparent, #38bdf8, #818cf8, transparent);
+  border-radius: 50% 50% 0 0;
+  box-shadow: 0 4px 20px rgba(56, 189, 248, 0.4);
+  transform: perspective(300px) rotateX(-20deg);
+}
+
+.cinema-screen-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  color: #94a3b8;
+  margin-top: 0.5rem;
+  text-transform: uppercase;
+}
+
+/* Seat Toolbar / Brush Picker */
+.seat-tool-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.brush-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.brush-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.85rem;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: var(--border-radius-sm);
+  border: 2px solid transparent;
+  cursor: pointer;
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  transition: all var(--transition-fast);
+}
+
+.brush-btn:hover {
+  background: var(--bg-surface-elevated);
+  color: #fff;
+}
+
+.brush-btn.active {
+  border-color: #38bdf8;
+  color: #fff;
+  background: rgba(56, 189, 248, 0.15);
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.25);
+}
+
+.brush-btn.brush-standard.active {
+  border-color: #64748b;
+  background: rgba(100, 116, 139, 0.2);
+}
+
+.brush-btn.brush-vip.active {
+  border-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+}
+
+.brush-btn.brush-couple.active {
+  border-color: #f43f5e;
+  background: rgba(244, 63, 94, 0.2);
+  color: #fda4af;
+}
+
+.brush-btn.brush-disabled.active {
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+}
+
+/* Seat Matrix Grid Container */
+.seat-matrix-wrapper {
+  overflow-x: auto;
+  overflow-y: visible;
+  padding: 1.5rem 0.5rem;
+  background: #090d16;
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--border-color);
+  min-height: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.seat-row-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  user-select: none;
+}
+
+.seat-row-label-btn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  color: #94a3b8;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.seat-row-label-btn:hover {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+}
+
+.seat-row-seats {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Individual Seat Styling */
+.admin-seat-cell {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  position: relative;
+  user-select: none;
+}
+
+.admin-seat-cell:hover {
+  transform: translateY(-2px) scale(1.1);
+  z-index: 5;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+}
+
+/* Standard Seat */
+.admin-seat-cell.type-standard {
+  background: #1e293b;
+  border: 1px solid #475569;
+  color: #cbd5e1;
+}
+
+.admin-seat-cell.type-standard:hover {
+  border-color: #94a3b8;
+}
+
+/* VIP Seat */
+.admin-seat-cell.type-vip {
+  background: linear-gradient(135deg, #78350f, #b45309);
+  border: 1px solid #f59e0b;
+  color: #fef3c7;
+  box-shadow: 0 0 6px rgba(245, 158, 11, 0.3);
+}
+
+.admin-seat-cell.type-vip:hover {
+  border-color: #fbbf24;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.6);
+}
+
+/* Couple Seat */
+.admin-seat-cell.type-couple {
+  width: 58px;
+  background: linear-gradient(135deg, #881337, #be123c);
+  border: 1px solid #f43f5e;
+  color: #ffe4e6;
+  box-shadow: 0 0 6px rgba(244, 63, 94, 0.3);
+}
+
+.admin-seat-cell.type-couple:hover {
+  border-color: #fb7185;
+  box-shadow: 0 0 12px rgba(244, 63, 94, 0.6);
+}
+
+/* Disabled / Inactive Seat */
+.admin-seat-cell.is-disabled {
+  background: #0f172a;
+  border: 1px dashed #334155;
+  color: #64748b;
+  opacity: 0.45;
+}
+
+.admin-seat-cell.is-disabled::after {
+  content: '✕';
+  position: absolute;
+  font-size: 12px;
+  color: #ef4444;
+}
+
+/* Selected Seat in Selection Mode */
+.admin-seat-cell.is-selected {
+  outline: 2px solid #38bdf8;
+  outline-offset: 1px;
+  box-shadow: 0 0 12px #38bdf8 !important;
+}
+
+/* Legend inside modal */
+.seat-map-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.legend-swatch {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+}
