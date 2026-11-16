@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vé Của Tôi - Cinema 3D</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#070a12',
+                            card: '#0f172a',
+                            cyan: '#06b6d4',
+                            rose: '#f43f5e',
+                            purple: '#8b5cf6',
+                            gold: '#f59e0b'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #070a12; color: #f8fafc; }
+        .glass-panel { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .glass-card { background: rgba(30, 41, 59, 0.5); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .tab-btn.active {
+            background-color: #06b6d4;
+            color: #020617;
+            font-weight: 800;
+            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Header Navigation -->
+    <header class="sticky top-[10px] mx-[10px] rounded-2xl z-50 glass-panel border border-slate-800/80">
+        <div class="w-full px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <a href="../index.html" class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-rose-500 to-cyan-400 p-[2px]">
+                    <div class="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
+                        <i class="fa-solid fa-cube text-cyan-400 text-xl"></i>
+                    </div>
+                </div>
+                <span class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-rose-500">
+                    CINEMA<span class="text-white font-light">3D</span>
+                </span>
+            </a>
+            <nav class="hidden md:flex gap-8">
+                <a href="../index.html" class="text-sm font-medium text-slate-300 hover:text-cyan-400 transition-colors">Trang chủ</a>
+                <a href="movies.html" class="text-sm font-medium text-slate-300 hover:text-cyan-400 transition-colors">Phim Chiếu</a>
+                <a href="showtimes.html" class="text-sm font-medium text-slate-300 hover:text-cyan-400 transition-colors">Lịch Chiếu</a>
+                <a href="my-tickets.html" class="text-sm font-semibold text-cyan-400 transition-colors">Vé Của Tôi</a>
+            </nav>
+            <div id="header-auth-section" class="flex items-center gap-3">
+                <a href="profile.html" class="w-9 h-9 rounded-full border border-cyan-400 flex items-center justify-center bg-slate-900 text-cyan-400 text-xs font-bold" title="Hồ sơ cá nhân">
+                    <i class="fa-solid fa-user"></i>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 max-w-5xl mx-auto px-4 py-10 w-full">
+        <!-- Title & Filter Tabs -->
+        <div class="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800/80 mb-8 shadow-2xl">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-black text-white uppercase tracking-tight flex items-center gap-3">
+                        <span class="w-3 h-8 bg-gradient-to-b from-cyan-400 to-rose-500 rounded-full inline-block"></span>
+                        Vé Của Tôi
+                    </h1>
+                    <p class="text-xs sm:text-sm text-slate-400 mt-1">Quản lý toàn bộ vé đã đặt, kiểm tra mã vé điện tử và trạng thái thanh toán</p>
+                </div>
+
+                <!-- Tabs Filter: Tất cả | Sắp chiếu | Đã xem | Đã huỷ -->
+                <div class="flex items-center gap-1.5 bg-slate-900/90 p-1.5 rounded-2xl border border-slate-800 overflow-x-auto">
+                    <button onclick="setTab('all', this)" class="tab-btn active px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap">
+                        Tất cả
+                    </button>
+                    <button onclick="setTab('upcoming', this)" class="tab-btn px-3.5 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-all whitespace-nowrap">
+                        🎬 Sắp chiếu
+                    </button>
+                    <button onclick="setTab('watched', this)" class="tab-btn px-3.5 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-all whitespace-nowrap">
+                        🍿 Đã xem
+                    </button>
+                    <button onclick="setTab('cancelled', this)" class="tab-btn px-3.5 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-all whitespace-nowrap">
+                        ❌ Đã huỷ / Hết hạn
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tickets Container -->
+        <div id="tickets-container" class="space-y-4">
+            <!-- Loading Indicator -->
+            <div class="glass-panel p-12 rounded-3xl text-center">
+                <i class="fa-solid fa-spinner fa-spin text-3xl text-cyan-400 mb-3"></i>
+                <p class="text-xs text-slate-400">Đang tải danh sách vé...</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal QR Code & Ticket Detail -->
+    <div id="qr-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
+        <div class="glass-panel w-full max-w-sm rounded-3xl p-6 border border-slate-700/80 text-center relative shadow-2xl">
+            <button onclick="closeQrModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-900 text-slate-400 hover:text-white flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="w-12 h-12 rounded-2xl bg-cyan-950/80 border border-cyan-500/30 flex items-center justify-center text-cyan-400 text-2xl mx-auto mb-3">
+                <i class="fa-solid fa-qrcode"></i>
+            </div>
+            <h3 class="text-base font-black text-white uppercase tracking-wider mb-1" id="qr-modal-title">MÃ VÉ VÀO RẠP</h3>
+            <p class="text-xs text-slate-400 mb-4" id="qr-modal-code">BK-XXXXX</p>
+            <div class="bg-white p-4 rounded-2xl inline-block shadow-inner mb-4">
+                <img id="qr-img" src="" alt="QR Code" class="w-48 h-48 mx-auto">
+            </div>
+            <p class="text-[11px] text-slate-400">Đưa mã QR này cho nhân viên soát vé tại rạp để in vé giấy hoặc vào phòng chiếu.</p>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="../js/utils/storage.js"></script>
+    <script src="../js/config/api.js"></script>
+    <script src="../js/services/auth.service.js"></script>
+    <script src="../js/services/booking.service.js"></script>
+
+    <script>
+        let currentTab = 'all';
+
+        function setTab(tab, btn) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.className = 'tab-btn px-3.5 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-all whitespace-nowrap';
+            });
+            btn.className = 'tab-btn active px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap';
+            loadTickets();
+        }
+
+        async function loadTickets() {
+            const container = document.getElementById('tickets-container');
+            if (!window.StorageService || !window.StorageService.isAuthenticated()) {
+                window.location.replace('login.html');
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="glass-panel p-12 rounded-3xl text-center">
+                    <i class="fa-solid fa-spinner fa-spin text-3xl text-cyan-400 mb-3"></i>
+                    <p class="text-xs text-slate-400">Đang tải danh sách vé...</p>
+                </div>
+            `;
+
+            const filterParam = currentTab === 'all' ? null : currentTab;
+            const res = await window.BookingService.getMyTickets(filterParam);
+
+            if (!res.success || !res.data || res.data.length === 0) {
+                container.innerHTML = `
+                    <div class="glass-panel p-12 rounded-3xl text-center border border-slate-800/80">
+                        <div class="w-16 h-16 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-600 text-3xl mx-auto mb-4">
+                            <i class="fa-solid fa-ticket-simple"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-white mb-1">Chưa có vé xem phim nào</h3>
+                        <p class="text-xs text-slate-500 mb-6">Bạn chưa có đơn đặt vé nào trong mục này.</p>
+                        <a href="movies.html" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black text-xs uppercase tracking-wider transition-all shadow-lg shadow-cyan-500/25">
+                            <i class="fa-solid fa-film"></i> ĐẶT VÉ NGAY
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = res.data.map(ticket => {
+                const st = ticket.showtime;
+                const movie = st.movie;
+                const cinema = st.cinema;
+                const startTime = new Date(st.start_time);
+                const formattedTime = startTime.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+                const formattedDate = startTime.toLocaleDateString('vi-VN', { weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric' });
+                const seatList = ticket.seats.map(s => s.seat_number).join(', ') || 'Chưa xếp ghế';
+
+                // Trạng thái thanh toán & màu sắc
+                let statusBadge = '';
+                if (ticket.status === 'DA_THANH_TOAN' || ticket.payment_status === 'PAID') {
+                    statusBadge = '<span class="px-2.5 py-1 rounded-md text-[10px] font-black uppercase bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">ĐÃ THANH TOÁN</span>';
+                } else if (ticket.status === 'GIU_CHO' || ticket.payment_status === 'PENDING') {
+                    statusBadge = '<span class="px-2.5 py-1 rounded-md text-[10px] font-black uppercase bg-amber-500/20 text-amber-400 border border-amber-500/40">CHỜ THANH TOÁN</span>';
+                } else if (ticket.status === 'DA_HUY' || ticket.payment_status === 'CANCELLED') {
+                    statusBadge = '<span class="px-2.5 py-1 rounded-md text-[10px] font-black uppercase bg-rose-500/20 text-rose-400 border border-rose-500/40">ĐÃ HUỶ</span>';
+                } else {
+                    statusBadge = '<span class="px-2.5 py-1 rounded-md text-[10px] font-black uppercase bg-slate-800 text-slate-400 border border-slate-700">HẾT HẠN</span>';
+                }
+
+                return `
+                    <div class="glass-card p-5 sm:p-6 rounded-3xl border border-slate-800/80 hover:border-slate-700 transition-all flex flex-col md:flex-row gap-5 items-start md:items-center justify-between">
+                        <!-- Left: Poster + Movie Details -->
+                        <div class="flex gap-4 items-center w-full md:w-auto">
+                            <img src="${movie.poster_url || 'https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=200'}" class="w-16 h-24 sm:w-20 sm:h-28 rounded-2xl object-cover border border-slate-700/60 shadow-md shrink-0">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-2 mb-1">
+                                    ${statusBadge}
+                                    <span class="text-[10px] font-bold text-slate-500 font-mono tracking-wider">#${ticket.booking_code}</span>
+                                </div>
+                                <h3 class="text-base sm:text-lg font-black text-white hover:text-cyan-400 transition-colors">${movie.title}</h3>
+                                <p class="text-xs text-slate-300 mt-0.5">
+                                    <i class="fa-solid fa-location-dot text-rose-500 mr-1"></i> ${cinema.name} • <span class="text-cyan-400 font-semibold">${st.room_name} (${st.room_type})</span>
+                                </p>
+                                <p class="text-xs text-slate-400 mt-1">
+                                    <i class="fa-regular fa-clock text-cyan-400 mr-1"></i> <b>${formattedTime}</b> — ${formattedDate}
+                                </p>
+                                <p class="text-xs text-slate-400 mt-0.5">
+                                    <i class="fa-solid fa-couch text-purple-400 mr-1"></i> Ghế: <b class="text-purple-300">${seatList}</b>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Right: Total Price + Action Buttons -->
+                        <div class="flex md:flex-col items-center md:items-end justify-between w-full md:w-auto pt-3 md:pt-0 border-t md:border-t-0 border-slate-800 shrink-0 gap-2">
+                            <div class="text-left md:text-right">
+                                <span class="text-[10px] uppercase font-bold text-slate-500 block">Tổng tiền</span>
+                                <span class="text-lg font-black text-emerald-400">${Number(ticket.total_price).toLocaleString('vi-VN')} đ</span>
+                            </div>
+                            <button onclick="openQrModal('${ticket.booking_code}', '${movie.title}')" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-cyan-500 hover:text-slate-950 text-slate-200 text-xs font-bold transition-all border border-slate-700 flex items-center gap-1.5 shadow">
+                                <i class="fa-solid fa-qrcode text-xs"></i> Xem mã QR
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openQrModal(code, title) {
+            document.getElementById('qr-modal-code').innerText = `Mã vé: ${code} • ${title}`;
+            // Dùng API QR code chuẩn từ qrserver
+            document.getElementById('qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(code)}`;
+            const modal = document.getElementById('qr-modal');
+            modal.classList.remove('hidden');
+            setTimeout(() => modal.classList.remove('opacity-0'), 10);
+        }
+
+        function closeQrModal() {
+            const modal = document.getElementById('qr-modal');
+            modal.classList.add('opacity-0');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+
+        window.onload = function() {
+            loadTickets();
+        };
+    </script>
+</body>
+</html>
