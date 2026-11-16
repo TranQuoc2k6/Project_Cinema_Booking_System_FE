@@ -40,7 +40,7 @@
 .seat-tab-btn.active {
   color: #fff;
   background: var(--color-primary);
-  box-shadow: 0 0 12px rgba(229, 9, 20, 0.4);
+  box-shadow: 0 0 14px var(--color-primary-glow);
 }
 
 /* Filter toolbars for Cinemas & Rooms */
@@ -96,9 +96,9 @@
 
 .cinema-screen-bar {
   height: 8px;
-  background: linear-gradient(90deg, transparent, #38bdf8, #818cf8, transparent);
+  background: linear-gradient(90deg, transparent, #ff5e1e, #d4ff00, transparent);
   border-radius: 50% 50% 0 0;
-  box-shadow: 0 4px 20px rgba(56, 189, 248, 0.4);
+  box-shadow: 0 4px 20px rgba(255, 94, 30, 0.45);
   transform: perspective(300px) rotateX(-20deg);
 }
 
@@ -268,28 +268,28 @@
 /* VIP Seat */
 .admin-seat-cell.type-vip {
   background: linear-gradient(135deg, #78350f, #b45309);
-  border: 1px solid #f59e0b;
+  border: 1px solid #e6ca85;
   color: #fef3c7;
-  box-shadow: 0 0 6px rgba(245, 158, 11, 0.3);
+  box-shadow: 0 0 6px rgba(230, 202, 133, 0.4);
 }
 
 .admin-seat-cell.type-vip:hover {
-  border-color: #fbbf24;
-  box-shadow: 0 0 12px rgba(245, 158, 11, 0.6);
+  border-color: #fde68a;
+  box-shadow: 0 0 12px rgba(230, 202, 133, 0.7);
 }
 
 /* Couple Seat */
 .admin-seat-cell.type-couple {
   width: 58px;
-  background: linear-gradient(135deg, #881337, #be123c);
-  border: 1px solid #f43f5e;
-  color: #ffe4e6;
-  box-shadow: 0 0 6px rgba(244, 63, 94, 0.3);
+  background: linear-gradient(135deg, #4c1d95, #6d28d9);
+  border: 1px solid #7c3aed;
+  color: #ede9fe;
+  box-shadow: 0 0 6px rgba(124, 58, 237, 0.4);
 }
 
 .admin-seat-cell.type-couple:hover {
-  border-color: #fb7185;
-  box-shadow: 0 0 12px rgba(244, 63, 94, 0.6);
+  border-color: #a78bfa;
+  box-shadow: 0 0 12px rgba(124, 58, 237, 0.7);
 }
 
 /* Disabled / Inactive Seat */
@@ -309,9 +309,9 @@
 
 /* Selected Seat in Selection Mode */
 .admin-seat-cell.is-selected {
-  outline: 2px solid #38bdf8;
+  outline: 2px solid #d4ff00;
   outline-offset: 1px;
-  box-shadow: 0 0 12px #38bdf8 !important;
+  box-shadow: 0 0 12px #d4ff00 !important;
 }
 
 /* Legend inside modal */

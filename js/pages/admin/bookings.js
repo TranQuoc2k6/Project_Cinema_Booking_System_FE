@@ -110,7 +110,7 @@ function renderBookings(list) {
           <div style="font-size: 11px; color: var(--text-muted);">${b.showtime}</div>
         </td>
         <td>${b.cinema_name} • <span class="badge badge-info">${b.room_name}</span></td>
-        <td><span class="badge badge-admin">${b.seats.join(', ')}</span></td>
+        <td><span class="badge badge-admin">${Array.isArray(b.seats) ? b.seats.join(', ') : (b.seats || '')}</span></td>
         <td><strong style="color: var(--color-success);">${Number(b.total_price).toLocaleString('vi-VN')} đ</strong></td>
         <td>${statusBadge}</td>
         <td style="text-align: right;">
@@ -168,7 +168,7 @@ window.viewBookingDetail = function (id) {
         <h4 style="color: var(--color-primary); margin-bottom: 6px;">${b.movie_title}</h4>
         <p style="font-size: 13px;">Suất chiếu: <strong>${b.showtime}</strong></p>
         <p style="font-size: 13px;">Địa điểm: <strong>${b.cinema_name} - ${b.room_name}</strong></p>
-        <p style="font-size: 13px;">Ghế ngồi đã đặt: <strong style="color: #38bdf8;">${b.seats.join(', ')}</strong></p>
+        <p style="font-size: 13px;">Ghế ngồi đã đặt: <strong style="color: #38bdf8;">${Array.isArray(b.seats) ? b.seats.join(', ') : (b.seats || '')}</strong></p>
       </div>
 
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 13px;">
@@ -194,7 +194,8 @@ window.cancelBooking = function (id) {
   const b = bookingsList.find(x => x.id === id);
   if (!b) return;
 
-  if (confirm(`Bạn có chắc chắn muốn HỦY đơn vé #${b.code} của khách hàng ${b.customer_name}?\nGhế [${b.seats.join(', ')}] sẽ được giải phóng lập tức.`)) {
+  const seatsStr = Array.isArray(b.seats) ? b.seats.join(', ') : (b.seats || '');
+  if (confirm(`Bạn có chắc chắn muốn HỦY đơn vé #${b.code} của khách hàng ${b.customer_name}?\nGhế [${seatsStr}] sẽ được giải phóng lập tức.`)) {
     b.status = 'cancelled';
     renderBookings(bookingsList);
     window.showToast(`Đã hủy đơn vé #${b.code} và giải phóng ghế thành công!`, 'danger');
