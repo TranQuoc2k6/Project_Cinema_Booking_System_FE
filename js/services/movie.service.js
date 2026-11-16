@@ -199,6 +199,74 @@ const MovieService = {
   // ========================================================================
 
   /**
+   * Upload ảnh poster phim lên máy chủ (.jpg, .jpeg, .png, tối đa 5MB)
+   * Trả về đường dẫn ảnh tĩnh /uploads/posters/...
+   */
+  async uploadPoster(file) {
+    try {
+      const baseUrl = this._getBaseUrl();
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const token = (window.StorageService && window.StorageService.getToken()) ||
+                    localStorage.getItem('cinema_access_token') ||
+                    localStorage.getItem('token') ||
+                    sessionStorage.getItem('cinema_access_token');
+
+      const headers = {};
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      // Thử gọi endpoint admin trước, nếu không được thử endpoint public
+      const url = `${baseUrl}/api/admin/movies/upload-poster`;
+
+      if (window.apiClient) {
+        try {
+          const res = await window.apiClient.post(url, formData, {
+            headers: { ...headers, 'Content-Type': 'multipart/form-data' }
+          });
+          return { success: true, data: res.data };
+        } catch (apiErr) {
+          // Thử fallback sang public upload router
+          const fallbackUrl = `${baseUrl}/api/movies/upload-poster`;
+          const res = await window.apiClient.post(fallbackUrl, formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+          });
+          return { success: true, data: res.data };
+        }
+      }
+
+      let res = await fetch(url, {
+        method: 'POST',
+        headers,
+        body: formData
+      });
+
+      if (!res.ok && res.status === 401) {
+        // Thử fallback sang public upload router
+        const fallbackUrl = `${baseUrl}/api/movies/upload-poster`;
+        res = await fetch(fallbackUrl, {
+          method: 'POST',
+          body: formData
+        });
+      }
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.detail || 'Không thể upload ảnh poster');
+      }
+
+      return { success: true, data };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.response?.data?.detail || error.message
+      };
+    }
+  },
+
+  /**
    * Lấy danh sách phim cho trang Admin (có phân trang, tìm kiếm & lọc trạng thái)
    */
   async adminGetMovies({ page = 1, limit = 100, status = 'all', search = '' } = {}) {
