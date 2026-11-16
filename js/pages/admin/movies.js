@@ -1,100 +1,136 @@
 /**
  * ==========================================================================
  * ADMIN MOVIES MANAGEMENT CONTROLLER
- * Xử lý thêm, sửa, đổi trạng thái, ngừng chiếu, tìm kiếm phim và live preview
+ * Xử lý thêm, sửa, đổi trạng thái, ngừng chiếu, tìm kiếm phim và lưu vào Database
  * ==========================================================================
  */
 
-let moviesList = [
-  {
-    id: 1,
-    title: "Mai (18+)",
-    duration: 131,
-    release_date: "2026-02-10",
-    genres: ["Tâm lý", "Tình cảm"],
-    status: "now_showing",
-    poster_url: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=400&auto=format&fit=crop&q=80",
-    description: "Câu chuyện về số phận và tình yêu của một phụ nữ làm nghề massage trị liệu tên Mai."
-  },
-  {
-    id: 2,
-    title: "Lật Mặt 7: Một Điều Ước",
-    duration: 138,
-    release_date: "2026-04-26",
-    genres: ["Gia đình", "Hài", "Chính kịch"],
-    status: "now_showing",
-    poster_url: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=400&auto=format&fit=crop&q=80",
-    description: "Tác phẩm cảm động về tình mẫu tử của người mẹ già ở vùng cao Tây Bắc và những người con."
-  },
-  {
-    id: 3,
-    title: "Dune: Hành Tinh Cát - Phần Hai",
-    duration: 166,
-    release_date: "2026-03-01",
-    genres: ["Khoa học viễn tưởng", "Hành động"],
-    status: "now_showing",
-    poster_url: "https://images.unsplash.com/photo-1518676590629-3dcbd9c5a5c9?w=400&auto=format&fit=crop&q=80",
-    description: "Hành trình báo thù và định đoạt vận mệnh vũ trụ của Paul Atreides giữa sa mạc Arrakis."
-  },
-  {
-    id: 4,
-    title: "Kung Fu Panda 4",
-    duration: 94,
-    release_date: "2026-03-08",
-    genres: ["Hoạt hình", "Võ thuật", "Hài"],
-    status: "coming_soon",
-    poster_url: "https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?w=400&auto=format&fit=crop&q=80",
-    description: "Gấu Po lên đường tìm kiếm truyền nhân Thần Long Đại Hiệp mới và đối đầu với Tắc Kè Bông."
-  },
-  {
-    id: 5,
-    title: "Đất Rừng Phương Nam",
-    duration: 110,
-    release_date: "2025-10-20",
-    genres: ["Phiêu lưu", "Lịch sử"],
-    status: "ended",
-    poster_url: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=400&auto=format&fit=crop&q=80",
-    description: "Hành trình tìm cha của bé An giữa bối cảnh lục tỉnh Nam Kỳ đầu thế kỷ 20."
-  }
-];
+let moviesList = [];
 
 document.addEventListener('DOMContentLoaded', function () {
   loadMoviesFromApi();
   initMovieFilterEvents();
 });
 
-// Tải danh sách phim từ Backend (nếu có API) hoặc dùng mock data
+// Mapping thể loại dạng chữ sang ID trong cơ sở dữ liệu
+function mapGenreTextToIds(genresStr) {
+  if (!genresStr) return [];
+  const lower = genresStr.toLowerCase();
+  const map = [
+    { id: 1, keys: ['hành động', 'action', 'hanh dong'] },
+    { id: 2, keys: ['hài', 'comedy', 'hai'] },
+    { id: 3, keys: ['tình cảm', 'lãng mạn', 'romance', 'tinh cam'] },
+    { id: 4, keys: ['tâm lý', 'gia đình', 'chính kịch', 'drama', 'tam ly', 'gia dinh'] },
+    { id: 5, keys: ['kinh dị', 'horror', 'kinh di'] },
+    { id: 6, keys: ['khoa học', 'viễn tưởng', 'sci-fi', 'khoa hoc vien tuong'] },
+    { id: 7, keys: ['hoạt hình', 'anime', 'animation', 'hoat hinh'] }
+  ];
+  const matched = [];
+  map.forEach(item => {
+    if (item.keys.some(k => lower.includes(k))) {
+      matched.push(item.id);
+    }
+  });
+  return matched;
+}
+
+// Tải danh sách phim từ Backend API (kết nối trực tiếp Database)
 async function loadMoviesFromApi() {
+  const tbody = document.getElementById('movies-table-tbody');
+  if (tbody && moviesList.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="7" class="text-center py-6 text-slate-400">
+          <i class="fa-solid fa-spinner fa-spin mr-2"></i> Đang tải dữ liệu phim từ Database...
+        </td>
+      </tr>
+    `;
+  }
+
   try {
-    const res = await fetch('http://127.0.0.1:8000/api/movies');
-    if (res.ok) {
-      const apiMovies = await res.json();
-      if (Array.isArray(apiMovies) && apiMovies.length > 0) {
-        // Hợp nhất dữ liệu API với thông tin hiển thị
-        apiMovies.forEach(m => {
-          const existing = moviesList.find(x => x.id === m.id);
-          if (existing) {
-            Object.assign(existing, m);
-          } else {
-            moviesList.push({
-              id: m.id,
-              title: m.title,
-              duration: m.duration || 120,
-              release_date: m.release_date || '2026-05-01',
-              genres: m.genres || ['Điện ảnh'],
-              status: m.status || 'now_showing',
-              poster_url: m.poster_url || 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=400&auto=format&fit=crop&q=80',
-              description: m.description || ''
+    if (window.MovieService && typeof window.MovieService.adminGetMovies === 'function') {
+      const res = await window.MovieService.adminGetMovies({ limit: 100 });
+      if (res.success && res.data && Array.isArray(res.data.items)) {
+        moviesList = res.data.items.map(m => {
+          let genresArr = [];
+          let genreIds = [];
+          if (Array.isArray(m.genres)) {
+            m.genres.forEach(g => {
+              if (typeof g === 'object' && g !== null) {
+                genresArr.push(g.name);
+                if (g.id) genreIds.push(g.id);
+              } else if (typeof g === 'string') {
+                genresArr.push(g);
+              }
             });
           }
+          return {
+            id: m.id,
+            title: m.title,
+            duration: m.duration_minutes || m.duration || 120,
+            release_date: m.release_date || '',
+            genres: genresArr.length > 0 ? genresArr : ['Điện ảnh'],
+            genre_ids: genreIds,
+            status: (m.status || 'now_showing').toLowerCase(),
+            poster_url: m.poster_url || 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=400&auto=format&fit=crop&q=80',
+            description: m.description || ''
+          };
         });
+      } else {
+        console.warn('[Movies Admin] Không tải được từ adminGetMovies, thử fallback getMovies.');
+        await fallbackPublicMovies();
       }
+    } else {
+      await fallbackPublicMovies();
     }
   } catch (e) {
-    console.log('[Movies] Đang sử dụng danh sách phim mẫu.');
+    console.error('[Movies Admin] Lỗi tải phim:', e);
+    await fallbackPublicMovies();
   }
 
   renderMoviesTable(moviesList);
+}
+
+// Fallback tải qua public API hoặc Mock Data nếu chưa đăng nhập token admin
+async function fallbackPublicMovies() {
+  try {
+    const res = await fetch('http://127.0.0.1:8000/api/movies?limit=50');
+    if (res.ok) {
+      const data = await res.json();
+      const items = Array.isArray(data) ? data : (data.items || []);
+      if (items.length > 0) {
+        moviesList = items.map(m => ({
+          id: m.id,
+          title: m.title,
+          duration: m.duration_minutes || m.duration || 120,
+          release_date: m.release_date || '',
+          genres: ['Điện ảnh'],
+          genre_ids: [],
+          status: (m.status || 'now_showing').toLowerCase(),
+          poster_url: m.poster_url || 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=400&auto=format&fit=crop&q=80',
+          description: m.description || ''
+        }));
+        return;
+      }
+    }
+  } catch (err) {
+    console.warn('[Movies Admin] Fallback error:', err);
+  }
+
+  // Dùng mock fallback nếu hoàn toàn mất kết nối
+  if (moviesList.length === 0 && window.MovieService?._mockMovies) {
+    moviesList = window.MovieService._mockMovies.map(m => ({
+      id: m.id,
+      title: m.title,
+      duration: m.duration_minutes || 120,
+      release_date: m.release_date || '2026-05-01',
+      genres: m.genres || ['Điện ảnh'],
+      genre_ids: [],
+      status: m.status || 'now_showing',
+      poster_url: m.poster_url || '',
+      description: m.description || ''
+    }));
+  }
 }
 
 // Render bảng danh sách phim
@@ -127,11 +163,13 @@ function renderMoviesTable(list) {
     return `
       <tr>
         <td>
-          <img src="${movie.poster_url}" alt="${movie.title}" style="width: 46px; height: 64px; object-fit: cover; border-radius: 4px; box-shadow: 0 2px 6px rgba(0,0,0,0.5);">
+          <img src="${movie.poster_url || 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=400'}"
+               alt="${movie.title}"
+               style="width: 46px; height: 64px; object-fit: cover; border-radius: 4px; box-shadow: 0 2px 6px rgba(0,0,0,0.5);">
         </td>
         <td>
           <div style="font-weight: 700; color: #fff; font-size: 15px;">${movie.title}</div>
-          <div style="font-size: 12px; color: var(--text-muted);">${(movie.description || '').substring(0, 50)}...</div>
+          <div style="font-size: 12px; color: var(--text-muted);">${(movie.description || '').substring(0, 50)}${(movie.description || '').length > 50 ? '...' : ''}</div>
         </td>
         <td><span class="badge badge-info">${genresStr}</span></td>
         <td><strong>${movie.duration}</strong> phút</td>
@@ -167,8 +205,8 @@ function initMovieFilterEvents() {
   const statusFilter = document.getElementById('movie-status-filter');
 
   function applyFilter() {
-    const keyword = searchInput.value.toLowerCase().trim();
-    const status = statusFilter.value;
+    const keyword = searchInput ? searchInput.value.toLowerCase().trim() : '';
+    const status = statusFilter ? statusFilter.value : 'all';
 
     const filtered = moviesList.filter(m => {
       const matchKey = m.title.toLowerCase().includes(keyword) || (m.description && m.description.toLowerCase().includes(keyword));
@@ -214,7 +252,8 @@ window.openMovieModal = function (editMovieObj = null) {
 };
 
 window.closeMovieModal = function () {
-  document.getElementById('movie-modal').classList.remove('show');
+  const modal = document.getElementById('movie-modal');
+  if (modal) modal.classList.remove('show');
 };
 
 // Live Image Preview (SRS Task 4)
@@ -238,8 +277,8 @@ window.updatePosterPreview = function (url) {
   }
 };
 
-// Xử lý lưu form phim
-window.handleMovieSubmit = function (e) {
+// Xử lý lưu form phim (Gọi API POST/PUT lên Backend Database)
+window.handleMovieSubmit = async function (e) {
   e.preventDefault();
   const editId = document.getElementById('movie-edit-id').value;
   const title = document.getElementById('movie-title').value.trim();
@@ -250,8 +289,12 @@ window.handleMovieSubmit = function (e) {
   const poster_url = document.getElementById('movie-poster-url').value.trim() || 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=400&auto=format&fit=crop&q=80';
   const description = document.getElementById('movie-description').value.trim();
 
-  // Validation ràng buộc nghiêm ngặt (SRS 1.2)
-  if (duration <= 0) {
+  // Validation ràng buộc
+  if (!title) {
+    alert('Vui lòng nhập tên phim!');
+    return;
+  }
+  if (!duration || duration <= 0) {
     alert('Thời lượng phim bắt buộc phải lớn hơn 0 phút!');
     return;
   }
@@ -260,33 +303,56 @@ window.handleMovieSubmit = function (e) {
     return;
   }
 
-  const genres = genresStr.split(',').map(g => g.trim()).filter(Boolean);
-
-  if (editId) {
-    // Chỉnh sửa phim
-    const target = moviesList.find(m => m.id === parseInt(editId, 10));
-    if (target) {
-      Object.assign(target, { title, duration, release_date, genres, status, poster_url, description });
-      window.showToast('Cập nhật thông tin phim "' + title + '" thành công!');
-    }
-  } else {
-    // Thêm mới
-    const newId = moviesList.length > 0 ? Math.max(...moviesList.map(m => m.id)) + 1 : 1;
-    moviesList.unshift({
-      id: newId,
-      title,
-      duration,
-      release_date,
-      genres,
-      status,
-      poster_url,
-      description
-    });
-    window.showToast('Đã thêm thành công phim mới: ' + title);
+  const saveBtn = document.getElementById('btn-save-movie');
+  const originalBtnHtml = saveBtn ? saveBtn.innerHTML : '';
+  if (saveBtn) {
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang lưu...';
   }
 
-  closeMovieModal();
-  renderMoviesTable(moviesList);
+  const genreIds = mapGenreTextToIds(genresStr);
+  const payload = {
+    title,
+    duration_minutes: duration,
+    duration: duration,
+    release_date,
+    status,
+    poster_url,
+    description,
+    genre_ids: genreIds
+  };
+
+  try {
+    if (editId) {
+      // Cập nhật phim (PUT /api/admin/movies/{id})
+      const res = await window.MovieService.adminUpdateMovie(parseInt(editId, 10), payload);
+      if (res.success) {
+        window.showToast('Cập nhật thông tin phim "' + title + '" thành công!');
+        closeMovieModal();
+        await loadMoviesFromApi();
+      } else {
+        alert('Lỗi cập nhật phim: ' + (res.message || 'Không thể cập nhật'));
+      }
+    } else {
+      // Thêm phim mới (POST /api/admin/movies)
+      const res = await window.MovieService.adminCreateMovie(payload);
+      if (res.success) {
+        window.showToast('Đã thêm thành công phim mới: ' + title);
+        closeMovieModal();
+        await loadMoviesFromApi();
+      } else {
+        alert('Lỗi thêm phim mới: ' + (res.message || 'Không thể tạo phim'));
+      }
+    }
+  } catch (err) {
+    console.error('[handleMovieSubmit error]', err);
+    alert('Lỗi kết nối máy chủ: ' + err.message);
+  } finally {
+    if (saveBtn) {
+      saveBtn.disabled = false;
+      saveBtn.innerHTML = originalBtnHtml;
+    }
+  }
 };
 
 // Chỉnh sửa phim
@@ -295,31 +361,56 @@ window.editMovie = function (id) {
   if (m) openMovieModal(m);
 };
 
-// Ngừng chiếu phim (chuyển sang 'ended') (SRS 1.2)
-window.endMovieShowing = function (id) {
+// Ngừng chiếu phim (PATCH /api/admin/movies/{id}/stop)
+window.endMovieShowing = async function (id) {
   const m = moviesList.find(x => x.id === id);
   if (m && confirm(`Bạn có chắc chắn muốn ngừng chiếu bộ phim "${m.title}" không?`)) {
-    m.status = 'ended';
-    renderMoviesTable(moviesList);
-    window.showToast(`Đã chuyển trạng thái phim "${m.title}" sang Đã kết thúc (Ended).`, 'danger');
+    try {
+      const res = await window.MovieService.adminStopMovie(id);
+      if (res.success) {
+        window.showToast(`Đã chuyển trạng thái phim "${m.title}" sang Đã kết thúc (Ended).`, 'danger');
+        await loadMoviesFromApi();
+      } else {
+        alert('Lỗi ngừng chiếu phim: ' + (res.message || 'Không thể cập nhật'));
+      }
+    } catch (err) {
+      alert('Lỗi kết nối máy chủ: ' + err.message);
+    }
   }
 };
 
-window.restartMovieShowing = function (id) {
+// Chiếu lại phim (PATCH /api/admin/movies/{id}/status)
+window.restartMovieShowing = async function (id) {
   const m = moviesList.find(x => x.id === id);
   if (m) {
-    m.status = 'now_showing';
-    renderMoviesTable(moviesList);
-    window.showToast(`Đã đưa phim "${m.title}" trở lại danh sách Đang chiếu!`);
+    try {
+      const res = await window.MovieService.adminUpdateStatus(id, 'now_showing');
+      if (res.success) {
+        window.showToast(`Đã đưa phim "${m.title}" trở lại danh sách Đang chiếu!`);
+        await loadMoviesFromApi();
+      } else {
+        alert('Lỗi đổi trạng thái phim: ' + (res.message || 'Không thể cập nhật'));
+      }
+    } catch (err) {
+      alert('Lỗi kết nối máy chủ: ' + err.message);
+    }
   }
 };
 
-// Xóa phim
-window.deleteMovie = function (id) {
+// Xóa phim vĩnh viễn (DELETE /api/admin/movies/{id})
+window.deleteMovie = async function (id) {
   const m = moviesList.find(x => x.id === id);
-  if (m && confirm(`CẢNH BÁO: Bạn có chắc chắn muốn xoá vĩnh viễn phim "${m.title}"?`)) {
-    moviesList = moviesList.filter(x => x.id !== id);
-    renderMoviesTable(moviesList);
-    window.showToast(`Đã xoá bộ phim thành công!`, 'danger');
+  if (m && confirm(`CẢNH BÁO: Bạn có chắc chắn muốn xoá vĩnh viễn phim "${m.title}" khỏi cơ sở dữ liệu?`)) {
+    try {
+      const res = await window.MovieService.adminDeleteMovie(id);
+      if (res.success) {
+        window.showToast(`Đã xoá bộ phim thành công!`, 'danger');
+        await loadMoviesFromApi();
+      } else {
+        alert('Lỗi xoá phim: ' + (res.message || 'Không thể xóa'));
+      }
+    } catch (err) {
+      alert('Lỗi kết nối máy chủ: ' + err.message);
+    }
   }
 };

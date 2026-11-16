@@ -12,6 +12,18 @@ const MovieService = {
     return raw.replace(/\/api\/v1\/?$/, '');
   },
 
+  _getHeaders() {
+    const headers = { 'Content-Type': 'application/json' };
+    const token = (window.StorageService && window.StorageService.getToken()) ||
+                  localStorage.getItem('cinema_access_token') ||
+                  localStorage.getItem('token') ||
+                  sessionStorage.getItem('cinema_access_token');
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+    return headers;
+  },
+
   /**
    * Danh sách phim mẫu fallback khi Backend API offline
    */
@@ -177,6 +189,172 @@ const MovieService = {
       return {
         success: true,
         data: fallback,
+        message: error.response?.data?.detail || error.message
+      };
+    }
+  },
+
+  // ========================================================================
+  // ADMIN APIS (QUẢN TRỊ DANH MỤC PHIM)
+  // ========================================================================
+
+  /**
+   * Lấy danh sách phim cho trang Admin (có phân trang, tìm kiếm & lọc trạng thái)
+   */
+  async adminGetMovies({ page = 1, limit = 100, status = 'all', search = '' } = {}) {
+    try {
+      const baseUrl = this._getBaseUrl();
+      const params = new URLSearchParams();
+      params.append('page', page);
+      params.append('limit', limit);
+      if (status && status !== 'all') params.append('status', status);
+      if (search && search.trim()) params.append('search', search.trim());
+
+      const url = `${baseUrl}/api/admin/movies?${params.toString()}`;
+      if (window.apiClient) {
+        const res = await window.apiClient.get(url);
+        return { success: true, data: res.data };
+      }
+      const res = await fetch(url, { headers: this._getHeaders() });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Không thể tải danh sách phim quản trị');
+      return { success: true, data };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.response?.data?.detail || error.message
+      };
+    }
+  },
+
+  /**
+   * Thêm phim mới vào Database
+   */
+  async adminCreateMovie(payload) {
+    try {
+      const baseUrl = this._getBaseUrl();
+      const url = `${baseUrl}/api/admin/movies`;
+      if (window.apiClient) {
+        const res = await window.apiClient.post(url, payload);
+        return { success: true, data: res.data };
+      }
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: this._getHeaders(),
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Không thể tạo phim mới');
+      return { success: true, data };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.response?.data?.detail || error.message
+      };
+    }
+  },
+
+  /**
+   * Cập nhật thông tin phim
+   */
+  async adminUpdateMovie(movieId, payload) {
+    try {
+      const baseUrl = this._getBaseUrl();
+      const url = `${baseUrl}/api/admin/movies/${movieId}`;
+      if (window.apiClient) {
+        const res = await window.apiClient.put(url, payload);
+        return { success: true, data: res.data };
+      }
+      const res = await fetch(url, {
+        method: 'PUT',
+        headers: this._getHeaders(),
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Không thể cập nhật phim');
+      return { success: true, data };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.response?.data?.detail || error.message
+      };
+    }
+  },
+
+  /**
+   * Ngừng chiếu phim (chuyển sang 'ended')
+   */
+  async adminStopMovie(movieId) {
+    try {
+      const baseUrl = this._getBaseUrl();
+      const url = `${baseUrl}/api/admin/movies/${movieId}/stop`;
+      if (window.apiClient) {
+        const res = await window.apiClient.patch(url);
+        return { success: true, data: res.data };
+      }
+      const res = await fetch(url, {
+        method: 'PATCH',
+        headers: this._getHeaders()
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Không thể ngừng chiếu phim');
+      return { success: true, data };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.response?.data?.detail || error.message
+      };
+    }
+  },
+
+  /**
+   * Điều chỉnh trạng thái phim (now_showing, coming_soon, ended)
+   */
+  async adminUpdateStatus(movieId, status) {
+    try {
+      const baseUrl = this._getBaseUrl();
+      const url = `${baseUrl}/api/admin/movies/${movieId}/status`;
+      if (window.apiClient) {
+        const res = await window.apiClient.patch(url, { status });
+        return { success: true, data: res.data };
+      }
+      const res = await fetch(url, {
+        method: 'PATCH',
+        headers: this._getHeaders(),
+        body: JSON.stringify({ status })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Không thể cập nhật trạng thái');
+      return { success: true, data };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.response?.data?.detail || error.message
+      };
+    }
+  },
+
+  /**
+   * Xóa vĩnh viễn phim khỏi hệ thống
+   */
+  async adminDeleteMovie(movieId) {
+    try {
+      const baseUrl = this._getBaseUrl();
+      const url = `${baseUrl}/api/admin/movies/${movieId}`;
+      if (window.apiClient) {
+        const res = await window.apiClient.delete(url);
+        return { success: true, data: res.data };
+      }
+      const res = await fetch(url, {
+        method: 'DELETE',
+        headers: this._getHeaders()
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Không thể xóa phim');
+      return { success: true, data };
+    } catch (error) {
+      return {
+        success: false,
         message: error.response?.data?.detail || error.message
       };
     }
