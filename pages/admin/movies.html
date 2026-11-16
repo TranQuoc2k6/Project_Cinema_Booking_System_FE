@@ -230,17 +230,48 @@
             </div>
           </div>
 
-          <!-- URL POSTER & LIVE IMAGE PREVIEW (SRS 1.2) -->
+          <!-- UPLOAD POSTER & LIVE IMAGE PREVIEW (SRS 1.2 & Task: API Upload Poster) -->
           <div class="form-group">
-            <label class="form-label" for="movie-poster-url">Đường dẫn ảnh Poster (URL hoặc Upload)</label>
-            <input type="url" id="movie-poster-url" class="form-control" placeholder="https://images.unsplash.com/..." oninput="updatePosterPreview(this.value)">
+            <label class="form-label">
+              <i class="fa-solid fa-image text-primary"></i>
+              Ảnh Poster Phim <span class="text-danger">*</span>
+              <span class="text-xs text-muted" style="font-weight: normal; margin-left: 8px;">(Định dạng: .jpg, .jpeg, .png | Dung lượng tối đa: 5MB)</span>
+            </label>
+
+            <!-- Khối Upload File Poster -->
+            <div class="poster-upload-control" style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: var(--border-radius-md); padding: 12px; margin-bottom: 10px;">
+              <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                <label for="movie-poster-file" class="btn btn-secondary btn-sm" style="cursor: pointer; margin-bottom: 0;">
+                  <i class="fa-solid fa-cloud-arrow-up text-primary"></i> Chọn ảnh từ máy tính
+                </label>
+                <input type="file" id="movie-poster-file" accept=".jpg,.jpeg,.png,image/jpeg,image/png" style="display: none;" onchange="handlePosterFileSelect(event)">
+                <span class="text-xs text-muted">hoặc nhập URL trực tiếp bên dưới</span>
+              </div>
+
+              <!-- Badge hiển thị thông tin file đã chọn -->
+              <div id="poster-file-info-badge" style="display: none; margin-top: 10px; padding: 6px 12px; background: rgba(6, 182, 212, 0.15); border: 1px solid rgba(6, 182, 212, 0.4); border-radius: 6px; font-size: 12px; color: #38bdf8; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                  <i class="fa-solid fa-file-image"></i>
+                  <span id="poster-file-name" style="font-weight: 600;"></span>
+                  <span id="poster-file-size" style="color: #94a3b8; font-size: 11px;"></span>
+                </div>
+                <button type="button" class="btn-clear-file" onclick="clearSelectedPosterFile()" title="Hủy chọn file" style="background: none; border: none; color: #f43f5e; cursor: pointer; padding: 2px 6px;">
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Input URL Poster dự phòng hoặc dán link online -->
+            <input type="url" id="movie-poster-url" class="form-control" placeholder="https://images.unsplash.com/... (hoặc tự động điền khi upload)" oninput="updatePosterPreview(this.value)">
             
-            <div class="image-preview-box" id="poster-preview-container">
+            <!-- Khung Xem trước Poster (Live Image Preview) -->
+            <div class="image-preview-box" id="poster-preview-container" style="position: relative;">
               <div class="image-preview-placeholder" id="poster-preview-placeholder">
                 <i class="fa-regular fa-image" style="font-size: 2.2rem; color: var(--color-primary);"></i>
                 <span>Xem trước hình ảnh Poster (Live Image Preview)</span>
+                <span style="font-size: 11px; color: var(--text-muted);">Hỗ trợ xem trước tức thì khi chọn file từ máy hoặc dán link URL</span>
               </div>
-              <img id="poster-preview-img" src="" alt="Preview" style="display: none;">
+              <img id="poster-preview-img" src="" alt="Poster Preview" style="display: none; max-height: 220px; object-fit: contain; border-radius: 6px;">
             </div>
           </div>
 
@@ -259,6 +290,17 @@
           </button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- MODAL: LIGHTBOX PHÓNG TO POSTER PHIM (HD PREVIEW) -->
+  <div class="modal-overlay" id="poster-lightbox-modal" onclick="closePosterLightbox(event)">
+    <div style="position: relative; max-width: 90vw; max-height: 90vh; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 101;">
+      <button type="button" onclick="closePosterLightbox()" style="position: absolute; top: -40px; right: 0; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2); color: #fff; width: 36px; height: 36px; border-radius: 50%; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <img id="lightbox-poster-img" src="" alt="Poster Full HD" style="max-height: 80vh; max-width: 85vw; object-fit: contain; border-radius: 8px; box-shadow: 0 20px 50px rgba(0,0,0,0.9), 0 0 30px rgba(6, 182, 212, 0.4); border: 2px solid rgba(6, 182, 212, 0.4);">
+      <div id="lightbox-poster-title" style="margin-top: 12px; font-weight: 700; color: #f8fafc; font-size: 16px; text-shadow: 0 2px 4px rgba(0,0,0,0.8);"></div>
     </div>
   </div>
 

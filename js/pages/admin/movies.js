@@ -6,6 +6,18 @@
  */
 
 let moviesList = [];
+let selectedPosterFile = null;
+
+// Chuyển đổi đường dẫn ảnh tương đối thành URL đầy đủ để hiển thị
+function getPosterFullUrl(url) {
+  if (!url) return 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=400&auto=format&fit=crop&q=80';
+  if (url.startsWith('blob:') || url.startsWith('data:') || url.startsWith('http://') || url.startsWith('https://')) {
+    return url;
+  }
+  const base = (window.API_BASE_URL || 'http://127.0.0.1:8000').replace(/\/api\/v1\/?$/, '').replace(/\/api\/?$/, '');
+  const cleanPath = url.startsWith('/') ? url : `/${url}`;
+  return `${base}${cleanPath}`;
+}
 
 document.addEventListener('DOMContentLoaded', function () {
   loadMoviesFromApi();
@@ -159,13 +171,25 @@ function renderMoviesTable(list) {
     }
 
     const genresStr = Array.isArray(movie.genres) ? movie.genres.join(', ') : (movie.genres || 'Chưa phân loại');
+    const posterSrc = getPosterFullUrl(movie.poster_url);
+    const escapedTitle = (movie.title || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
     return `
       <tr>
         <td>
-          <img src="${movie.poster_url || 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=400'}"
-               alt="${movie.title}"
-               style="width: 46px; height: 64px; object-fit: cover; border-radius: 4px; box-shadow: 0 2px 6px rgba(0,0,0,0.5);">
+          <div style="position: relative; display: inline-block; cursor: pointer;"
+               onclick="openPosterLightbox('${posterSrc}', '${escapedTitle}')"
+               title="Nhấn để xem trước Poster phóng to">
+            <img src="${posterSrc}"
+                 alt="${movie.title}"
+                 style="width: 48px; height: 68px; object-fit: cover; border-radius: 6px; box-shadow: 0 4px 10px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.15); transition: transform 0.2s;"
+                 onmouseover="this.style.transform='scale(1.08)'"
+                 onmouseout="this.style.transform='scale(1)'"
+                 onerror="this.src='https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=400'">
+            <span style="position: absolute; bottom: 2px; right: 2px; background: rgba(0,0,0,0.75); color: #38bdf8; font-size: 9px; padding: 1px 3px; border-radius: 3px;">
+              <i class="fa-solid fa-magnifying-glass-plus"></i>
+            </span>
+          </div>
         </td>
         <td>
           <div style="font-weight: 700; color: #fff; font-size: 15px;">${movie.title}</div>
@@ -221,6 +245,115 @@ function initMovieFilterEvents() {
   if (statusFilter) statusFilter.addEventListener('change', applyFilter);
 }
 
+// ============================================================================
+// XỬ LÝ UPLOAD POSTER VÀ LIVE PREVIEW (SRS 1.2 & TASK 4)
+// ============================================================================
+
+// Xử lý khi người dùng chọn file ảnh từ máy tính
+window.handlePosterFileSelect = function (event) {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+
+  // 1. Kiểm tra định dạng đuôi file (.jpg, .jpeg, .png)
+  const allowedExts = ['.jpg', '.jpeg', '.png'];
+  const fileName = (file.name || '').toLowerCase();
+  const isExtValid = allowedExts.some(ext => fileName.endsWith(ext));
+  const isMimeValid = !file.type || file.type.startsWith('image/');
+
+  if (!isExtValid) {
+    alert(`Định dạng file không được hỗ trợ! Vui lòng chỉ chọn ảnh có định dạng .jpg, .jpeg, hoặc .png.`);
+    event.target.value = '';
+    return;
+  }
+
+  // 2. Kiểm tra giới hạn dung lượng: Tối đa 5MB
+  const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+  if (file.size > MAX_SIZE) {
+    const curMB = (file.size / (1024 * 1024)).toFixed(2);
+    alert(`Dung lượng ảnh (${curMB}MB) vượt quá giới hạn tối đa 5MB cho phép!\nVui lòng nén hoặc chọn ảnh khác có dung lượng nhỏ hơn 5MB.`);
+    event.target.value = '';
+    return;
+  }
+
+  if (file.size === 0) {
+    alert('File ảnh trống (0 bytes). Vui lòng chọn file ảnh hợp lệ!');
+    event.target.value = '';
+    return;
+  }
+
+  selectedPosterFile = file;
+
+  // 3. Hiển thị huy hiệu thông tin file đã chọn
+  const badge = document.getElementById('poster-file-info-badge');
+  const nameEl = document.getElementById('poster-file-name');
+  const sizeEl = document.getElementById('poster-file-size');
+  if (badge && nameEl && sizeEl) {
+    nameEl.textContent = file.name;
+    const sizeStr = file.size >= 1024 * 1024
+      ? `${(file.size / (1024 * 1024)).toFixed(2)} MB`
+      : `${Math.round(file.size / 1024)} KB`;
+    sizeEl.textContent = `(${sizeStr})`;
+    badge.style.display = 'flex';
+  }
+
+  // 4. Tạo Object URL xem trước hình ảnh trực tiếp (Live Image Preview)
+  try {
+    const previewUrl = URL.createObjectURL(file);
+    updatePosterPreview(previewUrl);
+  } catch (err) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      updatePosterPreview(e.target.result);
+    };
+    reader.readAsDataURL(file);
+  }
+};
+
+// Hủy chọn file ảnh đã chọn
+window.clearSelectedPosterFile = function () {
+  selectedPosterFile = null;
+  const fileInput = document.getElementById('movie-poster-file');
+  if (fileInput) fileInput.value = '';
+
+  const badge = document.getElementById('poster-file-info-badge');
+  if (badge) badge.style.display = 'none';
+
+  // Khôi phục preview theo input URL hiện tại (nếu có)
+  const urlInput = document.getElementById('movie-poster-url');
+  updatePosterPreview(urlInput ? urlInput.value : '');
+};
+
+// Live Image Preview (SRS Task 4 & SRS 1.2)
+window.updatePosterPreview = function (url) {
+  const img = document.getElementById('poster-preview-img');
+  const placeholder = document.getElementById('poster-preview-placeholder');
+  if (!img || !placeholder) return;
+
+  if (url && url.trim().length > 3) {
+    const fullUrl = getPosterFullUrl(url.trim());
+    img.src = fullUrl;
+    img.style.display = 'block';
+    placeholder.style.display = 'none';
+    img.onerror = function () {
+      img.style.display = 'none';
+      placeholder.style.display = 'flex';
+      placeholder.innerHTML = `
+        <i class="fa-solid fa-triangle-exclamation" style="font-size: 2rem; color: #f43f5e;"></i>
+        <span style="color: #f43f5e; font-weight: 500;">Không thể tải hình ảnh từ nguồn này</span>
+        <span style="font-size: 11px; color: var(--text-muted);">Vui lòng kiểm tra lại đường dẫn hoặc chọn file ảnh từ máy</span>
+      `;
+    };
+  } else {
+    img.style.display = 'none';
+    placeholder.style.display = 'flex';
+    placeholder.innerHTML = `
+      <i class="fa-regular fa-image" style="font-size: 2.2rem; color: var(--color-primary);"></i>
+      <span>Xem trước hình ảnh Poster (Live Image Preview)</span>
+      <span style="font-size: 11px; color: var(--text-muted);">Hỗ trợ xem trước tức thì khi chọn file từ máy hoặc dán link URL</span>
+    `;
+  }
+};
+
 // Modal Thêm / Sửa phim
 window.openMovieModal = function (editMovieObj = null) {
   const modal = document.getElementById('movie-modal');
@@ -229,7 +362,7 @@ window.openMovieModal = function (editMovieObj = null) {
   const form = document.getElementById('movie-form');
 
   form.reset();
-  updatePosterPreview('');
+  clearSelectedPosterFile();
 
   if (editMovieObj) {
     titleEl.textContent = 'Chỉnh sửa thông tin phim: ' + editMovieObj.title;
@@ -246,6 +379,7 @@ window.openMovieModal = function (editMovieObj = null) {
     titleEl.textContent = 'Thêm phim mới vào hệ thống';
     editId.value = '';
     document.getElementById('movie-release-date').value = new Date().toISOString().split('T')[0];
+    updatePosterPreview('');
   }
 
   modal.classList.add('show');
@@ -254,30 +388,10 @@ window.openMovieModal = function (editMovieObj = null) {
 window.closeMovieModal = function () {
   const modal = document.getElementById('movie-modal');
   if (modal) modal.classList.remove('show');
+  clearSelectedPosterFile();
 };
 
-// Live Image Preview (SRS Task 4)
-window.updatePosterPreview = function (url) {
-  const img = document.getElementById('poster-preview-img');
-  const placeholder = document.getElementById('poster-preview-placeholder');
-
-  if (url && url.trim().length > 5) {
-    img.src = url;
-    img.style.display = 'block';
-    placeholder.style.display = 'none';
-    img.onerror = function () {
-      img.style.display = 'none';
-      placeholder.style.display = 'flex';
-      placeholder.innerHTML = '<span>⚠️ Không thể nạp ảnh từ đường dẫn này</span>';
-    };
-  } else {
-    img.style.display = 'none';
-    placeholder.style.display = 'flex';
-    placeholder.innerHTML = '<span>🖼️</span><span>Xem trước hình ảnh Poster (Live Image Preview)</span>';
-  }
-};
-
-// Xử lý lưu form phim (Gọi API POST/PUT lên Backend Database)
+// Xử lý lưu form phim (Tự động Upload Poster nếu có file mới -> Gọi API POST/PUT Database)
 window.handleMovieSubmit = async function (e) {
   e.preventDefault();
   const editId = document.getElementById('movie-edit-id').value;
@@ -286,7 +400,7 @@ window.handleMovieSubmit = async function (e) {
   const release_date = document.getElementById('movie-release-date').value;
   const genresStr = document.getElementById('movie-genres-input').value;
   const status = document.getElementById('movie-status').value;
-  const poster_url = document.getElementById('movie-poster-url').value.trim() || 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=400&auto=format&fit=crop&q=80';
+  let poster_url = document.getElementById('movie-poster-url').value.trim();
   const description = document.getElementById('movie-description').value.trim();
 
   // Validation ràng buộc
@@ -305,29 +419,63 @@ window.handleMovieSubmit = async function (e) {
 
   const saveBtn = document.getElementById('btn-save-movie');
   const originalBtnHtml = saveBtn ? saveBtn.innerHTML : '';
-  if (saveBtn) {
-    saveBtn.disabled = true;
-    saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang lưu...';
-  }
-
-  const genreIds = mapGenreTextToIds(genresStr);
-  const payload = {
-    title,
-    duration_minutes: duration,
-    duration: duration,
-    release_date,
-    status,
-    poster_url,
-    description,
-    genre_ids: genreIds
-  };
 
   try {
+    // BƯỚC 1: NẾU NGƯỜI DÙNG CHỌN FILE ẢNH MỚI -> UPLOAD LÊN SERVER QUA API UPLOAD POSTER
+    if (selectedPosterFile) {
+      if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up fa-spin"></i> Đang tải poster lên máy chủ...';
+      }
+
+      const uploadRes = await window.MovieService.uploadPoster(selectedPosterFile);
+      if (!uploadRes.success) {
+        alert('Lỗi upload ảnh poster: ' + (uploadRes.message || 'Không thể tải ảnh lên máy chủ. Vui lòng thử lại!'));
+        if (saveBtn) {
+          saveBtn.disabled = false;
+          saveBtn.innerHTML = originalBtnHtml;
+        }
+        return;
+      }
+
+      // Lấy URL poster từ phản hồi backend
+      const uploadedData = uploadRes.data?.data || uploadRes.data;
+      poster_url = uploadedData.poster_url || uploadedData.full_url;
+      document.getElementById('movie-poster-url').value = poster_url;
+      console.info('[Poster Upload] Upload ảnh poster thành công:', poster_url);
+    }
+
+    if (!poster_url) {
+      poster_url = 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=400&auto=format&fit=crop&q=80';
+    }
+
+    // BƯỚC 2: TIẾN HÀNH LƯU DỮ LIỆU PHIM VÀO DATABASE
+    if (saveBtn) {
+      saveBtn.disabled = true;
+      saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang lưu phim vào Database...';
+    }
+
+    const genreIds = mapGenreTextToIds(genresStr);
+    const payload = {
+      title,
+      duration_minutes: duration,
+      duration: duration,
+      release_date,
+      status,
+      poster_url,
+      description,
+      genre_ids: genreIds
+    };
+
     if (editId) {
       // Cập nhật phim (PUT /api/admin/movies/{id})
       const res = await window.MovieService.adminUpdateMovie(parseInt(editId, 10), payload);
       if (res.success) {
-        window.showToast('Cập nhật thông tin phim "' + title + '" thành công!');
+        if (window.showToast) {
+          window.showToast('Cập nhật thông tin phim "' + title + '" thành công!');
+        } else {
+          alert('Cập nhật thông tin phim "' + title + '" thành công!');
+        }
         closeMovieModal();
         await loadMoviesFromApi();
       } else {
@@ -337,7 +485,11 @@ window.handleMovieSubmit = async function (e) {
       // Thêm phim mới (POST /api/admin/movies)
       const res = await window.MovieService.adminCreateMovie(payload);
       if (res.success) {
-        window.showToast('Đã thêm thành công phim mới: ' + title);
+        if (window.showToast) {
+          window.showToast('Đã thêm thành công phim mới: ' + title);
+        } else {
+          alert('Đã thêm thành công phim mới: ' + title);
+        }
         closeMovieModal();
         await loadMoviesFromApi();
       } else {
@@ -353,6 +505,29 @@ window.handleMovieSubmit = async function (e) {
       saveBtn.innerHTML = originalBtnHtml;
     }
   }
+};
+
+// ============================================================================
+// LIGHTBOX PHÓNG TO POSTER PHIM (HD PREVIEW)
+// ============================================================================
+window.openPosterLightbox = function (url, title = '') {
+  const modal = document.getElementById('poster-lightbox-modal');
+  const img = document.getElementById('lightbox-poster-img');
+  const titleEl = document.getElementById('lightbox-poster-title');
+
+  if (modal && img) {
+    img.src = url;
+    if (titleEl) titleEl.textContent = title ? `Poster: ${title}` : 'Ảnh Poster Phim';
+    modal.classList.add('show');
+  }
+};
+
+window.closePosterLightbox = function (event) {
+  if (event && event.target && event.target.tagName === 'IMG') {
+    return; // Không đóng nếu click vào chính tấm ảnh
+  }
+  const modal = document.getElementById('poster-lightbox-modal');
+  if (modal) modal.classList.remove('show');
 };
 
 // Chỉnh sửa phim
