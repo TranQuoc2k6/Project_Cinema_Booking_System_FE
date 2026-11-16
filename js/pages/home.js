@@ -84,7 +84,7 @@ function renderMovieList(container, movies) {
                 </h4>
 
                 <div class="text-xs text-slate-400 mt-2 mb-3">
-                    <i class="fa-regular fa-clock mr-1 text-cyan-400"></i>
+                    <i class="fa-regular fa-clock mr-1 text-[#ff5e1e]"></i>
                     ${movie.duration_minutes || 'Chưa cập nhật'} phút
                 </div>
 
@@ -95,7 +95,7 @@ function renderMovieList(container, movies) {
                     </a>
 
                     <a href="pages/showtimes.html?movieId=${movie.id}"
-                       class="flex-1 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-black text-center">
+                       class="flex-1 py-2 rounded-xl bg-gradient-to-r from-[#ff5e1e] to-[#ea580c] hover:brightness-110 text-white text-xs font-bold text-center shadow-[0_0_12px_rgba(255,94,30,0.4)]">
                         Đặt vé
                     </a>
                 </div>
@@ -145,7 +145,7 @@ function renderBanner(movies) {
 
                 <div class="absolute bottom-4 left-4 right-4">
 
-                    <span class="text-xs font-semibold text-cyan-400">
+                    <span class="text-xs font-bold text-[#d4ff00]">
                         ${movie.status === 'coming_soon' ? 'Sắp công chiếu' : 'Đang công chiếu'}
                     </span>
 
@@ -162,12 +162,12 @@ function renderBanner(movies) {
 
             <div class="p-4 bg-slate-950/90 flex items-center justify-between border-t border-slate-800">
 
-                <span class="text-xs text-slate-400">
-                    CINEMA 3D
+                <span class="text-xs font-mono font-bold text-[#ff5e1e]">
+                    LUMEN CINEMA
                 </span>
 
                 <a href="pages/movie-detail.html?id=${movie.id}"
-                   class="px-4 py-2 rounded-xl bg-cyan-500 text-slate-950 font-extrabold text-xs">
+                   class="px-4 py-2 rounded-xl bg-gradient-to-r from-[#ff5e1e] to-[#ea580c] text-white font-bold text-xs shadow-md">
                     XEM CHI TIẾT
                 </a>
 

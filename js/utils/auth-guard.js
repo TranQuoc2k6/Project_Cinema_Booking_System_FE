@@ -46,8 +46,9 @@
     sessionStorage.getItem('cinema_access_token');
 
   // 2. Kiểm tra thông tin User
+  const storageUser = window.StorageService ? window.StorageService.getUser() : null;
   const userJson =
-    (window.StorageService && JSON.stringify(window.StorageService.getUser())) ||
+    (storageUser ? JSON.stringify(storageUser) : null) ||
     localStorage.getItem('cinema_user_info') ||
     localStorage.getItem('user') ||
     localStorage.getItem('cinema_user') ||

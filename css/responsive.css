@@ -67,6 +67,34 @@
     flex: 1;
     min-width: 140px;
   }
+
+  /* Filter bars for Cinemas & Rooms */
+  .admin-filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.85rem;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .admin-filter-bar .filter-group-inputs {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .admin-filter-bar .filter-group-inputs .search-input-group {
+    max-width: 100% !important;
+    width: 100%;
+    flex: 1 1 100%;
+  }
+
+  .admin-filter-bar .filter-group-inputs .form-select {
+    max-width: 100% !important;
+    flex: 1;
+    min-width: 140px;
+  }
 }
 
 /* 3. Mobile Screens (<= 768px) */
@@ -130,6 +158,37 @@
   /* Form columns collapsing */
   div[style*="grid-template-columns"] {
     grid-template-columns: 1fr !important;
+  }
+
+  /* Admin Filter Bars on Mobile */
+  .admin-filter-bar .filter-group-inputs {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-filter-bar .filter-group-inputs .form-select {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: unset;
+  }
+
+  /* Seat Map Modal Toolbars on Mobile */
+  .seat-tool-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .brush-buttons {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .seat-stats-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
   }
 }
 

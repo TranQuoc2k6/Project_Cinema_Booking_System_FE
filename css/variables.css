@@ -1,36 +1,41 @@
 /* ==========================================================================
-   CSS VARIABLES & DESIGN TOKENS - CINEMA MODERN 3D ULTRA-DETAILED SYSTEM
-   High-Tech 3D Cyber Cinema Aesthetics for Admin Portal & Client Platform
+   CSS VARIABLES & DESIGN TOKENS - LUMEN CINEMA & STUDIO HQ SYSTEM
+   Neo-Editorial Swiss Architecture meets Tokyo Cyber-Aesthetics
+   Bảng màu: Obsidian Titanium (#0b0d12), Electric Tangerine (#ff5e1e),
+             Acid Lime (#d4ff00), Warm Champagne Gold (#e6ca85), Velvet Violet (#7c3aed)
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap');
 
 :root {
   /* ========================================================================
-     1. VIBRANT CINEMA 3D COLOR PALETTE
+     1. LUMEN NEO-EDITORIAL ACCENT COLOR PALETTE
      ======================================================================== */
-  --color-primary: #06b6d4;          /* Cyber Neon Cyan */
-  --color-primary-hover: #0891b2;
-  --color-primary-light: rgba(6, 182, 212, 0.15);
-  --color-primary-glow: rgba(6, 182, 212, 0.55);
-  --color-primary-deep: #0e7490;
+  --color-primary: #ff5e1e;          /* Electric Tangerine */
+  --color-primary-hover: #ea580c;
+  --color-primary-light: rgba(255, 94, 30, 0.15);
+  --color-primary-glow: rgba(255, 94, 30, 0.55);
+  --color-primary-deep: #c2410c;
 
-  --color-accent: #f43f5e;           /* Cinema Crimson Rose */
-  --color-accent-hover: #e11d48;
-  --color-accent-light: rgba(244, 63, 94, 0.15);
-  --color-accent-glow: rgba(244, 63, 94, 0.55);
-  --color-accent-deep: #be123c;
+  --color-accent: #d4ff00;           /* Acid Lime (High-contrast Swiss Poster) */
+  --color-accent-hover: #b8dc00;
+  --color-accent-light: rgba(212, 255, 0, 0.15);
+  --color-accent-glow: rgba(212, 255, 0, 0.55);
+  --color-accent-deep: #84cc16;
 
-  --color-secondary: #8b5cf6;        /* Electric Violet */
-  --color-secondary-hover: #7c3aed;
-  --color-secondary-light: rgba(139, 92, 246, 0.18);
-  --color-secondary-glow: rgba(139, 92, 246, 0.5);
-  --color-secondary-deep: #6d28d9;
+  --color-secondary: #7c3aed;        /* Velvet Violet (Sweetbox & ScreenX) */
+  --color-secondary-hover: #6d28d9;
+  --color-secondary-light: rgba(124, 58, 237, 0.18);
+  --color-secondary-glow: rgba(124, 58, 237, 0.5);
+  --color-secondary-deep: #5b21b6;
 
-  --color-gold: #f59e0b;             /* Cyber Golden Amber */
-  --color-gold-hover: #d97706;
-  --color-gold-light: rgba(245, 158, 11, 0.18);
-  --color-gold-glow: rgba(245, 158, 11, 0.5);
+  --color-gold: #e6ca85;             /* Warm Champagne Gold (VIP / Royal) */
+  --color-gold-hover: #d8b96f;
+  --color-gold-light: rgba(230, 202, 133, 0.18);
+  --color-gold-glow: rgba(230, 202, 133, 0.5);
+
+  --color-lime: #d4ff00;
+  --color-lime-glow: rgba(212, 255, 0, 0.6);
 
   /* Status / Feedback Colors */
   --color-success: #10b981;          /* Neon Emerald */
@@ -42,40 +47,40 @@
   --color-warning-bg: rgba(245, 158, 11, 0.15);
   --color-warning-border: rgba(245, 158, 11, 0.4);
 
-  --color-danger: #f43f5e;           /* Rose Red */
-  --color-danger-bg: rgba(244, 63, 94, 0.15);
-  --color-danger-border: rgba(244, 63, 94, 0.4);
+  --color-danger: #ef4444;           /* Vivid Red */
+  --color-danger-bg: rgba(239, 68, 68, 0.15);
+  --color-danger-border: rgba(239, 68, 68, 0.4);
 
-  --color-info: #06b6d4;             /* Cyan Info */
-  --color-info-bg: rgba(6, 182, 212, 0.15);
-  --color-info-border: rgba(6, 182, 212, 0.4);
-
-  /* ========================================================================
-     2. DEEP SPACE THEME PALETTE & SURFACES
-     ======================================================================== */
-  --bg-deep-space: #070a12;
-  --bg-body: #070a12;
-  --bg-sidebar: rgba(10, 15, 29, 0.88);
-  --bg-sidebar-hover: rgba(30, 41, 59, 0.7);
-  --bg-card: rgba(15, 23, 42, 0.75);
-  --bg-card-hover: rgba(26, 38, 66, 0.85);
-  --bg-surface: rgba(15, 23, 42, 0.68);
-  --bg-surface-elevated: rgba(30, 41, 59, 0.85);
-  --bg-input: rgba(11, 17, 32, 0.82);
+  --color-info: #0284c7;             /* Precision Cobalt */
+  --color-info-bg: rgba(2, 132, 199, 0.15);
+  --color-info-border: rgba(2, 132, 199, 0.4);
 
   /* ========================================================================
-     3. 3D GLASSMORPHISM & SPECULAR TOKENS
+     2. OBSIDIAN TITANIUM & SURFACE ELEVATED
      ======================================================================== */
-  --glass-bg: rgba(15, 23, 42, 0.72);
-  --glass-bg-elevated: rgba(21, 32, 57, 0.82);
-  --glass-border: rgba(255, 255, 255, 0.09);
-  --glass-border-light: rgba(255, 255, 255, 0.18);
-  --glass-border-hover: rgba(6, 182, 212, 0.45);
-  --glass-border-focus: rgba(6, 182, 212, 0.65);
+  --bg-deep-space: #0b0d12;
+  --bg-body: #0b0d12;
+  --bg-sidebar: rgba(19, 23, 34, 0.92);
+  --bg-sidebar-hover: rgba(31, 36, 51, 0.7);
+  --bg-card: rgba(19, 23, 34, 0.82);
+  --bg-card-hover: rgba(27, 33, 49, 0.9);
+  --bg-surface: rgba(19, 23, 34, 0.72);
+  --bg-surface-elevated: rgba(31, 36, 51, 0.88);
+  --bg-input: rgba(11, 13, 18, 0.85);
+
+  /* ========================================================================
+     3. 3D GLASSMORPHISM & SPECULAR LIGHT TOKENS
+     ======================================================================== */
+  --glass-bg: rgba(19, 23, 34, 0.78);
+  --glass-bg-elevated: rgba(25, 30, 45, 0.88);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-border-light: rgba(255, 255, 255, 0.16);
+  --glass-border-hover: rgba(255, 94, 30, 0.45);
+  --glass-border-focus: rgba(255, 94, 30, 0.65);
   --glass-blur: blur(20px);
   --glass-blur-deep: blur(28px);
-  --glass-specular-gradient: linear-gradient(135deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.04) 40%, transparent 100%);
-  --glass-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.65), 0 0 25px rgba(6, 182, 212, 0.1);
+  --glass-specular-gradient: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.03) 40%, transparent 100%);
+  --glass-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.75), 0 0 25px rgba(255, 94, 30, 0.08);
 
   /* ========================================================================
      4. 3D PERSPECTIVE & TRANSFORM TOKENS
@@ -87,31 +92,31 @@
   --transform-3d-press: translateY(2px) scale(0.985);
 
   /* ========================================================================
-     5. DYNAMIC CINEMA 3D GRADIENTS
+     5. DYNAMIC LUMEN CINEMA GRADIENTS
      ======================================================================== */
-  --gradient-primary: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
-  --gradient-accent: linear-gradient(135deg, #f43f5e 0%, #ec4899 100%);
-  --gradient-secondary: linear-gradient(135deg, #8b5cf6 0%, #d946ef 100%);
-  --gradient-gold: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
-  --gradient-emerald: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
-  --gradient-cinema: linear-gradient(135deg, #06b6d4 0%, #8b5cf6 45%, #f43f5e 100%);
-  --gradient-cinema-glow: linear-gradient(135deg, rgba(6, 182, 212, 0.4) 0%, rgba(139, 92, 246, 0.3) 50%, rgba(244, 63, 94, 0.4) 100%);
-  --gradient-surface: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
-  --gradient-3d-border: linear-gradient(135deg, rgba(6, 182, 212, 0.6) 0%, rgba(139, 92, 246, 0.4) 50%, rgba(244, 63, 94, 0.6) 100%);
-  --gradient-carbon: linear-gradient(145deg, #0d1527 0%, #080d19 100%);
+  --gradient-primary: linear-gradient(135deg, #ff5e1e 0%, #ea580c 100%);
+  --gradient-accent: linear-gradient(135deg, #d4ff00 0%, #a3e635 100%);
+  --gradient-secondary: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+  --gradient-gold: linear-gradient(135deg, #e6ca85 0%, #b45309 100%);
+  --gradient-emerald: linear-gradient(135deg, #10b981 0%, #d4ff00 100%);
+  --gradient-cinema: linear-gradient(135deg, #ff5e1e 0%, #d4ff00 50%, #7c3aed 100%);
+  --gradient-cinema-glow: linear-gradient(135deg, rgba(255, 94, 30, 0.4) 0%, rgba(212, 255, 0, 0.3) 50%, rgba(124, 58, 237, 0.4) 100%);
+  --gradient-surface: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.01) 100%);
+  --gradient-3d-border: linear-gradient(135deg, rgba(255, 94, 30, 0.6) 0%, rgba(212, 255, 0, 0.4) 50%, rgba(124, 58, 237, 0.6) 100%);
+  --gradient-carbon: linear-gradient(145deg, #131722 0%, #0b0d12 100%);
 
   /* ========================================================================
      6. MULTI-LAYER 3D SHADOW TOKENS
      ======================================================================== */
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
   --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.55);
-  --shadow-lg: 0 18px 45px rgba(0, 0, 0, 0.7);
-  --shadow-3d-card: 0 20px 40px -15px rgba(0, 0, 0, 0.85), 0 0 30px rgba(6, 182, 212, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.16);
-  --shadow-3d-card-hover: 0 30px 60px -15px rgba(0, 0, 0, 0.95), 0 0 45px rgba(6, 182, 212, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.28);
-  --shadow-3d-btn: 0 10px 25px -5px rgba(6, 182, 212, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.35);
-  --shadow-neon-cyan: 0 0 30px rgba(6, 182, 212, 0.45);
-  --shadow-neon-rose: 0 0 30px rgba(244, 63, 94, 0.45);
-  --shadow-neon-violet: 0 0 30px rgba(139, 92, 246, 0.45);
+  --shadow-lg: 0 18px 45px rgba(0, 0, 0, 0.75);
+  --shadow-3d-card: 0 20px 40px -15px rgba(0, 0, 0, 0.85), 0 0 30px rgba(255, 94, 30, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  --shadow-3d-card-hover: 0 30px 60px -15px rgba(0, 0, 0, 0.95), 0 0 45px rgba(255, 94, 30, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  --shadow-3d-btn: 0 10px 25px -5px rgba(255, 94, 30, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  --shadow-neon-cyan: 0 0 30px rgba(255, 94, 30, 0.45);
+  --shadow-neon-rose: 0 0 30px rgba(212, 255, 0, 0.45);
+  --shadow-neon-violet: 0 0 30px rgba(124, 58, 237, 0.45);
   --shadow-neon-emerald: 0 0 30px rgba(16, 185, 129, 0.45);
 
   /* ========================================================================
@@ -119,7 +124,7 @@
      ======================================================================== */
   --border-color: rgba(255, 255, 255, 0.08);
   --border-light: rgba(255, 255, 255, 0.15);
-  --border-focus: #06b6d4;
+  --border-focus: #ff5e1e;
 
   /* ========================================================================
      8. TYPOGRAPHY
@@ -128,10 +133,10 @@
   --text-white: #ffffff;
   --text-muted: #94a3b8;
   --text-sub: #64748b;
-  --text-primary: #06b6d4;
-  --text-accent: #f43f5e;
-  --text-secondary: #8b5cf6;
-  --text-gold: #f59e0b;
+  --text-primary: #ff5e1e;
+  --text-accent: #d4ff00;
+  --text-secondary: #7c3aed;
+  --text-gold: #e6ca85;
 
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-heading: 'Outfit', 'Inter', -apple-system, sans-serif;

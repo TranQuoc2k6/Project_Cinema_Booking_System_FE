@@ -208,7 +208,8 @@
                 return;
             }
 
-            alert(`🎉 THANH TOÁN THÀNH CÔNG!\n\nVé xem phim "${bookingData.movieTitle}" (${bookingData.seats.join(', ')}) đã được gửi tới email ${email}.\nChúc bạn có buổi xem phim vui vẻ tại CINEMA 3D!`);
+            const seatsStr = Array.isArray(bookingData.seats) ? bookingData.seats.join(', ') : (bookingData.seats || '');
+            alert(`🎉 THANH TOÁN THÀNH CÔNG!\n\nVé xem phim "${bookingData.movieTitle}" (${seatsStr}) đã được gửi tới email ${email}.\nChúc bạn có buổi xem phim vui vẻ tại CINEMA 3D!`);
             sessionStorage.removeItem('current_booking');
             window.location.href = '../index.html';
         }
