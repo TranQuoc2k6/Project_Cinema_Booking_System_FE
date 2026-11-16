@@ -191,37 +191,24 @@
                     </form>
                 </div>
 
-                <!-- TAB 3: LỊCH SỬ VÉ -->
+                <!-- TAB 3: LỊCH SỬ VÉ (Task T3C5D0B) -->
                 <div id="tab-tickets" class="tab-content hidden">
-                    <h3 class="text-lg font-black text-white uppercase tracking-wider mb-6 flex items-center gap-3">
-                        <i class="fa-solid fa-ticket text-cyan-400"></i> Lịch Sử Đặt Vé Của Bạn
-                    </h3>
-
-                    <div class="space-y-4">
-                        <div class="glass-card p-4 rounded-2xl border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                            <div>
-                                <span class="text-[10px] font-black px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 uppercase">ĐÃ THANH TOÁN</span>
-                                <h4 class="text-base font-bold text-white mt-1">Dune: Hành Tinh Cát 2 (IMAX 3D)</h4>
-                                <p class="text-xs text-slate-400 mt-0.5">CGV Landmark 81 • Phòng 01 • Ghế: <b class="text-cyan-400">C05, C06</b></p>
-                                <span class="text-[11px] text-slate-500">Suất: 18:30 Ngày 14/11/2026</span>
-                            </div>
-                            <div class="text-right">
-                                <span class="text-base font-black text-emerald-400">260.000 đ</span>
-                                <button onclick="alert('Mã QR vé: 3D-DUNE-89421')" class="block mt-2 text-xs text-cyan-400 hover:underline">Xem mã QR vé</button>
-                            </div>
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+                        <h3 class="text-lg font-black text-white uppercase tracking-wider flex items-center gap-3">
+                            <i class="fa-solid fa-ticket text-cyan-400"></i> Vé Của Tôi
+                        </h3>
+                        <!-- Filter tab con -->
+                        <div class="flex items-center gap-1 bg-slate-900 p-1 rounded-xl border border-slate-800 text-[11px]">
+                            <button onclick="setProfileTicketFilter('all', this)" class="prof-ticket-filter-btn active px-2.5 py-1 rounded-lg font-bold bg-cyan-500 text-slate-950">Tất cả</button>
+                            <button onclick="setProfileTicketFilter('upcoming', this)" class="prof-ticket-filter-btn px-2.5 py-1 rounded-lg font-bold text-slate-400 hover:text-white">Sắp chiếu</button>
+                            <button onclick="setProfileTicketFilter('watched', this)" class="prof-ticket-filter-btn px-2.5 py-1 rounded-lg font-bold text-slate-400 hover:text-white">Đã xem</button>
+                            <button onclick="setProfileTicketFilter('cancelled', this)" class="prof-ticket-filter-btn px-2.5 py-1 rounded-lg font-bold text-slate-400 hover:text-white">Đã huỷ</button>
                         </div>
+                    </div>
 
-                        <div class="glass-card p-4 rounded-2xl border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                            <div>
-                                <span class="text-[10px] font-black px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 uppercase">ĐÃ THANH TOÁN</span>
-                                <h4 class="text-base font-bold text-white mt-1">Mai (18+) (2D Digital)</h4>
-                                <p class="text-xs text-slate-400 mt-0.5">CGV Bà Triệu • Phòng 02 • Ghế: <b class="text-cyan-400">A01</b></p>
-                                <span class="text-[11px] text-slate-500">Suất: 20:00 Ngày 10/11/2026</span>
-                            </div>
-                            <div class="text-right">
-                                <span class="text-base font-black text-emerald-400">90.000 đ</span>
-                                <button onclick="alert('Mã QR vé: 3D-MAI-10294')" class="block mt-2 text-xs text-cyan-400 hover:underline">Xem mã QR vé</button>
-                            </div>
+                    <div id="profile-tickets-list" class="space-y-4">
+                        <div class="text-center py-8 text-slate-400 text-xs">
+                            <i class="fa-solid fa-spinner fa-spin mr-1"></i> Đang tải danh sách vé...
                         </div>
                     </div>
                 </div>
@@ -238,6 +225,7 @@
     <script src="../js/utils/validation.js"></script>
     <script src="../js/services/auth.service.js"></script>
     <script src="../js/services/user.service.js"></script>
+    <script src="../js/services/booking.service.js"></script>
 
     <script>
         // 1. Chuyển Tab
@@ -248,6 +236,7 @@
             });
 
             document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            if (tabId === 'tickets') loadProfileTickets();
             const activeBtn = document.getElementById(`tab-btn-${tabId}`);
             activeBtn.className = 'tab-btn active w-full py-2.5 px-4 rounded-xl text-xs font-bold transition-all text-left flex items-center gap-2';
         }
@@ -384,6 +373,69 @@
                 ? 'p-3 rounded-xl text-xs mb-4 bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 block'
                 : 'p-3 rounded-xl text-xs mb-4 bg-rose-500/20 text-rose-400 border border-rose-500/40 block';
             el.innerText = msg;
+        }
+
+        // Quản lý vé trong tab Profile (Task T3C5D0B)
+        let profileTicketTab = 'all';
+
+        async function loadProfileTickets() {
+            const listEl = document.getElementById('profile-tickets-list');
+            if (!listEl) return;
+            listEl.innerHTML = '<div class="text-center py-8 text-slate-400 text-xs"><i class="fa-solid fa-spinner fa-spin mr-1"></i> Đang tải danh sách vé...</div>';
+
+            const filter = profileTicketTab === 'all' ? null : profileTicketTab;
+            const res = await window.BookingService.getMyTickets(filter);
+
+            if (!res.success || !res.data || res.data.length === 0) {
+                listEl.innerHTML = '<div class="text-center py-8 text-slate-500 text-xs">Không có vé nào trong mục này.</div>';
+                return;
+            }
+
+            listEl.innerHTML = res.data.map(ticket => {
+                const st = ticket.showtime;
+                const movie = st.movie;
+                const cinema = st.cinema;
+                const startTime = new Date(st.start_time);
+                const formattedTime = startTime.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+                const formattedDate = startTime.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                const seatList = ticket.seats.map(s => s.seat_number).join(', ') || 'Chưa xếp ghế';
+
+                let badge = '';
+                if (ticket.status === 'DA_THANH_TOAN' || ticket.payment_status === 'PAID') {
+                    badge = '<span class="text-[10px] font-black px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 uppercase">ĐÃ THANH TOÁN</span>';
+                } else if (ticket.status === 'GIU_CHO' || ticket.payment_status === 'PENDING') {
+                    badge = '<span class="text-[10px] font-black px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30 uppercase">CHỜ THANH TOÁN</span>';
+                } else {
+                    badge = '<span class="text-[10px] font-black px-2 py-0.5 rounded bg-rose-500/20 text-rose-400 border border-rose-500/30 uppercase">ĐÃ HUỶ</span>';
+                }
+
+                return `
+                    <div class="glass-card p-4 rounded-2xl border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <div>
+                            ${badge}
+                            <span class="text-[10px] font-mono text-slate-500 ml-2">#${ticket.booking_code}</span>
+                            <h4 class="text-base font-bold text-white mt-1">${movie.title}</h4>
+                            <p class="text-xs text-slate-400 mt-0.5">${cinema.name} • ${st.room_name} • Ghế: <b class="text-cyan-400">${seatList}</b></p>
+                            <span class="text-[11px] text-slate-500"><i class="fa-regular fa-clock mr-1"></i> Suất: ${formattedTime} - ${formattedDate}</span>
+                        </div>
+                        <div class="text-right shrink-0">
+                            <span class="text-base font-black text-emerald-400">${Number(ticket.total_price).toLocaleString('vi-VN')} đ</span>
+                            <button onclick="alert('Mã QR tra cứu vé:\n${ticket.booking_code}\nPhim: ${movie.title}\nGhế: ${seatList}')" class="block mt-2 text-xs text-cyan-400 hover:underline">
+                                Xem mã vé QR
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function setProfileTicketFilter(tab, btn) {
+            profileTicketTab = tab;
+            document.querySelectorAll('.prof-ticket-filter-btn').forEach(b => {
+                b.className = 'prof-ticket-filter-btn px-2.5 py-1 rounded-lg font-bold text-slate-400 hover:text-white';
+            });
+            btn.className = 'prof-ticket-filter-btn active px-2.5 py-1 rounded-lg font-bold bg-cyan-500 text-slate-950';
+            loadProfileTickets();
         }
 
         function handleLogout() {

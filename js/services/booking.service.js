@@ -1,7 +1,7 @@
 /**
  * ==========================================================================
  * BOOKING SERVICE (js/services/booking.service.js)
- * Quản lý các cuộc gọi API Đặt vé, Danh sách đơn vé và Hủy đơn vé
+ * Quản lý các cuộc gọi API Đặt vé, Danh sách đơn vé và Hủy đơn vé (Task T3C5D0B)
  * ==========================================================================
  */
 
@@ -21,14 +21,14 @@ const BookingService = {
   },
 
   /**
-   * Tạo đơn đặt vé mới
-   * @param {object} payload { showtime_id, seat_ids: number[], customer_name, customer_email, customer_phone, total_price, payment_method }
+   * Tạo đơn đặt vé mới (giữ ghế)
+   * @param {object} payload { showtime_id, seat_ids: number[] }
    * @returns {Promise<object>}
    */
   async createBooking(payload) {
     try {
       const baseUrl = this._getBaseUrl();
-      const url = `${baseUrl}/api/bookings`;
+      const url = `${baseUrl}/api/bookings/hold`;
       if (window.apiClient) {
         const res = await window.apiClient.post(url, payload);
         return { success: true, data: res.data };
@@ -51,13 +51,17 @@ const BookingService = {
   },
 
   /**
-   * Lấy lịch sử đặt vé của người dùng hiện tại
+   * Lấy lịch sử vé của tôi kèm lọc trạng thái (Task T3C5D0B)
+   * @param {string|null} statusFilter - 'upcoming' | 'watched' | 'cancelled' | null
    * @returns {Promise<object>}
    */
-  async getMyBookings() {
+  async getMyTickets(statusFilter = null) {
     try {
       const baseUrl = this._getBaseUrl();
-      const url = `${baseUrl}/api/bookings/my-bookings`;
+      let url = `${baseUrl}/api/bookings/my-tickets`;
+      if (statusFilter && statusFilter !== 'all') {
+        url += `?status_filter=${encodeURIComponent(statusFilter)}`;
+      }
       if (window.apiClient) {
         const res = await window.apiClient.get(url);
         return { success: true, data: res.data };
@@ -69,13 +73,20 @@ const BookingService = {
     } catch (error) {
       return {
         success: false,
-        message: error.response?.data?.detail || error.message
+        message: error.response?.data?.detail || error.message || 'Lỗi kết nối máy chủ'
       };
     }
   },
 
   /**
-   * Lấy chi tiết đơn vé theo mã hoặc ID
+   * Alias tương thích
+   */
+  async getMyBookings(statusFilter = null) {
+    return this.getMyTickets(statusFilter);
+  },
+
+  /**
+   * Lấy chi tiết đơn vé theo ID
    * @param {number|string} bookingId 
    * @returns {Promise<object>}
    */
@@ -90,34 +101,6 @@ const BookingService = {
       const res = await fetch(url, { headers: this._getHeaders() });
       const data = await res.json();
       if (!res.ok) throw new Error(data.detail || 'Không tìm thấy đơn vé');
-      return { success: true, data };
-    } catch (error) {
-      return {
-        success: false,
-        message: error.response?.data?.detail || error.message
-      };
-    }
-  },
-
-  /**
-   * Hủy đơn vé
-   * @param {number|string} bookingId 
-   * @returns {Promise<object>}
-   */
-  async cancelBooking(bookingId) {
-    try {
-      const baseUrl = this._getBaseUrl();
-      const url = `${baseUrl}/api/bookings/${bookingId}/cancel`;
-      if (window.apiClient) {
-        const res = await window.apiClient.post(url);
-        return { success: true, data: res.data };
-      }
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: this._getHeaders()
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail || 'Không thể hủy đơn vé');
       return { success: true, data };
     } catch (error) {
       return {
