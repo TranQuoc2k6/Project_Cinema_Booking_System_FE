@@ -83,22 +83,58 @@ const MovieService = {
       duration_minutes: 94,
       status: 'now_showing',
       release_date: '2024-03-08',
-      poster_url: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=600',
+      poster_url: 'https://image.tmdb.org/t/p/original/kDp1vUBnMpe8ak4rjgl3cLELqjU.jpg',
       description: 'Po đối mặt với thử thách mới để trở thành Thủ lĩnh tâm linh.',
       age_rating: 'P',
       genres: ['Hoạt Hình', 'Hài Hước']
     },
     {
       id: 6,
+      title: 'Godzilla x Kong: Đế Chế Mới',
+      original_title: 'Godzilla x Kong',
+      duration_minutes: 115,
+      status: 'now_showing',
+      release_date: '2024-03-29',
+      poster_url: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=800&auto=format&fit=crop&q=80',
+      description: 'Trận chiến đỉnh cao giữa Godzilla và Kong chống lại mối đe dọa khổng lồ.',
+      age_rating: 'T13',
+      genres: ['Hành Động', 'Khoa Học Viễn Tưởng']
+    },
+    {
+      id: 7,
       title: 'Deadpool & Wolverine',
       original_title: 'Deadpool & Wolverine',
       duration_minutes: 128,
       status: 'coming_soon',
-      release_date: '2026-11-20',
-      poster_url: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=600',
-      description: 'Sự kết hợp bùng nổ giữa hai dị nhân biểu tượng của Marvel.',
+      release_date: '2026-11-28',
+      poster_url: 'https://image.tmdb.org/t/p/original/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg',
+      description: 'Sự kết hợp bùng nổ và hài hước giữa hai dị nhân biểu tượng của Marvel trong chuyến phiêu lưu đa vũ trụ.',
       age_rating: 'T18',
-      genres: ['Hành Động', 'Hài Hước']
+      genres: ['Hành Động', 'Hài Hước', 'Khoa Học Viễn Tưởng']
+    },
+    {
+      id: 8,
+      title: 'Moana 2: Hành Trình Biển Cả',
+      original_title: 'Moana 2',
+      duration_minutes: 100,
+      status: 'coming_soon',
+      release_date: '2026-12-05',
+      poster_url: 'https://image.tmdb.org/t/p/original/yh64qw9mgXBvlaWDi7Q9tpUBAvH.jpg',
+      description: 'Moana cùng á thần Maui bước vào hành trình thám hiểm đại dương bao la đầy hiểm nguy và kỳ vĩ mới.',
+      age_rating: 'P',
+      genres: ['Hoạt Hình', 'Hài Hước']
+    },
+    {
+      id: 9,
+      title: 'Võ Sĩ Giác Đấu II (Gladiator II)',
+      original_title: 'Gladiator II',
+      duration_minutes: 148,
+      status: 'coming_soon',
+      release_date: '2026-12-18',
+      poster_url: 'https://image.tmdb.org/t/p/original/2cxhvwyEwRlysAmRH4iodkvo0z5.jpg',
+      description: 'Trường thiên sử thi rực lửa tại đấu trường La Mã cổ đại nối tiếp huyền thoại đoạt giải Oscar năm 2000.',
+      age_rating: 'T18',
+      genres: ['Hành Động', 'Tâm Lý']
     }
   ],
 
