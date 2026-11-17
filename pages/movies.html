@@ -123,9 +123,9 @@
 
                 <!-- Tabs Filter Status -->
                 <div class="flex items-center gap-2 bg-[#0b0d12]/90 p-1.5 rounded-2xl border border-white/10">
-                    <button onclick="filterMovies('ALL', this)" class="filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-[#ff5e1e] to-[#ea580c] text-white shadow-[0_0_15px_rgba(255,94,30,0.4)]">Tất Cả</button>
-                    <button onclick="filterMovies('NOW_SHOWING', this)" class="filter-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-colors">Đang Chiếu</button>
-                    <button onclick="filterMovies('COMING_SOON', this)" class="filter-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-colors">Sắp Chiếu</button>
+                    <button data-status="ALL" onclick="filterMovies('ALL', this)" class="filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-[#ff5e1e] to-[#ea580c] text-white shadow-[0_0_15px_rgba(255,94,30,0.4)]">Tất Cả</button>
+                    <button data-status="now_showing" onclick="filterMovies('now_showing', this)" class="filter-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-colors">Đang Chiếu</button>
+                    <button data-status="coming_soon" onclick="filterMovies('coming_soon', this)" class="filter-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-colors">Sắp Chiếu</button>
                 </div>
             </div>
 
@@ -160,127 +160,10 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="../js/utils/storage.js"></script>
+    <script src="../js/utils/format.js"></script>
     <script src="../js/config/api.js"></script>
     <script src="../js/services/auth.service.js"></script>
-
-    <script>
-        let allMovies = [];
-        let currentFilter = 'ALL';
-
-        function updateAuthHeader() {
-            const authSec = document.getElementById('header-auth-section');
-            if (!authSec) return;
-            const isAuth = window.StorageService ? window.StorageService.isAuthenticated() : false;
-            const user = window.StorageService ? window.StorageService.getUser() : null;
-
-            if (isAuth && user) {
-                authSec.innerHTML = `
-                    <div class="flex items-center gap-3">
-                        <a href="profile.html" class="flex items-center gap-2 text-xs font-semibold text-slate-200 hover:text-cyan-400">
-                            <img src="${user.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100'}" class="w-8 h-8 rounded-full border border-cyan-500/40 object-cover">
-                            <span>${user.full_name || user.email}</span>
-                        </a>
-                        <button onclick="window.AuthService.logout('login.html')" class="px-3 py-1.5 rounded-full glass-panel text-xs text-slate-400 hover:text-rose-400">
-                            <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                        </button>
-                    </div>
-                `;
-            }
-        }
-
-        async function fetchMovies() {
-            try {
-                const res = await fetch('http://127.0.0.1:8000/api/v1/movies');
-                if (res.ok) {
-                    const data = await res.json();
-                    allMovies = Array.isArray(data) ? data : (data.items || []);
-                }
-            } catch (e) {
-                console.log('Dùng fallback data');
-            }
-
-            if (allMovies.length === 0) {
-                allMovies = [
-                    { id: 1, title: 'Mai (18+)', duration_minutes: 131, status: 'NOW_SHOWING', release_date: '2024-02-10', poster_url: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=600', description: 'Câu chuyện tình yêu đầy cảm xúc và trắc trở giữa Mai và Dương.' },
-                    { id: 2, title: 'Lật Mặt 7: Một Điều Ước', duration_minutes: 138, status: 'NOW_SHOWING', release_date: '2024-04-26', poster_url: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=600', description: 'Tình mẫu tử thiêng liêng và lòng hiếu thảo của những người con.' },
-                    { id: 3, title: 'Dune: Hành Tinh Cát 2', duration_minutes: 166, status: 'NOW_SHOWING', release_date: '2024-03-01', poster_url: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=600', description: 'Hành trình trả thù và định đoạt tương lai thiên hà của Paul Atreides.' },
-                    { id: 4, title: 'Quật Mộ Trùng Ma (Exhuma)', duration_minutes: 134, status: 'NOW_SHOWING', release_date: '2024-03-15', poster_url: 'https://images.unsplash.com/photo-1563089145-599997674d42?q=80&w=600', description: 'Bí ẩn ngôi mộ cổ đe dọa sinh mạng của gia tộc giàu có.' },
-                    { id: 5, title: 'Kung Fu Panda 4', duration_minutes: 94, status: 'NOW_SHOWING', release_date: '2024-03-08', poster_url: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=600', description: 'Po đối mặt với thử thách mới để trở thành Thủ lĩnh tâm linh.' },
-                    { id: 6, title: 'Deadpool & Wolverine', duration_minutes: 128, status: 'COMING_SOON', release_date: '2026-11-20', poster_url: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=600', description: 'Sự kết hợp bùng nổ giữa hai dị nhân biểu tượng của Marvel.' }
-                ];
-            }
-
-            renderMovies(allMovies);
-        }
-
-        function renderMovies(list) {
-            const grid = document.getElementById('movies-grid');
-            if (list.length === 0) {
-                grid.innerHTML = '<div class="col-span-full py-16 text-center text-slate-500">Không tìm thấy bộ phim nào phù hợp.</div>';
-                return;
-            }
-
-            grid.innerHTML = list.map(m => {
-                const isNowShowing = (m.status || '').toUpperCase() === 'NOW_SHOWING';
-                return `
-                <div class="glass-card rounded-2xl overflow-hidden border border-slate-800 hover:-translate-y-2 transition-all duration-300 flex flex-col">
-                    <div class="relative h-[320px] overflow-hidden">
-                        <img src="${m.poster_url || 'https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=600'}" class="w-full h-full object-cover">
-                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
-                        <span class="absolute top-3 left-3 ${isNowShowing ? 'bg-[#d4ff00] text-[#0b0d12]' : 'bg-[#ff5e1e] text-white'} text-[10px] font-black px-2 py-0.5 rounded shadow-[0_0_10px_rgba(0,0,0,0.5)]">
-                            ${isNowShowing ? 'ĐANG CHIẾU' : 'SẮP CHIẾU'}
-                        </span>
-                    </div>
-                    <div class="p-4 bg-[#131722] flex-1 flex flex-col justify-between">
-                        <div>
-                            <h4 class="text-base font-bold text-white truncate" title="${m.title}">${m.title}</h4>
-                            <div class="flex items-center justify-between text-xs text-slate-400 mt-1 mb-2">
-                                <span><i class="fa-regular fa-clock mr-1 text-[#ff5e1e]"></i> ${m.duration_minutes || 120}p</span>
-                                <span>KC: ${m.release_date || '2026'}</span>
-                            </div>
-                            <p class="text-xs text-slate-400 line-clamp-2">${m.description || 'Trải nghiệm điện ảnh đỉnh cao.'}</p>
-                        </div>
-                        <div class="flex gap-2 mt-4 pt-3 border-t border-white/5">
-                            <a href="movie-detail.html?id=${m.id}" class="flex-1 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold text-center border border-white/10">Chi tiết</a>
-                            <a href="showtimes.html?movieId=${m.id}" class="flex-1 py-2 rounded-xl bg-gradient-to-r from-[#ff5e1e] to-[#ea580c] hover:brightness-110 text-white text-xs font-bold text-center shadow-[0_0_12px_rgba(255,94,30,0.4)]">Đặt vé</a>
-                        </div>
-                    </div>
-                </div>
-            `;
-            }).join('');
-        }
-
-        function filterMovies(status, btn) {
-            currentFilter = status;
-            document.querySelectorAll('.filter-btn').forEach(b => {
-                b.className = 'filter-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-colors';
-            });
-            btn.className = 'filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-[#ff5e1e] to-[#ea580c] text-white shadow-[0_0_15px_rgba(255,94,30,0.4)]';
-            handleSearch();
-        }
-
-        function handleSearch() {
-            const query = (document.getElementById('search-input')?.value || '').toLowerCase().trim();
-            const genre = (document.getElementById('genre-select')?.value || '').toLowerCase().trim();
-
-            const filtered = allMovies.filter(m => {
-                const s = (m.status || '').toUpperCase();
-                const matchStatus = currentFilter === 'ALL' || s === currentFilter;
-                const matchQuery = !query || m.title.toLowerCase().includes(query) || (m.description && m.description.toLowerCase().includes(query));
-                
-                const genresText = Array.isArray(m.genres) ? m.genres.join(' ') : (m.genres || '');
-                const matchGenre = !genre || genresText.toLowerCase().includes(genre) || (m.description && m.description.toLowerCase().includes(genre)) || (m.title && m.title.toLowerCase().includes(genre));
-                
-                return matchStatus && matchQuery && matchGenre;
-            });
-
-            renderMovies(filtered);
-        }
-
-        window.onload = function() {
-            updateAuthHeader();
-            fetchMovies();
-        };
-    </script>
+    <script src="../js/services/movie.service.js"></script>
+    <script src="../js/pages/movies.js"></script>
 </body>
 </html>
