@@ -114,6 +114,18 @@
    * Tải danh sách cụm rạp cho bộ lọc
    */
   async function loadCinemasFilter() {
+    if (window.CinemaService) {
+      try {
+        const res = await window.CinemaService.getCinemas();
+        if (res && res.success && Array.isArray(res.data) && res.data.length > 0) {
+          state.allCinemas = res.data;
+          renderCinemaFilterOptions();
+          return;
+        }
+      } catch (e) {
+        console.warn('[ShowtimesPage] Lỗi tải cụm rạp từ CinemaService:', e);
+      }
+    }
     if (window.ShowtimeService) {
       state.allCinemas = window.ShowtimeService.getCinemasList();
       renderCinemaFilterOptions();
@@ -414,21 +426,32 @@
       return;
     }
 
-    const res = await window.ShowtimeService.getShowtimes({
-      date: state.selectedDate,
-      movieId: state.selectedMovieId !== 'all' ? state.selectedMovieId : null,
-      cinemaId: state.selectedCinemaId !== 'all' ? state.selectedCinemaId : null,
-      city: state.selectedCity !== 'all' ? state.selectedCity : null,
-      format: state.selectedFormat !== 'all' ? state.selectedFormat : null
-    });
+    try {
+      const res = await window.ShowtimeService.getShowtimes({
+        date: state.selectedDate,
+        movieId: state.selectedMovieId !== 'all' ? state.selectedMovieId : null,
+        cinemaId: state.selectedCinemaId !== 'all' ? state.selectedCinemaId : null,
+        city: state.selectedCity !== 'all' ? state.selectedCity : null,
+        format: state.selectedFormat !== 'all' ? state.selectedFormat : null
+      });
 
-    if (res.success && Array.isArray(res.data)) {
-      state.currentShowtimes = res.data;
-    } else {
-      state.currentShowtimes = [];
+      if (res && res.success && Array.isArray(res.data)) {
+        state.currentShowtimes = res.data;
+      } else {
+        state.currentShowtimes = [];
+      }
+
+      renderShowtimesContent();
+    } catch (err) {
+      console.error('[ShowtimesPage] Lỗi tải suất chiếu:', err);
+      container.innerHTML = `
+        <div class="glass-panel p-8 rounded-3xl border border-rose-500/40 text-center space-y-3">
+          <i class="fa-solid fa-triangle-exclamation text-rose-400 text-3xl"></i>
+          <p class="text-sm font-semibold text-rose-300">Đã xảy ra lỗi khi tải dữ liệu suất chiếu.</p>
+          <button onclick="window.location.reload()" class="px-4 py-2 rounded-xl bg-slate-800 text-cyan-400 hover:bg-slate-700 text-xs font-bold">Thử lại</button>
+        </div>
+      `;
     }
-
-    renderShowtimesContent();
   }
 
   /**
@@ -439,11 +462,37 @@
     const countBadge = document.getElementById('showtimes-count-badge');
     if (!container) return;
 
-    // Áp dụng bộ lọc client-side cho search keyword và hidePastShowtimes
-    let list = [...state.currentShowtimes];
+    // Chuẩn hóa danh sách phẳng (phòng trường hợp Backend trả về dạng group nested)
+    let list = [];
+    if (Array.isArray(state.currentShowtimes)) {
+      if (state.currentShowtimes.length > 0 && state.currentShowtimes[0].cinema && Array.isArray(state.currentShowtimes[0].showtimes)) {
+        state.currentShowtimes.forEach(group => {
+          const c = group.cinema || {};
+          (group.showtimes || []).forEach(st => {
+            const rType = st.room_type || st.format || '2D';
+            let formatStr = '2D Digital';
+            if (rType.toUpperCase().includes('IMAX')) formatStr = 'IMAX 3D Laser';
+            else if (rType.toUpperCase().includes('VIP') || rType.toUpperCase().includes('GOLD')) formatStr = 'VIP Gold Class';
+            else if (rType.toUpperCase().includes('3D')) formatStr = '3D Digital';
+
+            list.push({
+              ...st,
+              cinema_id: c.id,
+              cinema_name: c.name,
+              cinema_brand: c.name,
+              city: c.city,
+              cinema_address: c.address,
+              format: formatStr
+            });
+          });
+        });
+      } else {
+        list = [...state.currentShowtimes];
+      }
+    }
 
     if (state.searchKeyword) {
-      list = list.filter(s => s.movie_title.toLowerCase().includes(state.searchKeyword));
+      list = list.filter(s => (s.movie_title || '').toLowerCase().includes(state.searchKeyword));
     }
 
     if (state.hidePastShowtimes) {
@@ -465,28 +514,30 @@
     // Gom nhóm theo Cụm Rạp (Cinema Grouping)
     const cinemaGroups = {};
     list.forEach(showtime => {
-      const cId = showtime.cinema_id;
+      const cId = showtime.cinema_id || 1;
       if (!cinemaGroups[cId]) {
         cinemaGroups[cId] = {
           cinema_id: cId,
-          cinema_name: showtime.cinema_name,
-          cinema_brand: showtime.cinema_brand,
-          city: showtime.city,
-          district: showtime.district,
-          cinema_address: showtime.cinema_address,
+          cinema_name: showtime.cinema_name || 'Cụm Rạp',
+          cinema_brand: showtime.cinema_brand || showtime.cinema_name || 'Cinema',
+          city: showtime.city || '',
+          district: showtime.district || '',
+          cinema_address: showtime.cinema_address || '',
           movies: {}
         };
       }
 
       const mId = showtime.movie_id;
       if (!cinemaGroups[cId].movies[mId]) {
+        // Tìm thông tin bổ sung từ state.allMovies nếu có
+        const movieDetail = state.allMovies.find(m => String(m.id) === String(mId)) || {};
         cinemaGroups[cId].movies[mId] = {
           movie_id: mId,
-          movie_title: showtime.movie_title,
-          poster_url: showtime.poster_url,
-          duration_minutes: showtime.duration_minutes,
-          age_rating: showtime.age_rating,
-          genres: showtime.genres,
+          movie_title: showtime.movie_title || movieDetail.title || 'Phim Chiếu',
+          poster_url: showtime.poster_url || movieDetail.poster_url || 'https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=400',
+          duration_minutes: showtime.duration_minutes || movieDetail.duration_minutes || 120,
+          age_rating: showtime.age_rating || movieDetail.age_rating || 'P',
+          genres: (showtime.genres && showtime.genres.length > 0) ? showtime.genres : (movieDetail.genres || ['Điện ảnh']),
           formats: {}
         };
       }
@@ -515,9 +566,10 @@
               <div>
                 <div class="flex items-center gap-2 flex-wrap">
                   <h2 class="text-lg sm:text-xl font-black text-white">${cinema.cinema_name}</h2>
+                  ${cinema.city ? `
                   <span class="text-[10px] font-black px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-500/30">
                     <i class="fa-solid fa-map-pin text-[9px] mr-1"></i>${cinema.city}
-                  </span>
+                  </span>` : ''}
                 </div>
                 <p class="text-xs text-slate-400 mt-1 flex items-center gap-1.5">
                   <i class="fa-solid fa-location-dot text-rose-500"></i>
@@ -527,7 +579,7 @@
             </div>
 
             <div class="flex items-center gap-3 self-start sm:self-auto">
-              <a href="https://maps.google.com/?q=${encodeURIComponent(cinema.cinema_name + ' ' + cinema.cinema_address)}" target="_blank" class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-xs font-semibold text-slate-300 hover:text-white border border-slate-800 transition-all flex items-center gap-1.5">
+              <a href="https://maps.google.com/?q=${encodeURIComponent(cinema.cinema_name + ' ' + (cinema.cinema_address || ''))}" target="_blank" class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-xs font-semibold text-slate-300 hover:text-white border border-slate-800 transition-all flex items-center gap-1.5">
                 <i class="fa-solid fa-diamond-turn-right text-cyan-400"></i> Chỉ đường
               </a>
             </div>
@@ -552,7 +604,7 @@
                     <a href="movie-detail.html?id=${movie.movie_id}" class="block text-sm sm:text-base font-black text-white hover:text-cyan-400 transition-colors line-clamp-2">
                       ${movie.movie_title}
                     </a>
-                    <p class="text-xs text-slate-400 mt-1 line-clamp-1">${movie.genres ? movie.genres.join(' • ') : 'Điện ảnh'}</p>
+                    <p class="text-xs text-slate-400 mt-1 line-clamp-1">${Array.isArray(movie.genres) ? movie.genres.join(' • ') : (movie.genres || 'Điện ảnh')}</p>
                     <a href="movie-detail.html?id=${movie.movie_id}" class="inline-flex items-center gap-1 text-[11px] font-semibold text-cyan-400 hover:underline mt-2">
                       Xem chi tiết <i class="fa-solid fa-angle-right text-[9px]"></i>
                     </a>
@@ -593,8 +645,20 @@
    */
   function renderShowtimeChip(showtime) {
     const isPast = window.ShowtimeService.isPastShowtime(showtime.start_time);
-    const timeFormatted = window.FormatUtil ? window.FormatUtil.extractTime(showtime.start_time) : showtime.start_time.split(' ')[1];
-    const endTimeFormatted = window.FormatUtil ? window.FormatUtil.extractTime(showtime.end_time) : (showtime.end_time ? showtime.end_time.split(' ')[1] : '');
+    const extractTimeString = (t) => {
+      if (!t) return '--:--';
+      if (window.FormatUtil && typeof window.FormatUtil.extractTime === 'function') {
+        return window.FormatUtil.extractTime(t);
+      }
+      if (typeof t === 'string') {
+        const clean = t.replace('T', ' ');
+        return clean.includes(' ') ? clean.split(' ')[1].substring(0, 5) : clean.substring(0, 5);
+      }
+      return '--:--';
+    };
+
+    const timeFormatted = extractTimeString(showtime.start_time);
+    const endTimeFormatted = extractTimeString(showtime.end_time);
     const priceFormatted = window.FormatUtil ? window.FormatUtil.currency(showtime.price) : `${showtime.price} đ`;
 
     if (isPast) {
@@ -620,10 +684,12 @@
     // Suất chiếu hợp lệ: Sáng đẹp, click được, hiệu ứng hover phát sáng neon đồng bộ
     let borderAccent = 'border-slate-700/80 hover:border-cyan-300 hover:shadow-cyan-500/30';
     let typeBadge = '';
-    if (showtime.format.includes('IMAX')) {
+    const formatUpper = (showtime.format || showtime.room_type || '2D').toUpperCase();
+
+    if (formatUpper.includes('IMAX')) {
       borderAccent = 'border-purple-500/50 hover:border-purple-300 hover:shadow-purple-500/30';
       typeBadge = '<span class="text-[8px] font-black uppercase px-1 rounded bg-purple-900/90 text-purple-200 border border-purple-500/40">IMAX</span>';
-    } else if (showtime.format.includes('VIP')) {
+    } else if (formatUpper.includes('VIP') || formatUpper.includes('GOLD')) {
       borderAccent = 'border-amber-500/50 hover:border-amber-300 hover:shadow-amber-500/30';
       typeBadge = '<span class="text-[8px] font-black uppercase px-1 rounded bg-amber-900/90 text-amber-200 border border-amber-500/40">VIP</span>';
     }
@@ -706,7 +772,7 @@
       console.warn('Không thể lưu session:', e);
     }
 
-    const timeOnly = window.FormatUtil ? window.FormatUtil.extractTime(showtime.start_time) : showtime.start_time.split(' ')[1];
+    const timeOnly = window.FormatUtil ? window.FormatUtil.extractTime(showtime.start_time) : (showtime.start_time.includes(' ') ? showtime.start_time.split(' ')[1] : showtime.start_time);
 
     // Điều hướng sang trang chọn ghế theo yêu cầu:
     // pages/booking.html?showtimeId=15&movieId=...&cinema=...&time=...
@@ -737,13 +803,14 @@
    * Helper: Class màu sắc cho định dạng phòng chiếu (Đồng bộ tươi sáng & sắc nét)
    */
   function getFormatBadgeClass(format) {
-    if (format.includes('IMAX')) {
+    const fmt = (format || '').toUpperCase();
+    if (fmt.includes('IMAX')) {
       return 'bg-gradient-to-r from-purple-950/90 to-indigo-950/90 text-purple-200 border border-purple-400/70 shadow-sm shadow-purple-500/25';
     }
-    if (format.includes('VIP')) {
+    if (fmt.includes('VIP') || fmt.includes('GOLD')) {
       return 'bg-gradient-to-r from-amber-950/90 to-yellow-950/90 text-amber-200 border border-amber-400/70 shadow-sm shadow-amber-500/25';
     }
-    if (format.includes('4DX')) {
+    if (fmt.includes('4DX')) {
       return 'bg-gradient-to-r from-rose-950/90 to-pink-950/90 text-rose-200 border border-rose-400/70 shadow-sm shadow-rose-500/25';
     }
     return 'bg-cyan-950/90 text-cyan-300 border border-cyan-400/70 shadow-sm shadow-cyan-500/25';
