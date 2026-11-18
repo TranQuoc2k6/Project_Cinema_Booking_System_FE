@@ -108,6 +108,97 @@ const BookingService = {
         message: error.response?.data?.detail || error.message
       };
     }
+  },
+
+  // ========================================================================
+  // ADMIN APIS: QUẢN TRỊ ĐƠN VÉ (SRS 1.3 & TASK: QUẢN LÝ ĐƠN VÉ)
+  // ========================================================================
+
+  /**
+   * Lấy danh sách toàn bộ đơn vé cho Quản trị viên (Admin)
+   * Có hỗ trợ:
+   * - Lọc theo phim (movie_id)
+   * - Lọc theo ngày (date: YYYY-MM-DD)
+   * - Lọc theo trạng thái (status: confirmed, pending, cancelled, all)
+   * - Tìm kiếm theo mã vé (#BK-...) hoặc SĐT khách hàng (search)
+   * - Phân trang (page, limit)
+   */
+  async adminGetBookings({ page = 1, limit = 50, movie_id = null, date = null, status = 'all', search = '' } = {}) {
+    try {
+      const baseUrl = this._getBaseUrl();
+      const params = new URLSearchParams();
+      params.append('page', page);
+      params.append('limit', limit);
+      if (movie_id) params.append('movie_id', movie_id);
+      if (date && date.trim()) params.append('date', date.trim());
+      if (status && status !== 'all') params.append('status', status);
+      if (search && search.trim()) params.append('search', search.trim());
+
+      const url = `${baseUrl}/api/admin/bookings?${params.toString()}`;
+      if (window.apiClient) {
+        const res = await window.apiClient.get(url);
+        return { success: true, data: res.data };
+      }
+      const res = await fetch(url, { headers: this._getHeaders() });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Không thể tải danh sách đơn vé');
+      return { success: true, data };
+    } catch (error) {
+      console.warn('[BookingService.adminGetBookings]', error.message);
+      return {
+        success: false,
+        message: error.response?.data?.detail || error.message || 'Lỗi kết nối máy chủ'
+      };
+    }
+  },
+
+  /**
+   * Xem chi tiết đơn vé cho Quản trị viên
+   */
+  async adminGetBookingDetail(bookingId) {
+    try {
+      const baseUrl = this._getBaseUrl();
+      const url = `${baseUrl}/api/admin/bookings/${bookingId}`;
+      if (window.apiClient) {
+        const res = await window.apiClient.get(url);
+        return { success: true, data: res.data };
+      }
+      const res = await fetch(url, { headers: this._getHeaders() });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Không thể tải chi tiết đơn vé');
+      return { success: true, data };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.response?.data?.detail || error.message
+      };
+    }
+  },
+
+  /**
+   * Hủy vé và giải phóng ghế cho Quản trị viên
+   */
+  async adminCancelBooking(bookingId) {
+    try {
+      const baseUrl = this._getBaseUrl();
+      const url = `${baseUrl}/api/admin/bookings/${bookingId}/cancel`;
+      if (window.apiClient) {
+        const res = await window.apiClient.put(url);
+        return { success: true, data: res.data };
+      }
+      const res = await fetch(url, {
+        method: 'PUT',
+        headers: this._getHeaders()
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Không thể hủy đơn vé');
+      return { success: true, data };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.response?.data?.detail || error.message
+      };
+    }
   }
 };
 

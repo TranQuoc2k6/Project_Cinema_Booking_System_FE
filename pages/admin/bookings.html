@@ -125,20 +125,41 @@
           </div>
         </div>
 
-        <!-- SEARCH & FILTER TOOLBAR (SRS 1.3) -->
-        <div class="toolbar-bar">
-          <div class="search-input-group">
+        <!-- SEARCH & FILTER TOOLBAR (SRS 1.3: Lọc phim/ngày/trạng thái, tìm theo mã vé/SĐT) -->
+        <div class="toolbar-bar" style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between;">
+          <div class="search-input-group" style="flex: 1; min-width: 260px;">
             <span class="search-icon-inside"><i class="fa-solid fa-magnifying-glass"></i></span>
-            <input type="text" id="booking-search-input" class="form-control" placeholder="Tìm theo Mã đơn vé (#BK-...) hoặc SĐT khách hàng...">
+            <input type="text" id="booking-search-input" class="form-control" placeholder="Tìm kiếm theo Mã vé (#BK-...) hoặc SĐT khách hàng...">
           </div>
 
-          <div class="filter-actions">
-            <select id="booking-status-filter" class="form-select" style="width: auto;">
-              <option value="all">🎟️ Tất cả trạng thái đơn vé</option>
-              <option value="confirmed">🟢 Đã thanh toán (confirmed)</option>
-              <option value="pending">🟡 Chờ thanh toán (pending)</option>
-              <option value="cancelled">🔴 Đã hủy vé (cancelled)</option>
-            </select>
+          <div class="filter-actions" style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+            <!-- Bộ lọc theo Phim -->
+            <div style="min-width: 180px;">
+              <select id="booking-movie-filter" class="form-select">
+                <option value="all">🎬 Tất cả phim chiếu</option>
+                <!-- Nạp động từ danh sách phim -->
+              </select>
+            </div>
+
+            <!-- Bộ lọc theo Ngày chiếu / Ngày đặt -->
+            <div style="min-width: 150px;">
+              <input type="date" id="booking-date-filter" class="form-control" title="Lọc theo ngày chiếu hoặc ngày đặt vé">
+            </div>
+
+            <!-- Bộ lọc theo Trạng thái -->
+            <div style="min-width: 170px;">
+              <select id="booking-status-filter" class="form-select">
+                <option value="all">🎟️ Tất cả trạng thái</option>
+                <option value="confirmed">🟢 Đã thanh toán (confirmed)</option>
+                <option value="pending">🟡 Chờ thanh toán (pending)</option>
+                <option value="cancelled">🔴 Đã hủy vé (cancelled)</option>
+              </select>
+            </div>
+
+            <!-- Nút Reset bộ lọc -->
+            <button type="button" class="btn btn-secondary btn-sm" onclick="resetBookingFilters()" title="Đặt lại toàn bộ bộ lọc">
+              <i class="fa-solid fa-arrow-rotate-left"></i> Đặt lại
+            </button>
           </div>
         </div>
 
@@ -182,7 +203,10 @@
       <div class="modal-body" id="booking-detail-content">
         <!-- Nạp nội dung động -->
       </div>
-      <div class="modal-footer">
+      <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+        <div id="modal-cancel-btn-wrapper">
+          <!-- Nút hủy vé động nếu vé chưa bị hủy -->
+        </div>
         <button type="button" class="btn btn-secondary" onclick="closeBookingModal()">
           <i class="fa-solid fa-xmark"></i> Đóng cửa sổ
         </button>
@@ -190,6 +214,12 @@
     </div>
   </div>
 
+  <!-- Shared Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="../../js/utils/storage.js"></script>
+  <script src="../../js/config/api.js"></script>
+  <script src="../../js/services/movie.service.js"></script>
+  <script src="../../js/services/booking.service.js"></script>
   <script src="../../js/utils/admin-layout.js"></script>
   <script src="../../js/pages/admin/bookings.js"></script>
 </body>
