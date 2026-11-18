@@ -43,6 +43,8 @@
             font-weight: 800;
             box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
         }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -88,7 +90,7 @@
                 </div>
 
                 <!-- Tabs Filter: Tất cả | Sắp chiếu | Đã xem | Đã huỷ -->
-                <div class="flex items-center gap-1.5 bg-slate-900/90 p-1.5 rounded-2xl border border-slate-800 overflow-x-auto">
+                <div class="flex items-center gap-1.5 bg-slate-900/90 p-1.5 rounded-2xl border border-slate-800 overflow-x-auto no-scrollbar">
                     <button onclick="setTab('all', this)" class="tab-btn active px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap">
                         Tất cả
                     </button>
