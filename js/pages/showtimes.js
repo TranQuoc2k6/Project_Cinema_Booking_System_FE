@@ -182,19 +182,19 @@
       if (movie) {
         banner.classList.remove('hidden');
         banner.innerHTML = `
-          <div class="flex items-center justify-between gap-4 p-4 rounded-2xl bg-gradient-to-r from-cyan-950/80 via-slate-900 to-slate-900 border border-cyan-500/30">
+          <div class="flex items-center justify-between gap-4 p-4 rounded-2xl bg-gradient-to-r from-[#ff5e1e]/20 via-[#0b0f19] to-[#030508] border border-[#ff5e1e]/40 shadow-xl">
             <div class="flex items-center gap-4">
-              <img src="${movie.poster_url}" alt="${movie.title}" class="w-12 h-16 object-cover rounded-lg shadow-md border border-slate-700">
+              <img src="${movie.poster_url}" alt="${movie.title}" class="w-12 h-16 object-cover rounded-xl shadow-lg border border-white/10">
               <div>
-                <span class="text-[11px] font-bold text-cyan-400 uppercase tracking-wider flex items-center gap-1.5">
-                  <i class="fa-solid fa-filter"></i> Đang xem lịch chiếu phim:
+                <span class="text-[11px] font-bold text-[#d4ff00] uppercase tracking-wider flex items-center gap-1.5 font-mono-num">
+                  <i class="fa-solid fa-filter text-[#ff5e1e]"></i> Đang xem lịch chiếu phim:
                 </span>
-                <h3 class="text-base sm:text-lg font-black text-white">${movie.title}</h3>
-                <p class="text-xs text-slate-400">${movie.duration_minutes} phút • ${movie.genres?.join(', ') || 'Điện ảnh'}</p>
+                <h3 class="font-cinema text-base sm:text-lg font-black text-white">${movie.title}</h3>
+                <p class="text-xs text-slate-400 font-mono-num">${movie.duration_minutes} phút • ${movie.genres?.join(', ') || 'Điện ảnh'}</p>
               </div>
             </div>
-            <button onclick="window.ShowtimesPage.clearMovieFilter()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 hover:text-white border border-slate-700 transition-all flex items-center gap-1.5 whitespace-nowrap">
-              <i class="fa-solid fa-xmark text-rose-400"></i> Xem tất cả phim
+            <button onclick="window.ShowtimesPage.clearMovieFilter()" class="px-3.5 py-2 rounded-xl glass-pill text-xs font-semibold text-slate-300 hover:text-white hover:border-[#ff5e1e]/60 transition-all flex items-center gap-1.5 whitespace-nowrap">
+              <i class="fa-solid fa-xmark text-[#ff5e1e]"></i> Xem tất cả phim
             </button>
           </div>
         `;
@@ -224,7 +224,7 @@
 
       if (index === 0) {
         label = 'Hôm nay';
-        badge = '<span class="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-rose-500 text-white mt-1 shadow-sm">NOW</span>';
+        badge = '<span class="font-mono-num text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-[#d4ff00] text-slate-950 mt-1 shadow-sm">NOW</span>';
       } else if (index === 1) {
         label = 'Ngày mai';
       }
@@ -234,17 +234,17 @@
                 onclick="window.ShowtimesPage.selectDate('${item.ymd}')"
                 class="group relative flex-shrink-0 px-5 py-3.5 rounded-2xl flex flex-col items-center justify-center border transition-all duration-300 min-w-[96px] sm:min-w-[110px] ${
                   isSelected 
-                    ? 'bg-gradient-to-b from-cyan-500 to-cyan-600 border-cyan-300 text-slate-950 font-black shadow-lg shadow-cyan-500/30 scale-105 z-10' 
-                    : 'bg-slate-900/90 border-slate-800 text-slate-300 hover:border-slate-700 hover:bg-slate-800/80'
+                    ? 'bg-gradient-to-b from-[#ff5e1e] via-[#ea580c] to-[#c2410c] border-orange-400 text-white font-black shadow-[0_0_25px_rgba(255,94,30,0.5)] scale-105 z-10' 
+                    : 'glass-pill border-white/10 text-slate-300 hover:border-[#ff5e1e]/60 hover:text-white'
                 }">
-          <span class="text-[11px] uppercase tracking-wider ${isSelected ? 'text-slate-950 font-black' : 'text-slate-400 font-semibold group-hover:text-cyan-400'}">
+          <span class="text-[11px] uppercase tracking-wider ${isSelected ? 'text-white font-black' : 'text-slate-400 font-semibold group-hover:text-[#ff5e1e]'}">
             ${label}
           </span>
-          <span class="text-lg font-black tracking-tight my-0.5 ${isSelected ? 'text-slate-950' : 'text-white'}">
+          <span class="font-mono-num text-lg font-black tracking-tight my-0.5 ${isSelected ? 'text-white' : 'text-slate-200'}">
             ${formattedDate}
           </span>
           ${badge}
-          ${isSelected ? '<span class="absolute -bottom-1.5 w-3 h-1.5 bg-cyan-300 rounded-full"></span>' : ''}
+          ${isSelected ? '<span class="absolute -bottom-1.5 w-3 h-1.5 bg-[#d4ff00] rounded-full shadow-[0_0_8px_#d4ff00]"></span>' : ''}
         </button>
       `;
     }).join('');
@@ -381,12 +381,12 @@
   }
 
   /**
-   * Cập nhật đồng bộ style của các nút lọc định dạng phòng (Đồng bộ màu Cyan rực rỡ khi Active)
+   * Cập nhật đồng bộ style của các nút lọc định dạng phòng (Đồng bộ LUMEN 3D Tangerine Neon khi Active)
    */
   function updateFormatButtonsState() {
     const formatButtons = document.querySelectorAll('[data-format-filter]');
-    const activeClass = 'px-4 py-2 rounded-xl bg-cyan-500 text-slate-950 font-black text-xs border border-cyan-300 shadow-lg shadow-cyan-500/30 scale-105 transition-all';
-    const inactiveClass = 'px-4 py-2 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-300 hover:text-white font-semibold text-xs border border-slate-800 transition-all scale-100 shadow-none';
+    const activeClass = 'px-4 py-2 rounded-xl bg-gradient-to-r from-[#ff5e1e] to-[#ea580c] text-white font-black text-xs border border-orange-400/80 shadow-[0_0_15px_rgba(255,94,30,0.4)] scale-105 transition-all';
+    const inactiveClass = 'px-4 py-2 rounded-xl glass-pill text-slate-300 hover:text-white font-semibold text-xs border border-white/10 transition-all scale-100 shadow-none';
 
     formatButtons.forEach(btn => {
       const val = btn.getAttribute('data-format-filter');
@@ -415,9 +415,9 @@
 
     // Hiển thị trạng thái đang tải (skeleton)
     container.innerHTML = `
-      <div class="glass-panel p-8 rounded-3xl border border-slate-800/80 flex flex-col items-center justify-center min-h-[300px]">
-        <div class="w-12 h-12 rounded-full border-4 border-cyan-400 border-t-transparent animate-spin mb-4"></div>
-        <p class="text-sm font-semibold text-slate-400 animate-pulse">Đang đồng bộ dữ liệu lịch chiếu hệ thống...</p>
+      <div class="glass-hud p-12 rounded-3xl border border-white/10 flex flex-col items-center justify-center min-h-[300px] shadow-2xl">
+        <div class="w-12 h-12 rounded-full border-4 border-[#ff5e1e] border-t-transparent animate-spin mb-4 shadow-[0_0_20px_rgba(255,94,30,0.5)]"></div>
+        <p class="text-sm font-cinema font-bold text-slate-300 animate-pulse tracking-wide">Đang đồng bộ dữ liệu lịch chiếu LUMEN 3D...</p>
       </div>
     `;
 
@@ -445,10 +445,10 @@
     } catch (err) {
       console.error('[ShowtimesPage] Lỗi tải suất chiếu:', err);
       container.innerHTML = `
-        <div class="glass-panel p-8 rounded-3xl border border-rose-500/40 text-center space-y-3">
+        <div class="glass-hud p-8 rounded-3xl border border-rose-500/40 text-center space-y-3">
           <i class="fa-solid fa-triangle-exclamation text-rose-400 text-3xl"></i>
           <p class="text-sm font-semibold text-rose-300">Đã xảy ra lỗi khi tải dữ liệu suất chiếu.</p>
-          <button onclick="window.location.reload()" class="px-4 py-2 rounded-xl bg-slate-800 text-cyan-400 hover:bg-slate-700 text-xs font-bold">Thử lại</button>
+          <button onclick="window.location.reload()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#ff5e1e] to-[#ea580c] text-white hover:brightness-110 text-xs font-cinema font-black shadow-lg shadow-orange-500/30">Thử lại</button>
         </div>
       `;
     }
@@ -502,7 +502,7 @@
     // Cập nhật số lượng suất chiếu tìm thấy
     if (countBadge) {
       const activeCount = list.filter(s => !window.ShowtimeService.isPastShowtime(s.start_time)).length;
-      countBadge.innerHTML = `Tìm thấy <b class="text-cyan-400">${list.length}</b> suất chiếu (${activeCount} khả dụng)`;
+      countBadge.innerHTML = `Tìm thấy <b class="text-[#ff5e1e] font-mono-num font-black">${list.length}</b> suất chiếu (${activeCount} khả dụng)`;
     }
 
     // Kiểm tra nếu danh sách rỗng
@@ -555,32 +555,32 @@
       const brandLogo = getBrandBadge(cinema.cinema_brand || cinema.cinema_name);
 
       return `
-        <div class="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800/80 shadow-2xl relative overflow-hidden transition-all duration-300 hover:border-slate-700">
+        <div class="glass-hud p-6 sm:p-8 rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden transition-all duration-300 hover:border-[#ff5e1e]/40">
           
           <!-- Cinema Header Info -->
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-6 mb-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-6 mb-6">
             <div class="flex items-start gap-4">
-              <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-slate-800 to-slate-900 border border-slate-700 flex items-center justify-center shrink-0 shadow-md">
+              <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-slate-900 to-black border border-white/10 flex items-center justify-center shrink-0 shadow-lg">
                 ${brandLogo}
               </div>
               <div>
                 <div class="flex items-center gap-2 flex-wrap">
-                  <h2 class="text-lg sm:text-xl font-black text-white">${cinema.cinema_name}</h2>
+                  <h2 class="text-lg sm:text-xl font-cinema font-black text-white tracking-tight">${cinema.cinema_name}</h2>
                   ${cinema.city ? `
-                  <span class="text-[10px] font-black px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-500/30">
-                    <i class="fa-solid fa-map-pin text-[9px] mr-1"></i>${cinema.city}
+                  <span class="text-[10px] font-mono-num font-black px-2.5 py-0.5 rounded-full bg-[#ff5e1e]/15 text-[#ff5e1e] border border-[#ff5e1e]/30">
+                    <i class="fa-solid fa-location-dot text-[#d4ff00] text-[9px] mr-1"></i>${cinema.city}
                   </span>` : ''}
                 </div>
                 <p class="text-xs text-slate-400 mt-1 flex items-center gap-1.5">
-                  <i class="fa-solid fa-location-dot text-rose-500"></i>
-                  <span>${cinema.cinema_address || 'Đang cập nhật địa chỉ'}</span>
+                  <i class="fa-solid fa-location-pin text-[#ff5e1e]"></i>
+                  <span class="font-medium text-slate-400">${cinema.cinema_address || 'Đang cập nhật địa chỉ'}</span>
                 </p>
               </div>
             </div>
 
             <div class="flex items-center gap-3 self-start sm:self-auto">
-              <a href="https://maps.google.com/?q=${encodeURIComponent(cinema.cinema_name + ' ' + (cinema.cinema_address || ''))}" target="_blank" class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-xs font-semibold text-slate-300 hover:text-white border border-slate-800 transition-all flex items-center gap-1.5">
-                <i class="fa-solid fa-diamond-turn-right text-cyan-400"></i> Chỉ đường
+              <a href="https://maps.google.com/?q=${encodeURIComponent(cinema.cinema_name + ' ' + (cinema.cinema_address || ''))}" target="_blank" class="px-3.5 py-2 rounded-xl glass-pill hover:bg-white/10 text-xs font-bold text-slate-300 hover:text-white border border-white/10 transition-all flex items-center gap-1.5">
+                <i class="fa-solid fa-diamond-turn-right text-[#d4ff00]"></i> Chỉ đường
               </a>
             </div>
           </div>
@@ -588,39 +588,39 @@
           <!-- Movies List within this Cinema -->
           <div class="space-y-8">
             ${Object.values(cinema.movies).map(movie => `
-              <div class="flex flex-col lg:flex-row gap-6 p-5 rounded-2xl bg-slate-900/40 border border-slate-800/60 transition-all hover:border-slate-700/80">
+              <div class="flex flex-col lg:flex-row gap-6 p-5 rounded-2xl bg-slate-950/60 border border-white/5 transition-all hover:border-white/15">
                 
                 <!-- Movie Poster & Quick Info -->
                 <div class="flex gap-4 lg:w-72 shrink-0">
-                  <a href="movie-detail.html?id=${movie.movie_id}" class="group relative block w-20 h-28 sm:w-24 sm:h-34 rounded-xl overflow-hidden shadow-lg border border-slate-700/80 shrink-0">
+                  <a href="movie-detail.html?id=${movie.movie_id}" class="group relative block w-20 h-28 sm:w-24 sm:h-34 rounded-xl overflow-hidden shadow-lg border border-white/10 group-hover:border-[#ff5e1e]/50 shrink-0">
                     <img src="${movie.poster_url || 'https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=400'}" alt="${movie.movie_title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                     <div class="absolute inset-0 bg-slate-950/20 group-hover:bg-transparent transition-all"></div>
                   </a>
                   <div class="flex-1 min-w-0">
                     <div class="flex items-center gap-1.5 mb-1 flex-wrap">
                       <span class="text-[10px] font-black px-1.5 py-0.5 rounded ${getAgeRatingClass(movie.age_rating)}">${movie.age_rating || 'P'}</span>
-                      <span class="text-[11px] text-slate-400"><i class="fa-regular fa-clock text-cyan-400 mr-1"></i>${movie.duration_minutes}m</span>
+                      <span class="text-[11px] text-slate-400 font-mono-num"><i class="fa-regular fa-clock text-[#d4ff00] mr-1"></i>${movie.duration_minutes}m</span>
                     </div>
-                    <a href="movie-detail.html?id=${movie.movie_id}" class="block text-sm sm:text-base font-black text-white hover:text-cyan-400 transition-colors line-clamp-2">
+                    <a href="movie-detail.html?id=${movie.movie_id}" class="block text-sm sm:text-base font-cinema font-black text-white hover:text-[#ff5e1e] transition-colors line-clamp-2">
                       ${movie.movie_title}
                     </a>
-                    <p class="text-xs text-slate-400 mt-1 line-clamp-1">${Array.isArray(movie.genres) ? movie.genres.join(' • ') : (movie.genres || 'Điện ảnh')}</p>
-                    <a href="movie-detail.html?id=${movie.movie_id}" class="inline-flex items-center gap-1 text-[11px] font-semibold text-cyan-400 hover:underline mt-2">
+                    <p class="text-xs text-slate-400 mt-1 line-clamp-1 font-mono-num">${Array.isArray(movie.genres) ? movie.genres.join(' • ') : (movie.genres || 'Điện ảnh')}</p>
+                    <a href="movie-detail.html?id=${movie.movie_id}" class="inline-flex items-center gap-1 text-[11px] font-bold text-[#ff5e1e] hover:text-[#d4ff00] mt-2 transition-colors">
                       Xem chi tiết <i class="fa-solid fa-angle-right text-[9px]"></i>
                     </a>
                   </div>
                 </div>
 
                 <!-- Formats & Showtime Chips Grid -->
-                <div class="flex-1 space-y-4 pt-4 lg:pt-0 border-t lg:border-t-0 lg:border-l border-slate-800/80 lg:pl-6">
+                <div class="flex-1 space-y-4 pt-4 lg:pt-0 border-t lg:border-t-0 lg:border-l border-white/10 lg:pl-6">
                   ${Object.entries(movie.formats).map(([formatName, showtimes]) => `
                     <div>
                       <!-- Format Header Badge -->
                       <div class="flex items-center gap-2 mb-2.5">
-                        <span class="text-[11px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-md ${getFormatBadgeClass(formatName)}">
+                        <span class="text-[11px] font-mono-num font-black uppercase tracking-wider px-2.5 py-0.5 rounded-md ${getFormatBadgeClass(formatName)}">
                           ${formatName}
                         </span>
-                        <span class="text-xs text-slate-500">• ${showtimes.length} khung giờ</span>
+                        <span class="text-xs text-slate-400 font-mono-num">• ${showtimes.length} khung giờ</span>
                       </div>
 
                       <!-- Showtime Chips -->
@@ -664,9 +664,9 @@
     if (isPast) {
       // Suất chiếu đã qua: Làm mờ, Disable, không thể bấm, hiển thị badge Đã chiếu
       return `
-        <div class="group relative px-4 py-2.5 rounded-2xl bg-slate-900/60 border border-slate-800 text-slate-500 opacity-50 cursor-not-allowed select-none transition-all flex flex-col items-center justify-center min-w-[105px]">
-          <span class="text-sm font-black line-through text-slate-500">${timeFormatted}</span>
-          <span class="text-[9px] font-bold text-rose-400 uppercase mt-0.5 flex items-center gap-1">
+        <div class="group relative px-4 py-2.5 rounded-2xl bg-slate-950/40 border border-white/5 text-slate-600 opacity-40 cursor-not-allowed select-none transition-all flex flex-col items-center justify-center min-w-[110px]">
+          <span class="text-sm font-mono-num font-black line-through text-slate-500">${timeFormatted}</span>
+          <span class="text-[9px] font-bold text-rose-500 uppercase mt-0.5 flex items-center gap-1 font-mono-num">
             <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> Đã chiếu
           </span>
           
@@ -681,43 +681,43 @@
       `;
     }
 
-    // Suất chiếu hợp lệ: Sáng đẹp, click được, hiệu ứng hover phát sáng neon đồng bộ
-    let borderAccent = 'border-slate-700/80 hover:border-cyan-300 hover:shadow-cyan-500/30';
+    // Suất chiếu hợp lệ: Sáng đẹp, click được, hiệu ứng hover phát sáng neon đồng bộ LUMEN 3D
+    let borderAccent = 'border-white/10 hover:border-[#ff5e1e]/80 hover:shadow-[0_0_20px_rgba(255,94,30,0.35)]';
     let typeBadge = '';
     const formatUpper = (showtime.format || showtime.room_type || '2D').toUpperCase();
 
     if (formatUpper.includes('IMAX')) {
-      borderAccent = 'border-purple-500/50 hover:border-purple-300 hover:shadow-purple-500/30';
-      typeBadge = '<span class="text-[8px] font-black uppercase px-1 rounded bg-purple-900/90 text-purple-200 border border-purple-500/40">IMAX</span>';
+      borderAccent = 'border-purple-500/40 hover:border-purple-300 hover:shadow-[0_0_20px_rgba(168,85,247,0.4)]';
+      typeBadge = '<span class="text-[8px] font-mono-num font-black uppercase px-1 rounded bg-purple-900/90 text-purple-200 border border-purple-500/40">IMAX</span>';
     } else if (formatUpper.includes('VIP') || formatUpper.includes('GOLD')) {
-      borderAccent = 'border-amber-500/50 hover:border-amber-300 hover:shadow-amber-500/30';
-      typeBadge = '<span class="text-[8px] font-black uppercase px-1 rounded bg-amber-900/90 text-amber-200 border border-amber-500/40">VIP</span>';
+      borderAccent = 'border-amber-500/40 hover:border-amber-300 hover:shadow-[0_0_20px_rgba(245,158,11,0.4)]';
+      typeBadge = '<span class="text-[8px] font-mono-num font-black uppercase px-1 rounded bg-amber-900/90 text-amber-200 border border-amber-500/40">VIP</span>';
     }
 
     return `
       <button type="button" 
               onclick="window.ShowtimesPage.handleSelectShowtime(${showtime.id})"
-              class="group relative px-4 py-2.5 rounded-2xl bg-slate-900/95 hover:bg-gradient-to-br hover:from-cyan-500 hover:to-teal-400 border ${borderAccent} text-slate-200 hover:text-slate-950 transition-all duration-200 shadow-md hover:scale-105 active:scale-95 flex flex-col items-center justify-center min-w-[105px] text-center">
+              class="group relative px-4 py-2.5 rounded-2xl bg-slate-900/90 hover:bg-gradient-to-r hover:from-[#ff5e1e] hover:to-[#ea580c] border ${borderAccent} text-slate-200 hover:text-white transition-all duration-200 shadow-md hover:scale-105 active:scale-95 flex flex-col items-center justify-center min-w-[110px] text-center">
         
         <!-- Giờ bắt đầu & Badge phụ nếu có -->
         <div class="flex items-center gap-1.5">
-          <span class="text-sm sm:text-base font-black tracking-tight group-hover:text-slate-950 transition-colors">
+          <span class="text-sm sm:text-base font-mono-num font-black tracking-tight group-hover:text-white transition-colors">
             ${timeFormatted}
           </span>
           ${typeBadge}
         </div>
 
         <!-- Giờ kết thúc & Tên phòng -->
-        <div class="flex items-center gap-1 text-[10px] text-slate-400 group-hover:text-slate-900 font-semibold mt-0.5 transition-colors">
+        <div class="flex items-center gap-1 text-[10px] text-slate-400 group-hover:text-orange-100 font-medium font-mono-num mt-0.5 transition-colors">
           <span>~${endTimeFormatted}</span>
           <span>•</span>
           <span>${showtime.room_name ? showtime.room_name.split(' ')[0] : 'P.Chiếu'}</span>
         </div>
 
         <!-- Giá vé và ghế trống -->
-        <div class="mt-1 pt-1 border-t border-slate-800/80 group-hover:border-slate-900/20 w-full flex items-center justify-between gap-1 text-[9px] font-bold text-emerald-400 group-hover:text-slate-950 transition-colors">
+        <div class="mt-1 pt-1 border-t border-white/10 group-hover:border-white/20 w-full flex items-center justify-between gap-1 text-[10px] font-mono-num font-black text-[#d4ff00] group-hover:text-white transition-colors">
           <span>${priceFormatted}</span>
-          <span class="text-slate-400 group-hover:text-slate-800">${showtime.available_seats || 40}c</span>
+          <span class="text-slate-400 group-hover:text-orange-100 font-normal">${showtime.available_seats || 40}c</span>
         </div>
 
       </button>
@@ -729,19 +729,19 @@
    */
   function renderEmptyState(container) {
     container.innerHTML = `
-      <div class="glass-panel p-12 rounded-3xl border border-slate-800/80 text-center max-w-2xl mx-auto my-8">
-        <div class="w-20 h-20 rounded-3xl bg-slate-900/80 border border-slate-800 flex items-center justify-center mx-auto mb-4 text-3xl text-cyan-400 shadow-inner">
+      <div class="glass-hud p-12 rounded-3xl border border-white/10 text-center max-w-2xl mx-auto my-8 shadow-2xl">
+        <div class="w-20 h-20 rounded-3xl bg-slate-900/80 border border-white/10 flex items-center justify-center mx-auto mb-4 text-3xl text-[#ff5e1e] shadow-inner">
           <i class="fa-solid fa-film"></i>
         </div>
-        <h3 class="text-xl font-black text-white mb-2">Không tìm thấy suất chiếu phù hợp</h3>
+        <h3 class="text-xl font-cinema font-black text-white mb-2">Không tìm thấy suất chiếu phù hợp</h3>
         <p class="text-sm text-slate-400 mb-6 leading-relaxed">
           Rất tiếc, hiện chưa có suất chiếu nào khớp với tiêu chí bạn đã lọc cho ngày đã chọn. Vui lòng thử chọn một ngày khác hoặc đặt lại bộ lọc.
         </p>
         <div class="flex flex-wrap items-center justify-center gap-3">
-          <button onclick="window.ShowtimesPage.resetFilters()" class="px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-black uppercase tracking-wider transition-all shadow-lg shadow-cyan-500/25">
+          <button onclick="window.ShowtimesPage.resetFilters()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#ff5e1e] to-[#ea580c] text-white text-xs font-cinema font-black uppercase tracking-wider transition-all shadow-lg shadow-orange-500/25 hover:brightness-110">
             <i class="fa-solid fa-rotate-left mr-1.5"></i> Đặt lại tất cả bộ lọc
           </button>
-          <a href="movies.html" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold uppercase tracking-wider border border-slate-700 transition-all">
+          <a href="movies.html" class="px-5 py-2.5 rounded-xl glass-pill hover:bg-white/10 text-slate-200 text-xs font-bold uppercase tracking-wider border border-white/10 transition-all">
             Xem danh sách phim khác
           </a>
         </div>
@@ -786,16 +786,16 @@
   function getAgeRatingClass(rating) {
     switch (rating) {
       case 'T18':
-        return 'bg-rose-950 text-rose-300 border border-rose-500/40';
+        return 'bg-rose-950/80 text-rose-300 border border-rose-500/50';
       case 'T16':
-        return 'bg-amber-950 text-amber-300 border border-amber-500/40';
+        return 'bg-amber-950/80 text-amber-300 border border-amber-500/50';
       case 'T13':
-        return 'bg-yellow-950 text-yellow-300 border border-yellow-500/40';
+        return 'bg-yellow-950/80 text-yellow-300 border border-yellow-500/50';
       case 'K':
-        return 'bg-blue-950 text-blue-300 border border-blue-500/40';
+        return 'bg-blue-950/80 text-blue-300 border border-blue-500/50';
       case 'P':
       default:
-        return 'bg-emerald-950 text-emerald-300 border border-emerald-500/40';
+        return 'bg-emerald-950/80 text-[#d4ff00] border border-emerald-500/50';
     }
   }
 
@@ -805,15 +805,15 @@
   function getFormatBadgeClass(format) {
     const fmt = (format || '').toUpperCase();
     if (fmt.includes('IMAX')) {
-      return 'bg-gradient-to-r from-purple-950/90 to-indigo-950/90 text-purple-200 border border-purple-400/70 shadow-sm shadow-purple-500/25';
+      return 'bg-gradient-to-r from-purple-950 to-indigo-950 text-purple-200 border border-purple-400/60 shadow-[0_0_10px_rgba(168,85,247,0.25)]';
     }
     if (fmt.includes('VIP') || fmt.includes('GOLD')) {
-      return 'bg-gradient-to-r from-amber-950/90 to-yellow-950/90 text-amber-200 border border-amber-400/70 shadow-sm shadow-amber-500/25';
+      return 'bg-gradient-to-r from-amber-950 to-yellow-950 text-amber-200 border border-amber-400/60 shadow-[0_0_10px_rgba(245,158,11,0.25)]';
     }
     if (fmt.includes('4DX')) {
-      return 'bg-gradient-to-r from-rose-950/90 to-pink-950/90 text-rose-200 border border-rose-400/70 shadow-sm shadow-rose-500/25';
+      return 'bg-gradient-to-r from-rose-950 to-pink-950 text-rose-200 border border-rose-400/60 shadow-[0_0_10px_rgba(244,63,94,0.25)]';
     }
-    return 'bg-cyan-950/90 text-cyan-300 border border-cyan-400/70 shadow-sm shadow-cyan-500/25';
+    return 'bg-[#ff5e1e]/15 text-[#ff5e1e] border border-[#ff5e1e]/40 shadow-[0_0_10px_rgba(255,94,30,0.2)]';
   }
 
   /**
@@ -828,12 +828,12 @@
       return '<span class="text-emerald-400 font-black text-xs tracking-tighter">BHD</span>';
     }
     if (name.includes('GALAXY')) {
-      return '<span class="text-amber-400 font-black text-[11px] tracking-tighter">GLX</span>';
+      return '<span class="text-[#ff5e1e] font-black text-[11px] tracking-tighter">GLX</span>';
     }
     if (name.includes('LOTTE')) {
       return '<span class="text-red-500 font-black text-[11px] tracking-tighter">LOTTE</span>';
     }
-    return '<i class="fa-solid fa-film text-cyan-400 text-base"></i>';
+    return '<i class="fa-solid fa-cube text-[#ff5e1e] text-base"></i>';
   }
 
   /**
@@ -852,10 +852,10 @@
       authContainer.innerHTML = `
         <div class="flex items-center gap-3">
           <div class="hidden sm:flex flex-col text-right">
-            <span class="text-xs font-bold text-white">${user.full_name || user.email}</span>
-            <span class="text-[10px] text-cyan-400">${user.role === 'admin' ? 'Quản Trị Viên' : 'Thành Viên 3D'}</span>
+            <span class="text-xs font-cinema font-bold text-white">${user.full_name || user.email}</span>
+            <span class="text-[10px] text-[#d4ff00] font-mono-num font-bold">${user.role === 'admin' ? 'Quản Trị Viên' : 'Thành Viên LUMEN'}</span>
           </div>
-          <a href="profile.html" class="w-9 h-9 rounded-xl border border-cyan-400/50 flex items-center justify-center bg-slate-900 text-cyan-400 text-xs font-bold shadow-md hover:border-cyan-400 transition-all">
+          <a href="profile.html" class="w-9 h-9 rounded-xl border border-[#ff5e1e]/40 flex items-center justify-center bg-slate-900 text-[#ff5e1e] text-xs font-bold shadow-md hover:border-[#ff5e1e] transition-all">
             <i class="fa-solid fa-user"></i>
           </a>
         </div>
