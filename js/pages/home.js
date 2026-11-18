@@ -271,6 +271,10 @@ function initMovieCarousel() {
 
 // Cập nhật trạng thái đăng nhập trên Header
 function updateAuthHeader() {
+    if (window.renderAppHeader) {
+        window.renderAppHeader();
+        return;
+    }
     const authSec = document.getElementById('header-auth-section');
 
     if (!authSec) return;

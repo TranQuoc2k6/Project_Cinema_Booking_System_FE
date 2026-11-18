@@ -30,6 +30,9 @@
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Auth Storage & Customer Guard (Bắt buộc đăng nhập trước khi thanh toán) -->
+    <script src="../js/utils/storage.js"></script>
+    <script src="../js/utils/customer-guard.js"></script>
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #070a12; color: #f8fafc; }
         .glass-panel { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); }
@@ -51,7 +54,14 @@
                     CINEMA<span class="text-white font-light">3D</span>
                 </span>
             </a>
-            <span class="text-xs uppercase tracking-widest text-cyan-400 font-bold">Thanh Toán An Toàn</span>
+            <nav class="hidden md:flex gap-8">
+                <a href="../index.html" class="text-sm font-medium text-slate-300 hover:text-cyan-400 transition-colors">Trang chủ</a>
+                <a href="movies.html" class="text-sm font-medium text-slate-300 hover:text-cyan-400 transition-colors">Phim Chiếu</a>
+                <a href="showtimes.html" class="text-sm font-medium text-slate-300 hover:text-cyan-400 transition-colors">Lịch Chiếu</a>
+                <a href="booking.html" class="text-sm font-medium text-slate-300 hover:text-cyan-400 transition-colors">Đặt Vé</a>
+                <a href="my-tickets.html" class="text-sm font-medium text-slate-300 hover:text-cyan-400 transition-colors">Vé Của Tôi</a>
+            </nav>
+            <div id="header-auth-section" class="flex items-center gap-3"></div>
         </div>
     </header>
 
@@ -216,5 +226,7 @@
 
         window.onload = loadBookingInfo;
     </script>
+    <script src="../js/services/auth.service.js"></script>
+    <script src="../js/components/header.js"></script>
 </body>
 </html>
