@@ -169,40 +169,117 @@ const ShowtimeService = {
       const baseUrl = this._getBaseUrl();
       const params = new URLSearchParams();
       if (targetDate) params.append('date', targetDate);
-      if (movieId) params.append('movie_id', movieId);
-      if (cinemaId) params.append('cinema_id', cinemaId);
-      if (city) params.append('city', city);
+      if (movieId && movieId !== 'all') {
+        params.append('movieId', movieId);
+        params.append('movie_id', movieId);
+      }
+      if (cinemaId && cinemaId !== 'all') {
+        params.append('cinemaId', cinemaId);
+        params.append('cinema_id', cinemaId);
+      }
+      if (city && city !== 'all') params.append('city', city);
 
       const url = `${baseUrl}/api/showtimes${params.toString() ? '?' + params.toString() : ''}`;
 
+      let rawData = null;
       if (window.apiClient) {
         const res = await window.apiClient.get(url);
-        if (res.data && Array.isArray(res.data) && res.data.length > 0) {
-          return { success: true, data: res.data };
-        }
+        rawData = res.data;
       } else {
         const res = await fetch(url);
         if (res.ok) {
-          const data = await res.json();
-          if (Array.isArray(data) && data.length > 0) {
-            return { success: true, data };
-          }
+          rawData = await res.json();
         }
       }
+
+      if (Array.isArray(rawData)) {
+        let flatList = [];
+        if (rawData.length > 0 && rawData[0].cinema && Array.isArray(rawData[0].showtimes)) {
+          // Backend trả về mảng nhóm theo cinema: [{ cinema: {...}, showtimes: [...] }]
+          // Flatten sang danh sách phẳng cho Frontend hiển thị
+          rawData.forEach(group => {
+            const cinema = group.cinema || {};
+            const cinemaName = cinema.name || 'Cinema';
+            let brand = 'Cinema';
+            const upperName = cinemaName.toUpperCase();
+            if (upperName.includes('CGV')) brand = 'CGV';
+            else if (upperName.includes('BHD')) brand = 'BHD';
+            else if (upperName.includes('LOTTE')) brand = 'LOTTE';
+            else if (upperName.includes('GALAXY')) brand = 'GALAXY';
+
+            (group.showtimes || []).forEach(st => {
+              const rType = st.room_type || st.format || '2D';
+              let formatStr = '2D Digital';
+              if (rType.toUpperCase().includes('IMAX')) formatStr = 'IMAX 3D Laser';
+              else if (rType.toUpperCase().includes('VIP') || rType.toUpperCase().includes('GOLD')) formatStr = 'VIP Gold Class';
+              else if (rType.toUpperCase().includes('3D')) formatStr = '3D Digital';
+
+              flatList.push({
+                id: st.id,
+                date: targetDate,
+                movie_id: st.movie_id,
+                movie_title: st.movie_title || '',
+                original_title: st.original_title || st.movie_title || '',
+                poster_url: st.poster_url || '',
+                duration_minutes: st.duration_minutes || 120,
+                age_rating: st.age_rating || 'P',
+                genres: st.genres || ['Điện ảnh'],
+                cinema_id: cinema.id,
+                cinema_name: cinema.name,
+                cinema_brand: brand,
+                city: cinema.city || '',
+                district: cinema.district || '',
+                cinema_address: cinema.address || '',
+                room_id: st.room_id,
+                room_name: st.room_name || 'Phòng Chiếu 01',
+                format: formatStr,
+                start_time: typeof st.start_time === 'string' ? st.start_time.replace('T', ' ').substring(0, 19) : st.start_time,
+                end_time: typeof st.end_time === 'string' ? st.end_time.replace('T', ' ').substring(0, 19) : st.end_time,
+                price: typeof st.price === 'string' ? parseFloat(st.price) : (st.price || 85000),
+                available_seats: st.available_seats !== undefined ? st.available_seats : 60,
+                total_seats: st.total_seats !== undefined ? st.total_seats : 100
+              });
+            });
+          });
+        } else if (rawData.length > 0 && !rawData[0].cinema) {
+          flatList = rawData.map(st => {
+            const rType = st.room_type || st.format || '2D';
+            let formatStr = st.format || '2D Digital';
+            if (rType.toUpperCase().includes('IMAX')) formatStr = 'IMAX 3D Laser';
+            else if (rType.toUpperCase().includes('VIP')) formatStr = 'VIP Gold Class';
+            return {
+              ...st,
+              format: formatStr,
+              start_time: typeof st.start_time === 'string' ? st.start_time.replace('T', ' ').substring(0, 19) : st.start_time,
+              end_time: typeof st.end_time === 'string' ? st.end_time.replace('T', ' ').substring(0, 19) : st.end_time,
+              price: typeof st.price === 'string' ? parseFloat(st.price) : (st.price || 85000)
+            };
+          });
+        }
+
+        if (format && format !== 'all') {
+          flatList = flatList.filter(s => (s.format || '').toLowerCase().includes(format.toLowerCase()));
+        }
+
+        return {
+          success: true,
+          data: flatList
+        };
+      }
     } catch (e) {
-      console.info('[ShowtimeService] Sử dụng mock data suất chiếu cho ngày:', targetDate);
+      console.info('[ShowtimeService] Lỗi kết nối Backend, chuyển sang Mock Data:', targetDate, e);
     }
 
     // Fallback Mock Data
     let allShowtimes = this.generateMockShowtimes(targetDate);
 
     // Áp dụng bộ lọc client-side cho mock data
-    if (movieId) {
+    if (movieId && movieId !== 'all') {
       const mId = parseInt(movieId, 10);
       allShowtimes = allShowtimes.filter(s => s.movie_id === mId);
     }
 
-    if (cinemaId) {
+    if (cinemaId && cinemaId !== 'all') {
       const cId = parseInt(cinemaId, 10);
       allShowtimes = allShowtimes.filter(s => s.cinema_id === cId);
     }
@@ -229,15 +306,29 @@ const ShowtimeService = {
     try {
       const baseUrl = this._getBaseUrl();
       const url = `${baseUrl}/api/showtimes/${sId}`;
+      let data = null;
       if (window.apiClient) {
         const res = await window.apiClient.get(url);
-        if (res.data) return { success: true, data: res.data };
+        data = res.data;
       } else {
         const res = await fetch(url);
-        if (res.ok) {
-          const data = await res.json();
-          return { success: true, data };
-        }
+        if (res.ok) data = await res.json();
+      }
+      if (data) {
+        const rType = data.room_type || data.format || '2D';
+        let formatStr = data.format || '2D Digital';
+        if (rType.toUpperCase().includes('IMAX')) formatStr = 'IMAX 3D Laser';
+        else if (rType.toUpperCase().includes('VIP')) formatStr = 'VIP Gold Class';
+        return {
+          success: true,
+          data: {
+            ...data,
+            format: formatStr,
+            start_time: typeof data.start_time === 'string' ? data.start_time.replace('T', ' ').substring(0, 19) : data.start_time,
+            end_time: typeof data.end_time === 'string' ? data.end_time.replace('T', ' ').substring(0, 19) : data.end_time,
+            price: typeof data.price === 'string' ? parseFloat(data.price) : (data.price || 85000)
+          }
+        };
       }
     } catch (e) {
       // Fallback
