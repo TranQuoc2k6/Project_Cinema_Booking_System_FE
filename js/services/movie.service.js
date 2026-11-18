@@ -35,7 +35,7 @@ const MovieService = {
       duration_minutes: 131,
       status: 'now_showing',
       release_date: '2024-02-10',
-      poster_url: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=600',
+      poster_url: 'https://upload.wikimedia.org/wikipedia/vi/3/36/Mai_2024_poster.jpg',
       description: 'Câu chuyện tình yêu đầy cảm xúc và trắc trở giữa Mai và Dương.',
       age_rating: 'T18',
       genres: ['Tình Cảm', 'Tâm Lý']
@@ -47,7 +47,7 @@ const MovieService = {
       duration_minutes: 138,
       status: 'now_showing',
       release_date: '2024-04-26',
-      poster_url: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=600',
+      poster_url: 'https://image.tmdb.org/t/p/original/1K7pHhCZprfDXB7LkCquIK62yCb.jpg',
       description: 'Tình mẫu tử thiêng liêng và lòng hiếu thảo của những người con.',
       age_rating: 'K',
       genres: ['Gia Đình', 'Tâm Lý']
@@ -59,7 +59,7 @@ const MovieService = {
       duration_minutes: 166,
       status: 'now_showing',
       release_date: '2024-03-01',
-      poster_url: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=600',
+      poster_url: 'https://image.tmdb.org/t/p/original/8b8R8l88Qje9dn9OE8PY05Nxl1X.jpg',
       description: 'Hành trình trả thù và định đoạt tương lai thiên hà của Paul Atreides.',
       age_rating: 'T16',
       genres: ['Hành Động', 'Khoa Học Viễn Tưởng']
@@ -71,7 +71,7 @@ const MovieService = {
       duration_minutes: 134,
       status: 'now_showing',
       release_date: '2024-03-15',
-      poster_url: 'https://images.unsplash.com/photo-1563089145-599997674d42?q=80&w=600',
+      poster_url: 'https://image.tmdb.org/t/p/original/tMefBSflR6PGQLv7WvFPpKLZkyk.jpg',
       description: 'Bí ẩn ngôi mộ cổ đe dọa sinh mạng của gia tộc giàu có.',
       age_rating: 'T18',
       genres: ['Kinh Dị', 'Bí Ẩn']
@@ -95,7 +95,7 @@ const MovieService = {
       duration_minutes: 115,
       status: 'now_showing',
       release_date: '2024-03-29',
-      poster_url: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=800&auto=format&fit=crop&q=80',
+      poster_url: 'https://upload.wikimedia.org/wikipedia/en/b/be/Godzilla_x_kong_the_new_empire_poster.jpg',
       description: 'Trận chiến đỉnh cao giữa Godzilla và Kong chống lại mối đe dọa khổng lồ.',
       age_rating: 'T13',
       genres: ['Hành Động', 'Khoa Học Viễn Tưởng']
