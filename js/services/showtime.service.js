@@ -342,6 +342,104 @@ const ShowtimeService = {
   },
 
   /**
+   * Lấy sơ đồ ghế và trạng thái ghế cho một suất chiếu cụ thể (Task T3C68E8 & T3C6AF7)
+   * Gọi API: GET /api/showtimes/{id}/seats
+   */
+  async getShowtimeSeats(showtimeId) {
+    const sId = parseInt(showtimeId, 10);
+    try {
+      const baseUrl = this._getBaseUrl();
+      const url = `${baseUrl}/api/showtimes/${sId}/seats`;
+      let data = null;
+      if (window.apiClient) {
+        const res = await window.apiClient.get(url);
+        data = res.data;
+      } else {
+        const res = await fetch(url);
+        if (res.ok) {
+          data = await res.json();
+        }
+      }
+      if (data && data.rows) {
+        return { success: true, data };
+      }
+    } catch (e) {
+      console.warn('[ShowtimeService.getShowtimeSeats] Lỗi kết nối Backend, dùng Mock Seat Map:', e);
+    }
+
+    // Fallback Mock Seat Map
+    return {
+      success: true,
+      data: this.generateMockSeatMap(sId)
+    };
+  },
+
+  /**
+   * Sinh sơ đồ ghế giả lập đầy đủ trạng thái và loại ghế nếu Backend chưa chạy
+   */
+  generateMockSeatMap(showtimeId, basePrice = 90000) {
+    const rows = {};
+    const rowConfig = [
+      { row: 'A', type: 'standard', mult: 1.0, count: 10 },
+      { row: 'B', type: 'standard', mult: 1.0, count: 10 },
+      { row: 'C', type: 'standard', mult: 1.0, count: 10 },
+      { row: 'D', type: 'vip',      mult: 1.35, count: 10 },
+      { row: 'E', type: 'vip',      mult: 1.35, count: 10 },
+      { row: 'F', type: 'vip',      mult: 1.35, count: 10 },
+      { row: 'G', type: 'couple',   mult: 2.2,  count: 5 } // 5 ghế đôi (rộng gấp đôi)
+    ];
+
+    let seatIdCounter = 1000;
+    let totalSeats = 0;
+    let availableSeats = 0;
+
+    rowConfig.forEach(cfg => {
+      const seats = [];
+      for (let col = 1; col <= cfg.count; col++) {
+        seatIdCounter++;
+        totalSeats++;
+
+        // Một số ghế mẫu đã đặt hoặc đang giữ để test màu sắc
+        let status = 'available';
+        if (cfg.row === 'B' && (col === 4 || col === 5)) {
+          status = 'booked';
+        } else if (cfg.row === 'D' && (col === 5 || col === 6)) {
+          status = 'held';
+        } else if (cfg.row === 'E' && col === 8) {
+          status = 'booked';
+        } else if (cfg.row === 'G' && col === 2) {
+          status = 'held';
+        }
+
+        if (status === 'available') {
+          availableSeats++;
+        }
+
+        const seatPrice = Math.round(basePrice * cfg.mult);
+        seats.push({
+          id: seatIdCounter,
+          seat_number: `${cfg.row}${col}`,
+          seat_row: cfg.row,
+          seat_column: col,
+          seat_type: cfg.type,
+          status: status,
+          price: seatPrice
+        });
+      }
+      rows[cfg.row] = seats;
+    });
+
+    return {
+      showtime_id: showtimeId,
+      room_id: 1,
+      base_price: basePrice,
+      total_seats: totalSeats,
+      available_seats: availableSeats,
+      rows: rows
+    };
+  },
+
+  /**
    * Lấy danh sách tất cả các cụm rạp
    */
   getCinemasList() {
