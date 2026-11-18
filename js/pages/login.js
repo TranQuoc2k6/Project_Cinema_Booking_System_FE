@@ -150,9 +150,16 @@ window.handleLoginSubmit = async function (e) {
 };
 
 function redirectAfterLogin(user) {
-  // Kiểm tra xem có URL redirect trước đó không
-  const redirectUrl = window.StorageService ? window.StorageService.getAndClearRedirectUrl() : null;
+  // Kiểm tra xem có URL redirect trước đó không (ví dụ từ booking.html, payment.html)
+  const redirectUrl =
+    (window.StorageService && window.StorageService.getAndClearRedirectUrl()) ||
+    sessionStorage.getItem('cinema_redirect_url') ||
+    localStorage.getItem('cinema_redirect_url') ||
+    null;
+
   if (redirectUrl) {
+    sessionStorage.removeItem('cinema_redirect_url');
+    localStorage.removeItem('cinema_redirect_url');
     window.location.href = redirectUrl;
     return;
   }

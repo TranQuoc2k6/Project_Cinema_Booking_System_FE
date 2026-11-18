@@ -773,6 +773,10 @@
    * Đồng bộ header user profile
    */
   function syncUserHeader() {
+    if (window.renderAppHeader) {
+      window.renderAppHeader();
+      return;
+    }
     const authContainer = document.getElementById('header-auth-section');
     if (!authContainer) return;
 

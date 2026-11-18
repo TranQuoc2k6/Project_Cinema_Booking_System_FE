@@ -35,6 +35,9 @@
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Auth Storage & Customer Guard (Bắt buộc đăng nhập trước khi chọn ghế) -->
+    <script src="../js/utils/storage.js"></script>
+    <script src="../js/utils/customer-guard.js"></script>
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #0b0d12; color: #f8fafc; }
         .glass-panel { background: rgba(19, 23, 34, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
@@ -285,6 +288,15 @@
                 return;
             }
 
+            // Kiểm tra bắt buộc đăng nhập trước khi sang bước thanh toán
+            if (!window.StorageService || !window.StorageService.isAuthenticated()) {
+                alert('Vui lòng đăng nhập tài khoản để tiếp tục thanh toán!');
+                sessionStorage.setItem('cinema_redirect_url', window.location.href);
+                sessionStorage.setItem('auth_error', 'Vui lòng đăng nhập để thanh toán đơn vé.');
+                window.location.href = 'login.html';
+                return;
+            }
+
             // Lưu thông tin đặt vé vào session để chuyển sang payment.html
             sessionStorage.setItem('current_booking', JSON.stringify({
                 showtimeId: showtimeId,
@@ -348,5 +360,7 @@
             startTimer();
         };
     </script>
+    <script src="../js/services/auth.service.js"></script>
+    <script src="../js/components/header.js"></script>
 </body>
 </html>

@@ -79,6 +79,7 @@
     <script src="../js/utils/storage.js"></script>
     <script src="../js/config/api.js"></script>
     <script src="../js/services/auth.service.js"></script>
+    <script src="../js/components/header.js"></script>
 
     <script>
         const urlParams = new URLSearchParams(window.location.search);
@@ -141,14 +142,8 @@
         }
 
         window.onload = function() {
-            if (window.StorageService && window.StorageService.isAuthenticated()) {
-                const user = window.StorageService.getUser();
-                document.getElementById('header-auth-section').innerHTML = `
-                    <div class="flex items-center gap-3">
-                        <span class="text-xs text-slate-300">${user.full_name || user.email}</span>
-                        <a href="profile.html" class="w-8 h-8 rounded-full border border-cyan-400 flex items-center justify-center bg-slate-900 text-cyan-400 text-xs font-bold"><i class="fa-solid fa-user"></i></a>
-                    </div>
-                `;
+            if (window.renderAppHeader) {
+                window.renderAppHeader();
             }
             loadMovieDetail();
         };

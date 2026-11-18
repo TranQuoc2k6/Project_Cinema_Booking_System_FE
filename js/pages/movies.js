@@ -21,6 +21,10 @@ const MoviesPage = {
   },
 
   updateAuthHeader() {
+    if (window.renderAppHeader) {
+      window.renderAppHeader();
+      return;
+    }
     const authSec = document.getElementById('header-auth-section');
     if (!authSec) return;
 
