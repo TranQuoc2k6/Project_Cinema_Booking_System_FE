@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="../../css/layout.css">
   <link rel="stylesheet" href="../../css/components.css">
   <link rel="stylesheet" href="../../css/responsive.css">
+  <link rel="stylesheet" href="../../css/pages/admin.css">
 
   <!-- FRONTEND ROUTE GUARD: Kiểm tra token & role 'admin' -->
   <script src="../../js/utils/auth-guard.js"></script>
@@ -128,6 +129,7 @@
 
       <!-- PAGE CONTENT -->
       <main class="admin-content">
+        <!-- TITLE BAR & TIME FILTER PILLS -->
         <div class="page-title-bar">
           <div class="page-title-group">
             <h1>
@@ -136,9 +138,22 @@
             </h1>
             <p class="page-subtitle">Theo dõi các chỉ số doanh thu thời gian thực, tỷ lệ lấp đầy phòng chiếu 3D IMAX và trạng thái bán vé</p>
           </div>
-          <div class="header-actions d-flex gap-sm">
-            <button class="btn btn-secondary" onclick="window.location.reload()">
-              <i class="fa-solid fa-arrows-rotate"></i> Làm mới dữ liệu
+          <div class="header-actions d-flex gap-sm align-center" style="flex-wrap: wrap;">
+            <!-- Segmented Time Filter Pills -->
+            <div class="time-filter-pills">
+              <button class="pill-btn active" data-days="7" onclick="switchDashboardPeriod(7, this)">
+                <i class="fa-solid fa-calendar-week"></i> 7 ngày
+              </button>
+              <button class="pill-btn" data-days="14" onclick="switchDashboardPeriod(14, this)">
+                <i class="fa-solid fa-calendar-days"></i> 14 ngày
+              </button>
+              <button class="pill-btn" data-days="30" onclick="switchDashboardPeriod(30, this)">
+                <i class="fa-solid fa-calendar"></i> 30 ngày
+              </button>
+            </div>
+
+            <button class="btn btn-secondary" onclick="loadDashboardData()" title="Đồng bộ dữ liệu thời gian thực từ máy chủ">
+              <i class="fa-solid fa-arrows-rotate"></i> Làm mới
             </button>
             <a href="movies.html" class="btn btn-primary">
               <i class="fa-solid fa-plus"></i> Thêm phim mới
@@ -148,193 +163,141 @@
 
         <!-- 3D KPI CARDS (SRS 1.4) -->
         <div class="stats-grid">
+          <!-- Card 1: Tổng Doanh thu -->
           <div class="stat-card card-revenue">
             <div class="stat-info">
               <span class="stat-label">Tổng Doanh thu</span>
-              <span class="stat-value text-glow-cyan" id="kpi-revenue">48,500,000 đ</span>
-              <span class="stat-trend positive">↑ +14.8% so với tuần trước</span>
+              <span class="stat-value text-glow-cyan" id="kpi-revenue">-- đ</span>
+              <span class="stat-trend positive" id="kpi-revenue-trend">
+                <i class="fa-solid fa-arrow-trend-up"></i> Hôm nay: <strong>-- đ</strong>
+              </span>
             </div>
             <div class="stat-icon-wrapper icon-green">
               <i class="fa-solid fa-sack-dollar text-emerald"></i>
             </div>
           </div>
 
+          <!-- Card 2: Tổng vé đã bán -->
           <div class="stat-card card-tickets">
             <div class="stat-info">
               <span class="stat-label">Tổng vé đã bán</span>
-              <span class="stat-value text-glow-cyan" id="kpi-tickets">524 vé</span>
-              <span class="stat-trend positive">↑ +8.2% đơn đặt vé</span>
+              <span class="stat-value text-glow-cyan" id="kpi-tickets">-- vé</span>
+              <span class="stat-trend positive" id="kpi-tickets-trend">
+                <i class="fa-solid fa-ticket"></i> Hôm nay: <strong>-- vé</strong>
+              </span>
             </div>
             <div class="stat-icon-wrapper icon-blue">
               <i class="fa-solid fa-ticket text-cyan"></i>
             </div>
           </div>
 
+          <!-- Card 3: Tỷ lệ Lấp Đầy Trung Bình -->
+          <div class="stat-card card-users">
+            <div class="stat-info">
+              <span class="stat-label">Tỷ lệ Lấp Đầy TB</span>
+              <span class="stat-value text-glow-emerald" id="kpi-occupancy">--%</span>
+              <span class="stat-trend positive" id="kpi-occupancy-trend">
+                <i class="fa-solid fa-users-viewfinder"></i> Toàn bộ phòng chiếu 3D/IMAX
+              </span>
+            </div>
+            <div class="stat-icon-wrapper icon-amber">
+              <i class="fa-solid fa-users-viewfinder text-gold"></i>
+            </div>
+          </div>
+
+          <!-- Card 4: Phim đang chiếu & Top phòng vé -->
           <div class="stat-card card-movies">
             <div class="stat-info">
               <span class="stat-label">Phim đang chiếu</span>
-              <span class="stat-value text-glow-rose" id="kpi-movies">12 phim</span>
-              <span class="stat-trend">🎬 4 phim sắp công chiếu</span>
+              <span class="stat-value text-glow-rose" id="kpi-movies">-- phim</span>
+              <span class="stat-trend" id="kpi-top-movie">
+                <i class="fa-solid fa-trophy text-gold"></i> Dẫn đầu: <strong>--</strong>
+              </span>
             </div>
             <div class="stat-icon-wrapper icon-red">
               <i class="fa-solid fa-clapperboard text-rose"></i>
             </div>
           </div>
-
-          <div class="stat-card card-users">
-            <div class="stat-info">
-              <span class="stat-label">Khách hàng thành viên</span>
-              <span class="stat-value" id="kpi-users">158 tài khoản</span>
-              <span class="stat-trend positive">↑ +12 người dùng mới</span>
-            </div>
-            <div class="stat-icon-wrapper icon-amber">
-              <i class="fa-solid fa-users text-gold"></i>
-            </div>
-          </div>
         </div>
 
-        <!-- ANALYTICS PREVIEW & OCCUPANCY RATE (3D VISUALIZATION) -->
+        <!-- ROW 1: DOANH THU THEO NGÀY (3D CHART) & TỶ LỆ LẤP ĐẦY SUẤT CHIẾU -->
         <div style="display: grid; grid-template-columns: 2fr 1fr; gap: var(--spacing-lg); margin-bottom: var(--spacing-xl);">
-          <!-- 3D Bar Chart Doanh thu tuần -->
+          <!-- 3D Cylindrical Towers Chart: Doanh thu theo ngày -->
           <div class="table-card" style="padding: 1.8rem;">
-            <div class="d-flex justify-between align-center" style="margin-bottom: var(--spacing-lg);">
+            <div class="d-flex justify-between align-center" style="margin-bottom: var(--spacing-lg); flex-wrap: wrap; gap: 8px;">
               <div>
                 <h3 style="font-size: var(--font-lg); display: flex; align-items: center; gap: 8px;">
                   <i class="fa-solid fa-chart-simple text-primary"></i>
-                  Biểu đồ Doanh thu 7 ngày gần nhất
+                  Biểu đồ Doanh thu & Vé bán theo ngày
                 </h3>
-                <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Dữ liệu phân tích lưu lượng vé bán theo ngày trong tuần</p>
+                <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">
+                  Phân tích doanh thu và số lượng vé bán ra trong khoảng thời gian đã chọn
+                </p>
               </div>
-              <span class="badge badge-info"><i class="fa-solid fa-calendar-check"></i> Tuần hiện tại</span>
+              <span class="badge badge-info" id="chart-period-badge">
+                <i class="fa-solid fa-calendar-check"></i> 7 ngày gần nhất
+              </span>
             </div>
 
-            <!-- 3D Cylindrical Towers Chart -->
-            <div style="display: flex; align-items: flex-end; justify-content: space-around; height: 190px; padding: 20px 10px 10px; border-bottom: 1px solid var(--border-color); position: relative;">
-              <!-- T2 -->
-              <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
-                <span style="font-size: 11px; font-weight: 700; color: #94a3b8;">5.2tr</span>
-                <div style="width: 36px; height: 85px; background: linear-gradient(180deg, #06b6d4 0%, rgba(6, 182, 212, 0.3) 100%); border-radius: 8px 8px 4px 4px; box-shadow: 0 0 15px rgba(6, 182, 212, 0.35); position: relative;">
-                  <div style="position: absolute; top: -5px; left: 0; right: 0; height: 10px; border-radius: 50%; background: #67e8f9; box-shadow: 0 0 8px #06b6d4;"></div>
-                </div>
-                <span style="font-size: 12px; color: var(--text-muted); font-weight: 600;">T2</span>
-              </div>
-
-              <!-- T3 -->
-              <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
-                <span style="font-size: 11px; font-weight: 700; color: #94a3b8;">6.8tr</span>
-                <div style="width: 36px; height: 115px; background: linear-gradient(180deg, #06b6d4 0%, rgba(6, 182, 212, 0.3) 100%); border-radius: 8px 8px 4px 4px; box-shadow: 0 0 15px rgba(6, 182, 212, 0.35); position: relative;">
-                  <div style="position: absolute; top: -5px; left: 0; right: 0; height: 10px; border-radius: 50%; background: #67e8f9; box-shadow: 0 0 8px #06b6d4;"></div>
-                </div>
-                <span style="font-size: 12px; color: var(--text-muted); font-weight: 600;">T3</span>
-              </div>
-
-              <!-- T4 -->
-              <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
-                <span style="font-size: 11px; font-weight: 700; color: #94a3b8;">4.5tr</span>
-                <div style="width: 36px; height: 70px; background: linear-gradient(180deg, #06b6d4 0%, rgba(6, 182, 212, 0.3) 100%); border-radius: 8px 8px 4px 4px; box-shadow: 0 0 15px rgba(6, 182, 212, 0.35); position: relative;">
-                  <div style="position: absolute; top: -5px; left: 0; right: 0; height: 10px; border-radius: 50%; background: #67e8f9; box-shadow: 0 0 8px #06b6d4;"></div>
-                </div>
-                <span style="font-size: 12px; color: var(--text-muted); font-weight: 600;">T4</span>
-              </div>
-
-              <!-- T5 -->
-              <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
-                <span style="font-size: 11px; font-weight: 700; color: #94a3b8;">7.4tr</span>
-                <div style="width: 36px; height: 130px; background: linear-gradient(180deg, #06b6d4 0%, rgba(6, 182, 212, 0.3) 100%); border-radius: 8px 8px 4px 4px; box-shadow: 0 0 15px rgba(6, 182, 212, 0.35); position: relative;">
-                  <div style="position: absolute; top: -5px; left: 0; right: 0; height: 10px; border-radius: 50%; background: #67e8f9; box-shadow: 0 0 8px #06b6d4;"></div>
-                </div>
-                <span style="font-size: 12px; color: var(--text-muted); font-weight: 600;">T5</span>
-              </div>
-
-              <!-- T6 -->
-              <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
-                <span style="font-size: 11px; font-weight: 700; color: #94a3b8;">9.1tr</span>
-                <div style="width: 36px; height: 150px; background: linear-gradient(180deg, #06b6d4 0%, rgba(6, 182, 212, 0.3) 100%); border-radius: 8px 8px 4px 4px; box-shadow: 0 0 18px rgba(6, 182, 212, 0.45); position: relative;">
-                  <div style="position: absolute; top: -5px; left: 0; right: 0; height: 10px; border-radius: 50%; background: #67e8f9; box-shadow: 0 0 10px #06b6d4;"></div>
-                </div>
-                <span style="font-size: 12px; color: var(--text-muted); font-weight: 600;">T6</span>
-              </div>
-
-              <!-- T7 (Peak) -->
-              <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
-                <span style="font-size: 11px; font-weight: 800; color: #fb7185;">12.8tr</span>
-                <div style="width: 36px; height: 175px; background: linear-gradient(180deg, #f43f5e 0%, rgba(244, 63, 94, 0.35) 100%); border-radius: 8px 8px 4px 4px; box-shadow: 0 0 25px rgba(244, 63, 94, 0.55); position: relative;">
-                  <div style="position: absolute; top: -5px; left: 0; right: 0; height: 10px; border-radius: 50%; background: #fda4af; box-shadow: 0 0 12px #f43f5e;"></div>
-                </div>
-                <span style="font-size: 12px; color: var(--color-accent); font-weight: 800;">T7</span>
-              </div>
-
-              <!-- CN (Peak) -->
-              <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
-                <span style="font-size: 11px; font-weight: 800; color: #fb7185;">11.9tr</span>
-                <div style="width: 36px; height: 165px; background: linear-gradient(180deg, #f43f5e 0%, rgba(244, 63, 94, 0.35) 100%); border-radius: 8px 8px 4px 4px; box-shadow: 0 0 25px rgba(244, 63, 94, 0.55); position: relative;">
-                  <div style="position: absolute; top: -5px; left: 0; right: 0; height: 10px; border-radius: 50%; background: #fda4af; box-shadow: 0 0 12px #f43f5e;"></div>
-                </div>
-                <span style="font-size: 12px; color: var(--color-accent); font-weight: 800;">CN</span>
-              </div>
+            <!-- Dynamic 3D Towers Container -->
+            <div id="revenue-chart-towers" class="towers-chart-wrapper">
+              <!-- Rendered via JS -->
             </div>
 
-            <div class="d-flex justify-between align-center" style="margin-top: 14px;">
-              <p style="font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
-                <i class="fa-solid fa-fire text-accent"></i> Cao điểm cuối tuần chiếm <strong>62%</strong> tổng doanh thu toàn cụm rạp.
+            <!-- Chart Footer Summary -->
+            <div class="d-flex justify-between align-center" style="margin-top: 14px; flex-wrap: wrap; gap: 8px;">
+              <p style="font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px;" id="chart-footer-summary">
+                <i class="fa-solid fa-fire text-accent"></i> Cao điểm cuối tuần chiếm tỷ trọng doanh thu cao nhất.
               </p>
-              <span style="font-size: 12px; color: var(--color-primary); font-weight: 600;">Tăng trưởng +18% MoM</span>
+              <span style="font-size: 12px; color: var(--color-primary); font-weight: 600;" id="chart-footer-metric">
+                <i class="fa-solid fa-shield-halved"></i> Dữ liệu thời gian thực
+              </span>
             </div>
           </div>
 
-          <!-- Tỷ lệ lấp đầy phòng chiếu (SRS Occupancy Rate) -->
+          <!-- Tỷ lệ Lấp Đầy Suất Chiếu (Showtime Occupancy Rate) -->
           <div class="table-card" style="padding: 1.8rem;">
-            <h3 style="font-size: var(--font-lg); margin-bottom: 0.35rem; display: flex; align-items: center; gap: 8px;">
-              <i class="fa-solid fa-users-viewfinder text-secondary"></i>
-              Tỷ lệ Lấp Đầy Phòng Chiếu
-            </h3>
+            <div class="d-flex justify-between align-center" style="margin-bottom: 0.35rem;">
+              <h3 style="font-size: var(--font-lg); display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-users-viewfinder text-secondary"></i>
+                Tỷ lệ Lấp Đầy Suất Chiếu
+              </h3>
+            </div>
             <p style="font-size: 12px; color: var(--text-muted); margin-bottom: var(--spacing-lg);">
-              Occupancy = (Ghế đã đặt / Tổng số ghế) × 100%
+              Occupancy = (Ghế đã đặt / Tổng số ghế phòng) × 100%
             </p>
 
-            <div style="margin-bottom: var(--spacing-md);">
-              <div class="d-flex justify-between" style="font-size: 13px; font-weight: 700; margin-bottom: 4px;">
-                <span>Phim "Mai" (Phòng IMAX 01)</span>
-                <span class="text-success"><i class="fa-solid fa-bolt"></i> 92%</span>
-              </div>
-              <div class="progress-bar-bg">
-                <div class="progress-bar-fill" style="width: 92%; background: var(--gradient-emerald);"></div>
-              </div>
-            </div>
-
-            <div style="margin-bottom: var(--spacing-md);">
-              <div class="d-flex justify-between" style="font-size: 13px; font-weight: 700; margin-bottom: 4px;">
-                <span>Lật Mặt 7 (Phòng chiếu 02)</span>
-                <span class="text-success">84%</span>
-              </div>
-              <div class="progress-bar-bg">
-                <div class="progress-bar-fill" style="width: 84%; background: var(--gradient-emerald);"></div>
-              </div>
-            </div>
-
-            <div style="margin-bottom: var(--spacing-md);">
-              <div class="d-flex justify-between" style="font-size: 13px; font-weight: 700; margin-bottom: 4px;">
-                <span>Dune 2 (Phòng VIP Gold)</span>
-                <span class="text-warning">68%</span>
-              </div>
-              <div class="progress-bar-bg">
-                <div class="progress-bar-fill" style="width: 68%; background: var(--gradient-gold);"></div>
-              </div>
-            </div>
-
-            <div>
-              <div class="d-flex justify-between" style="font-size: 13px; font-weight: 700; margin-bottom: 4px;">
-                <span>Kung Fu Panda 4 (Phòng 03)</span>
-                <span class="text-info">55%</span>
-              </div>
-              <div class="progress-bar-bg">
-                <div class="progress-bar-fill" style="width: 55%; background: var(--gradient-primary);"></div>
-              </div>
+            <!-- Dynamic Occupancy List -->
+            <div id="occupancy-list-container" class="occupancy-list-wrapper">
+              <!-- Rendered via JS -->
             </div>
           </div>
         </div>
 
-        <!-- RECENT BOOKINGS TABLE (3D CINEMA STYLE) -->
+        <!-- ROW 2: DOANH THU & SỐ VÉ THEO PHIM (BOX OFFICE RANKING) -->
+        <div class="table-card" style="margin-bottom: var(--spacing-xl); padding: 1.8rem;">
+          <div class="d-flex justify-between align-center" style="margin-bottom: var(--spacing-md); flex-wrap: wrap; gap: 12px;">
+            <div>
+              <h3 style="font-size: var(--font-lg); display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-ranking-star text-gold"></i>
+                Doanh thu & Số vé theo Phim (Box Office Ranking)
+              </h3>
+              <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">
+                Bảng xếp hạng doanh thu phòng vé, tổng số vé đã bán và tỷ trọng đóng góp của từng bộ phim trong hệ thống
+              </p>
+            </div>
+            <a href="movies.html" class="btn btn-secondary btn-sm">
+              <i class="fa-solid fa-film"></i> Xem toàn bộ phim
+            </a>
+          </div>
+
+          <!-- Dynamic Box Office Movie Cards Grid -->
+          <div id="revenue-by-movie-container" class="movie-boxoffice-grid">
+            <!-- Rendered via JS -->
+          </div>
+        </div>
+
+        <!-- ROW 3: RECENT BOOKINGS TABLE (ĐƠN ĐẶT VÉ TRỰC TUYẾN MỚI NHẤT) -->
         <div class="table-card">
           <div class="table-header-bar">
             <div>
@@ -363,33 +326,7 @@
                 </tr>
               </thead>
               <tbody id="recent-bookings-tbody">
-                <tr>
-                  <td><strong style="color: #fff; font-family: monospace; font-size: 14px;">#BK-9842</strong></td>
-                  <td><strong>Nguyễn Văn Hùng</strong></td>
-                  <td>Mai (18+)</td>
-                  <td>19:30 • 09/11/2026</td>
-                  <td><span class="badge badge-info">F7, F8</span></td>
-                  <td><strong style="color: var(--color-success); font-size: 15px;">210,000 đ</strong></td>
-                  <td><span class="badge badge-success"><i class="fa-solid fa-circle-check"></i> Đã thanh toán</span></td>
-                </tr>
-                <tr>
-                  <td><strong style="color: #fff; font-family: monospace; font-size: 14px;">#BK-9841</strong></td>
-                  <td><strong>Trần Thị Lan</strong></td>
-                  <td>Lật Mặt 7: Một Điều Ước</td>
-                  <td>20:00 • 09/11/2026</td>
-                  <td><span class="badge badge-info">D4, D5, D6</span></td>
-                  <td><strong style="color: var(--color-success); font-size: 15px;">270,000 đ</strong></td>
-                  <td><span class="badge badge-success"><i class="fa-solid fa-circle-check"></i> Đã thanh toán</span></td>
-                </tr>
-                <tr>
-                  <td><strong style="color: #fff; font-family: monospace; font-size: 14px;">#BK-9840</strong></td>
-                  <td><strong>Lê Văn Khải</strong></td>
-                  <td>Dune: Hành Tinh Cát 2</td>
-                  <td>21:15 • 09/11/2026</td>
-                  <td><span class="badge badge-info">G11</span></td>
-                  <td><strong style="color: #fbbf24; font-size: 15px;">120,000 đ</strong></td>
-                  <td><span class="badge badge-warning"><i class="fa-solid fa-hourglass-half"></i> Chờ thanh toán</span></td>
-                </tr>
+                <!-- Rendered via JS -->
               </tbody>
             </table>
           </div>
