@@ -57,8 +57,8 @@ const fallbackMoviesList = [
         tech_badge: "DOLBY ATMOS",
         genres: ["Tâm Lý", "Tình Cảm", "Gia Đình"],
         description: "Câu chuyện tình yêu đầy trắc trở giữa Mai - người phụ nữ massage chịu nhiều tổn thương và Dương - chàng nhạc công lãng tử.",
-        poster_url: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=800&auto=format&fit=crop&q=80",
-        backdrop_url: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1600&auto=format&fit=crop&q=80",
+        poster_url: "https://upload.wikimedia.org/wikipedia/vi/3/36/Mai_2024_poster.jpg",
+        backdrop_url: "https://upload.wikimedia.org/wikipedia/vi/3/36/Mai_2024_poster.jpg",
         trailer_url: "https://www.youtube.com/embed/HKk97N0jG9g?autoplay=1",
         accent_color: "#ff8c42",
         release_date: "10/02/2026"
@@ -74,8 +74,8 @@ const fallbackMoviesList = [
         tech_badge: "2D DOLBY SOUND",
         genres: ["Gia Đình", "Tâm Lý", "Cảm Động"],
         description: "Bức tranh gia đình nhiều thế hệ xoay quanh người mẹ già một đời tần tảo và ước nguyện sum vầy cùng 5 người con.",
-        poster_url: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&auto=format&fit=crop&q=80",
-        backdrop_url: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=1600&auto=format&fit=crop&q=80",
+        poster_url: "https://image.tmdb.org/t/p/original/1K7pHhCZprfDXB7LkCquIK62yCb.jpg",
+        backdrop_url: "https://image.tmdb.org/t/p/original/1K7pHhCZprfDXB7LkCquIK62yCb.jpg",
         trailer_url: "https://www.youtube.com/embed/e5_Jt3J_Cq4?autoplay=1",
         accent_color: "#d4ff00",
         release_date: "26/04/2026"
@@ -159,8 +159,8 @@ const fallbackMoviesList = [
         tech_badge: "IMAX LASER 3D",
         genres: ["Quái Thú", "Khoa Học Viễn Tưởng", "Hành Động"],
         description: "Hai biểu tượng quái thú huyền thoại hợp nhất sức mạnh để đối đầu mối đe dọa sinh tử từ sâu thẳm lòng Trái Đất Rỗng.",
-        poster_url: "https://image.tmdb.org/t/p/original/bQ2ywkchCe02AcE2dUwTFRI0w2h.jpg",
-        backdrop_url: "https://image.tmdb.org/t/p/original/qrGtVF3YZvJneJRNiRHgtd4YgBq.jpg",
+        poster_url: "https://upload.wikimedia.org/wikipedia/en/b/be/Godzilla_x_kong_the_new_empire_poster.jpg",
+        backdrop_url: "https://upload.wikimedia.org/wikipedia/en/b/be/Godzilla_x_kong_the_new_empire_poster.jpg",
         trailer_url: "https://www.youtube.com/embed/lV1OOlGwExg?autoplay=1",
         accent_color: "#e11d48",
         release_date: "29/03/2026"
