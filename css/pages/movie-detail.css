@@ -1,0 +1,164 @@
+/* ==========================================================================
+   MOVIE DETAIL PAGE STYLES (css/pages/movie-detail.css)
+   LUMEN CINEMA Design System - Obsidian Titanium & Electric Tangerine
+   ========================================================================== */
+
+/* 1. Backdrop Glow & Hero Ambient Lighting */
+.movie-hero-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 520px;
+  background-size: cover;
+  background-position: center top;
+  filter: blur(55px) brightness(0.28);
+  opacity: 0.6;
+  pointer-events: none;
+  z-index: 0;
+  transform: scale(1.1);
+  transition: opacity 0.8s ease;
+}
+
+.movie-hero-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(11, 13, 18, 0.4) 0%,
+    rgba(11, 13, 18, 0.85) 60%,
+    #0b0d12 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* 2. Glassmorphism Panels */
+.glass-panel-cinema {
+  background: rgba(19, 23, 34, 0.82);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.85), 0 0 30px rgba(255, 94, 30, 0.05);
+}
+
+.glass-card-cinema {
+  background: rgba(25, 30, 45, 0.65);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card-cinema:hover {
+  border-color: rgba(255, 94, 30, 0.4);
+  box-shadow: 0 12px 30px -8px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 94, 30, 0.15);
+}
+
+/* 3. Poster Presentation with 3D Effect */
+.poster-container {
+  position: relative;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.95), 0 0 35px rgba(255, 94, 30, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+}
+
+.poster-container:hover {
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.98), 0 0 45px rgba(255, 94, 30, 0.35);
+  border-color: rgba(255, 94, 30, 0.5);
+}
+
+/* 4. Trailer Video Container */
+.trailer-frame-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 1.25rem;
+  overflow: hidden;
+  background: #000;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.95), 0 0 30px rgba(0, 0, 0, 0.8);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.trailer-frame-wrapper:hover {
+  border-color: rgba(255, 94, 30, 0.4);
+  box-shadow: 0 25px 50px -10px rgba(0, 0, 0, 0.98), 0 0 35px rgba(255, 94, 30, 0.2);
+}
+
+.trailer-frame-wrapper iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* 5. Pill badges & tags */
+.genre-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.85rem;
+  border-radius: 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.05);
+  color: #e2e8f0;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition: all 0.2s ease;
+}
+
+.genre-badge:hover {
+  background: rgba(255, 94, 30, 0.15);
+  color: #ff5e1e;
+  border-color: rgba(255, 94, 30, 0.4);
+  transform: translateY(-1px);
+}
+
+/* 6. Primary Action Button */
+.btn-book-tickets {
+  background: linear-gradient(135deg, #ff5e1e 0%, #ea580c 100%);
+  color: #ffffff;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  box-shadow: 0 10px 25px -5px rgba(255, 94, 30, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-book-tickets:hover {
+  background: linear-gradient(135deg, #ff7138 0%, #ff5e1e 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px -5px rgba(255, 94, 30, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+
+.btn-book-tickets:active {
+  transform: translateY(1px);
+  box-shadow: 0 5px 15px -3px rgba(255, 94, 30, 0.5);
+}
+
+/* 7. Shimmer Loading Skeleton */
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(25, 30, 45, 0.5) 0%,
+    rgba(40, 48, 70, 0.6) 50%,
+    rgba(25, 30, 45, 0.5) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeletonAnimation 1.6s infinite ease-in-out;
+  border-radius: 0.75rem;
+}
+
+@keyframes skeletonAnimation {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

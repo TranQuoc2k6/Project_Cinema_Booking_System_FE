@@ -209,7 +209,14 @@ const MovieService = {
         const res = await fetch(url);
 
         if (!res.ok) {
-          throw new Error('Không tìm thấy phim');
+          if (res.status === 404) {
+            return {
+              success: false,
+              status: 404,
+              message: 'Không tìm thấy phim yêu cầu'
+            };
+          }
+          throw new Error('Lỗi khi tải thông tin phim');
         }
 
         data = await res.json();
@@ -220,12 +227,28 @@ const MovieService = {
         data
       };
     } catch (error) {
+      if (error.response && error.response.status === 404) {
+        return {
+          success: false,
+          status: 404,
+          message: error.response.data?.detail || 'Không tìm thấy phim yêu cầu'
+        };
+      }
+
       const mId = parseInt(id, 10);
-      const fallback = this._mockMovies.find(m => m.id === mId) || this._mockMovies[0];
+      const fallback = this._mockMovies.find(m => m.id === mId);
+      if (fallback) {
+        console.warn('[MovieService] Backend offline, sử dụng dữ liệu mẫu cho phim ID:', id);
+        return {
+          success: true,
+          data: fallback,
+          isFallback: true
+        };
+      }
+
       return {
-        success: true,
-        data: fallback,
-        message: error.response?.data?.detail || error.message
+        success: false,
+        message: error.response?.data?.detail || error.message || 'Không thể kết nối đến máy chủ'
       };
     }
   },
