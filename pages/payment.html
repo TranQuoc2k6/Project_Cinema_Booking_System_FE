@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thanh Toán Vé 3D - Cinema Booking System</title>
+    <title>Thanh Toán Đơn Vé & Cổng Sandbox - LUMEN CINEMA</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -13,12 +13,14 @@
                 extend: {
                     colors: {
                         brand: {
-                            dark: '#070a12',
-                            card: '#0f172a',
-                            cyan: '#06b6d4',
-                            rose: '#f43f5e',
-                            purple: '#8b5cf6',
-                            gold: '#f59e0b'
+                            dark: '#0b0d12',
+                            surface: '#131722',
+                            card: '#131722',
+                            chrome: '#1f2433',
+                            tangerine: '#ff5e1e',
+                            lime: '#d4ff00',
+                            gold: '#e6ca85',
+                            violet: '#7c3aed'
                         }
                     },
                     fontFamily: {
@@ -30,135 +32,196 @@
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/pages/payment.css">
     <!-- Auth Storage & Customer Guard (Bắt buộc đăng nhập trước khi thanh toán) -->
     <script src="../js/utils/storage.js"></script>
     <script src="../js/utils/customer-guard.js"></script>
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #070a12; color: #f8fafc; }
-        .glass-panel { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .glass-card { background: rgba(30, 41, 59, 0.5); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        body { font-family: 'Inter', sans-serif; background-color: #0b0d12; color: #f8fafc; }
+        .glass-panel { background: rgba(19, 23, 34, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .glass-card { background: rgba(25, 30, 45, 0.65); backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, 0.08); }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
 
     <!-- Header Navigation -->
-    <header class="sticky top-[10px] mx-[10px] rounded-2xl z-50 glass-panel border border-slate-800/80">
+    <header class="sticky top-[10px] mx-[10px] rounded-2xl z-50 glass-panel border border-white/10 transition-all duration-300">
         <div class="w-full px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-            <a href="../index.html" class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-rose-500 to-cyan-400 p-[2px]">
-                    <div class="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
-                        <i class="fa-solid fa-cube text-cyan-400 text-xl"></i>
+            <a href="../index.html" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#ff5e1e] via-[#d4ff00] to-[#7c3aed] p-[2px] transform group-hover:rotate-12 transition-transform duration-300 shadow-[0_0_15px_rgba(255,94,30,0.5)]">
+                    <div class="w-full h-full bg-[#0b0d12] rounded-[10px] flex items-center justify-center">
+                        <i class="fa-solid font-black fa-cube text-[#d4ff00] text-xl group-hover:scale-110 transition-transform"></i>
                     </div>
                 </div>
-                <span class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-rose-500">
-                    CINEMA<span class="text-white font-light">3D</span>
-                </span>
+                <div class="flex flex-col">
+                    <span class="text-2xl font-black tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-[#ff5e1e] via-[#d4ff00] to-white">
+                        LUMEN<span class="text-white font-light">CINEMA</span>
+                    </span>
+                    <span class="text-[9px] uppercase tracking-widest text-[#d4ff00] -mt-1 font-semibold">Studio & Theater HQ</span>
+                </div>
             </a>
             <nav class="hidden md:flex gap-8">
-                <a href="../index.html" class="text-sm font-medium text-slate-300 hover:text-cyan-400 transition-colors">Trang chủ</a>
-                <a href="movies.html" class="text-sm font-medium text-slate-300 hover:text-cyan-400 transition-colors">Phim Chiếu</a>
-                <a href="showtimes.html" class="text-sm font-medium text-slate-300 hover:text-cyan-400 transition-colors">Lịch Chiếu</a>
-                <a href="booking.html" class="text-sm font-medium text-slate-300 hover:text-cyan-400 transition-colors">Đặt Vé</a>
-                <a href="my-tickets.html" class="text-sm font-medium text-slate-300 hover:text-cyan-400 transition-colors">Vé Của Tôi</a>
+                <a href="../index.html" class="text-sm font-medium text-slate-300 hover:text-[#ff5e1e] transition-colors">Trang chủ</a>
+                <a href="movies.html" class="text-sm font-medium text-slate-300 hover:text-[#ff5e1e] transition-colors">Phim Chiếu</a>
+                <a href="showtimes.html" class="text-sm font-medium text-slate-300 hover:text-[#ff5e1e] transition-colors">Lịch Chiếu</a>
+                <a href="booking.html" class="text-sm font-medium text-slate-300 hover:text-[#ff5e1e] transition-colors">Đặt Vé</a>
+                <a href="my-tickets.html" class="text-sm font-medium text-slate-300 hover:text-cyan-400 flex items-center gap-1.5 transition-colors">
+                    <i class="fa-solid fa-receipt text-xs"></i> Vé Của Tôi
+                </a>
             </nav>
-            <div id="header-auth-section" class="flex items-center gap-3"></div>
+            <div id="header-auth-section">
+                <a href="login.html" class="px-4 py-2 rounded-full glass-panel text-xs font-semibold text-slate-300 hover:text-white">Đăng Nhập</a>
+            </div>
         </div>
     </header>
 
-    <!-- Main Payment -->
-    <main class="flex-1 max-w-4xl mx-auto px-4 py-10 w-full">
+    <!-- Main Payment Container -->
+    <main class="flex-1 max-w-5xl mx-auto px-4 py-8 w-full">
         <div class="glass-panel p-6 sm:p-10 rounded-3xl border border-slate-800/80 shadow-2xl">
-            <h1 class="text-2xl font-black text-white uppercase mb-6 flex items-center gap-3 border-b border-slate-800 pb-4">
-                <span class="w-3 h-8 bg-gradient-to-b from-cyan-400 to-emerald-400 rounded-full inline-block"></span>
-                Xác Nhận & Thanh Toán Đơn Vé
-            </h1>
+            
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-6 border-b border-white/10 gap-3">
+                <div class="flex items-center gap-3">
+                    <span class="w-3 h-8 bg-gradient-to-b from-[#ff5e1e] to-[#d4ff00] rounded-full inline-block"></span>
+                    <div>
+                        <h1 class="text-xl sm:text-2xl font-black text-white uppercase tracking-wider">Xác Nhận & Thanh Toán Đơn Vé</h1>
+                        <p class="text-xs text-slate-400 mt-0.5">Vui lòng kiểm tra lại thông tin và chọn phương thức thanh toán</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-950/40 border border-cyan-500/30 text-cyan-400 text-xs font-semibold">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span>Cổng Sandbox 3D-Secure</span>
+                </div>
+            </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-8">
                 
-                <!-- Left: Booking Info Summary -->
-                <div class="space-y-4">
-                    <h3 class="text-sm font-bold text-cyan-400 uppercase tracking-wider">Chi Tiết Đơn Hàng</h3>
-                    <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-3 text-xs">
-                        <div class="flex justify-between">
-                            <span class="text-slate-400">Tên phim:</span>
-                            <span class="font-bold text-white text-right" id="pay-movie">Dune 2</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-slate-400">Rạp chiếu:</span>
-                            <span class="font-bold text-white" id="pay-cinema">CGV Landmark 81</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-slate-400">Suất chiếu:</span>
-                            <span class="font-bold text-white" id="pay-showtime">18:30 (Hôm nay)</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-slate-400">Ghế ngồi:</span>
-                            <span class="font-bold text-cyan-400 text-sm" id="pay-seats">A1, A2</span>
-                        </div>
-                        <div class="pt-3 border-t border-slate-800 flex justify-between items-center">
-                            <span class="text-xs font-bold uppercase text-slate-300">Tổng thanh toán:</span>
-                            <span class="text-xl font-black text-emerald-400" id="pay-total">180.000 đ</span>
+                <!-- Left: Booking Info Summary & Customer Contact (5 cols) -->
+                <div class="lg:col-span-5 space-y-6">
+                    <div>
+                        <h3 class="text-xs font-black text-[#d4ff00] uppercase tracking-widest mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-ticket"></i> Chi Tiết Đơn Vé
+                        </h3>
+                        <div class="glass-card p-5 rounded-2xl border border-white/10 space-y-3.5 text-xs">
+                            <div class="flex justify-between items-start">
+                                <span class="text-slate-400">Phim:</span>
+                                <span class="font-bold text-white text-right max-w-[200px]" id="pay-movie">Dune 2</span>
+                            </div>
+                            <div class="flex justify-between items-start">
+                                <span class="text-slate-400">Rạp chiếu:</span>
+                                <span class="font-bold text-slate-200 text-right" id="pay-cinema">CGV Landmark 81</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">Suất chiếu:</span>
+                                <span class="font-bold text-[#ff5e1e]" id="pay-showtime">18:30 (Hôm nay)</span>
+                            </div>
+                            <div class="flex justify-between items-start">
+                                <span class="text-slate-400">Ghế đã chọn:</span>
+                                <span class="font-bold text-[#d4ff00] font-mono text-sm" id="pay-seats">A1, A2</span>
+                            </div>
+                            <div class="pt-3 border-t border-white/10 flex justify-between items-center">
+                                <span class="text-xs font-bold uppercase text-slate-300">Tổng thanh toán:</span>
+                                <span class="text-xl font-black text-[#d4ff00] font-mono" id="pay-total">180.000 đ</span>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Customer Contact Details -->
-                    <h3 class="text-sm font-bold text-cyan-400 uppercase tracking-wider pt-2">Thông Tin Nhận Vé</h3>
-                    <div class="space-y-3">
-                        <div>
-                            <label class="block text-[11px] font-bold text-slate-400 mb-1">Họ và tên</label>
-                            <input type="text" id="pay-name" placeholder="Nguyễn Văn A" class="w-full bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-xl p-3 focus:outline-none focus:border-cyan-500">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] font-bold text-slate-400 mb-1">Email nhận vé điện tử</label>
-                            <input type="email" id="pay-email" placeholder="customer@cinema.com" class="w-full bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-xl p-3 focus:outline-none focus:border-cyan-500">
+                    <div>
+                        <h3 class="text-xs font-black text-cyan-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-envelope-open-text"></i> Thông Tin Nhận Vé Điện Tử
+                        </h3>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-400 mb-1">Họ và tên khách hàng</label>
+                                <input type="text" id="pay-name" placeholder="Nguyễn Văn A" class="w-full bg-[#131722] border border-slate-700 text-slate-200 text-xs rounded-xl p-3 focus:outline-none focus:border-[#d4ff00] transition-colors">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-400 mb-1">Email nhận vé (PDF & QR Code)</label>
+                                <input type="email" id="pay-email" placeholder="customer@cinema.com" class="w-full bg-[#131722] border border-slate-700 text-slate-200 text-xs rounded-xl p-3 focus:outline-none focus:border-[#d4ff00] transition-colors">
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Right: Payment Method Options -->
-                <div class="space-y-4">
-                    <h3 class="text-sm font-bold text-cyan-400 uppercase tracking-wider">Phương Thức Thanh Toán</h3>
-                    
-                    <div class="space-y-3">
-                        <label class="glass-card p-4 rounded-2xl border border-slate-800 flex items-center justify-between cursor-pointer hover:border-cyan-500 transition-all">
-                            <div class="flex items-center gap-3">
-                                <input type="radio" name="payment-method" value="MOMO" checked class="text-cyan-500 focus:ring-0">
-                                <div>
-                                    <div class="text-xs font-bold text-white">Ví MoMo</div>
-                                    <span class="text-[10px] text-slate-400">Quét mã QR MoMo tiện lợi</span>
+                <!-- Right: Payment Method Options & Sandbox Action (7 cols) -->
+                <div class="lg:col-span-7 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-xs font-black text-[#ff5e1e] uppercase tracking-widest mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-credit-card"></i> Chọn Cổng Thanh Toán
+                        </h3>
+                        
+                        <div class="space-y-3" id="payment-methods-list">
+                            <!-- MoMo -->
+                            <label class="payment-method-card glass-card p-4 rounded-2xl border border-white/10 flex items-center justify-between cursor-pointer selected">
+                                <div class="flex items-center gap-3.5">
+                                    <input type="radio" name="payment-method" value="MOMO" checked class="text-[#ff5e1e] focus:ring-0">
+                                    <div class="w-10 h-10 rounded-xl bg-pink-950/60 border border-pink-500/40 flex items-center justify-center">
+                                        <i class="fa-solid fa-wallet text-pink-400 text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-xs font-bold text-white">Ví Điện Tử MoMo</div>
+                                        <span class="text-[10px] text-slate-400">Quét mã QR MoMo tiện lợi & tức thì</span>
+                                    </div>
                                 </div>
-                            </div>
-                            <span class="text-rose-400 font-black text-sm">MoMo</span>
-                        </label>
+                                <span class="text-pink-400 font-black text-xs px-2.5 py-1 rounded bg-pink-950/40 border border-pink-500/20">MOMO</span>
+                            </label>
 
-                        <label class="glass-card p-4 rounded-2xl border border-slate-800 flex items-center justify-between cursor-pointer hover:border-cyan-500 transition-all">
-                            <div class="flex items-center gap-3">
-                                <input type="radio" name="payment-method" value="VNPAY" class="text-cyan-500 focus:ring-0">
-                                <div>
-                                    <div class="text-xs font-bold text-white">VNPAY-QR</div>
-                                    <span class="text-[10px] text-slate-400">Thẻ ATM / Internet Banking / QR</span>
+                            <!-- VNPAY -->
+                            <label class="payment-method-card glass-card p-4 rounded-2xl border border-white/10 flex items-center justify-between cursor-pointer">
+                                <div class="flex items-center gap-3.5">
+                                    <input type="radio" name="payment-method" value="VNPAY" class="text-[#ff5e1e] focus:ring-0">
+                                    <div class="w-10 h-10 rounded-xl bg-blue-950/60 border border-blue-500/40 flex items-center justify-center">
+                                        <i class="fa-solid fa-qrcode text-blue-400 text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-xs font-bold text-white">Cổng VNPAY-QR</div>
+                                        <span class="text-[10px] text-slate-400">Ứng dụng Ngân hàng (Vietcombank, MB, BIDV...)</span>
+                                    </div>
                                 </div>
-                            </div>
-                            <span class="text-blue-400 font-black text-sm">VNPAY</span>
-                        </label>
+                                <span class="text-blue-400 font-black text-xs px-2.5 py-1 rounded bg-blue-950/40 border border-blue-500/20">VNPAY</span>
+                            </label>
 
-                        <label class="glass-card p-4 rounded-2xl border border-slate-800 flex items-center justify-between cursor-pointer hover:border-cyan-500 transition-all">
-                            <div class="flex items-center gap-3">
-                                <input type="radio" name="payment-method" value="VISA" class="text-cyan-500 focus:ring-0">
-                                <div>
-                                    <div class="text-xs font-bold text-white">Thẻ Quốc Tế (Visa / Mastercard)</div>
-                                    <span class="text-[10px] text-slate-400">Cổng thanh toán bảo mật 3D-Secure</span>
+                            <!-- Thẻ Quốc Tế -->
+                            <label class="payment-method-card glass-card p-4 rounded-2xl border border-white/10 flex items-center justify-between cursor-pointer">
+                                <div class="flex items-center gap-3.5">
+                                    <input type="radio" name="payment-method" value="VISA" class="text-[#ff5e1e] focus:ring-0">
+                                    <div class="w-10 h-10 rounded-xl bg-cyan-950/60 border border-cyan-500/40 flex items-center justify-center">
+                                        <i class="fa-brands fa-cc-visa text-cyan-400 text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-xs font-bold text-white">Thẻ Quốc Tế (Visa / Mastercard)</div>
+                                        <span class="text-[10px] text-slate-400">Bảo mật chuẩn quốc tế 3D-Secure 2.0</span>
+                                    </div>
                                 </div>
-                            </div>
-                            <i class="fa-brands fa-cc-visa text-xl text-slate-300"></i>
-                        </label>
+                                <span class="text-cyan-400 font-black text-xs px-2.5 py-1 rounded bg-cyan-950/40 border border-cyan-500/20">VISA/MC</span>
+                            </label>
+
+                            <!-- ZaloPay -->
+                            <label class="payment-method-card glass-card p-4 rounded-2xl border border-white/10 flex items-center justify-between cursor-pointer">
+                                <div class="flex items-center gap-3.5">
+                                    <input type="radio" name="payment-method" value="ZALOPAY" class="text-[#ff5e1e] focus:ring-0">
+                                    <div class="w-10 h-10 rounded-xl bg-emerald-950/60 border border-emerald-500/40 flex items-center justify-center">
+                                        <i class="fa-solid fa-money-bill-transfer text-emerald-400 text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-xs font-bold text-white">Ví ZaloPay</div>
+                                        <span class="text-[10px] text-slate-400">Thanh toán liền mạch trong hệ sinh thái Zalo</span>
+                                    </div>
+                                </div>
+                                <span class="text-emerald-400 font-black text-xs px-2.5 py-1 rounded bg-emerald-950/40 border border-emerald-500/20">ZALOPAY</span>
+                            </label>
+                        </div>
                     </div>
 
-                    <div class="pt-6">
-                        <button onclick="handleConfirmPayment()" class="w-full py-4 rounded-xl bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 text-slate-950 font-black text-xs uppercase tracking-wider shadow-lg shadow-emerald-400/25 hover:brightness-110 transition-all flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-lock"></i>
-                            <span>HOÀN TẤT THANH TOÁN</span>
+                    <!-- Button kích hoạt Cổng Sandbox -->
+                    <div class="pt-8 space-y-3">
+                        <button onclick="handleOpenSandbox()" class="w-full py-4 rounded-xl bg-gradient-to-r from-[#ff5e1e] via-[#ea580c] to-[#d4ff00] text-[#0b0d12] font-black text-xs uppercase tracking-wider shadow-[0_0_25px_rgba(255,94,30,0.5)] hover:brightness-110 transition-all flex items-center justify-center gap-2.5">
+                            <i class="fa-solid fa-bolt text-sm"></i>
+                            <span>MỞ CỔNG THANH TOÁN MÔ PHỎNG (SANDBOX)</span>
                         </button>
+                        <a href="booking.html" class="block text-center text-xs text-slate-500 hover:text-slate-300 transition-colors">
+                            ← Quay lại chọn ghế khác
+                        </a>
                     </div>
                 </div>
 
@@ -166,67 +229,160 @@
         </div>
     </main>
 
+    <!-- ==================================================================== -->
+    <!-- MODAL CỔNG THANH TOÁN MÔ PHỎNG (SANDBOX GATEWAY SIMULATOR)           -->
+    <!-- ==================================================================== -->
+    <div id="sandbox-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 sandbox-modal-backdrop hidden">
+        <div class="glass-panel w-full max-w-xl rounded-3xl border border-white/20 p-6 sm:p-8 shadow-2xl relative overflow-hidden result-card-anim">
+            
+            <!-- VIEW 1: ĐANG TIẾN HÀNH THANH TOÁN (MÔ PHỎNG) -->
+            <div id="sandbox-process-view" class="space-y-6">
+                <!-- Sandbox Header -->
+                <div class="flex items-center justify-between border-b border-white/10 pb-4">
+                    <div class="flex items-center gap-3">
+                        <i id="sandbox-method-icon" class="fa-solid fa-wallet text-pink-500 text-xl"></i>
+                        <div>
+                            <h3 id="sandbox-method-name" class="text-sm font-black text-white tracking-wider uppercase">CỔNG THANH TOÁN MOMO</h3>
+                            <span class="text-[9px] uppercase tracking-widest text-[#d4ff00] font-bold">MÔI TRƯỜNG MÔ PHỎNG (SANDBOX)</span>
+                        </div>
+                    </div>
+                    <button onclick="handleCloseSandbox()" class="text-slate-400 hover:text-white text-lg">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <!-- QR Code & Transaction Info -->
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-6 py-2">
+                    <!-- Fake QR Code with Laser Animation -->
+                    <div class="qr-scanner-box flex flex-col items-center">
+                        <div class="qr-scanner-line"></div>
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=CINEMA_LUMEN_SANDBOX_PAYMENT" alt="QR Code" class="w-36 h-36">
+                        <span class="text-[9px] text-slate-800 font-bold mt-1 font-mono">QUÉT MÃ ĐỂ TRẢ TIỀN</span>
+                    </div>
+
+                    <!-- Info Details -->
+                    <div class="space-y-2.5 text-xs text-center sm:text-left">
+                        <div>
+                            <span class="text-slate-400 text-[11px]">Mã đơn hàng:</span>
+                            <div class="font-mono font-bold text-white text-sm" id="sandbox-booking-code">BK-20261118-001</div>
+                        </div>
+                        <div>
+                            <span class="text-slate-400 text-[11px]">Số tiền giao dịch:</span>
+                            <div class="font-mono font-black text-[#d4ff00] text-2xl" id="sandbox-amount">180.000 đ</div>
+                        </div>
+                        <div>
+                            <span class="text-slate-400 text-[11px]">Hạn phiên thanh toán:</span>
+                            <div class="text-[#ff5e1e] font-mono font-bold text-sm flex items-center justify-center sm:justify-start gap-1">
+                                <i class="fa-solid fa-clock"></i> <span id="sandbox-timer">15:00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SIMULATOR CONTROL PANEL (MÔ PHỎNG KẾT QUẢ THÀNH CÔNG / THẤT BẠI) -->
+                <div class="sandbox-control-panel p-4 rounded-2xl space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[10px] font-black uppercase text-cyan-400 tracking-wider flex items-center gap-1.5">
+                            <i class="fa-solid fa-sliders"></i> BẢNG MÔ PHỎNG KẾT QUẢ GIAO DỊCH
+                        </span>
+                        <span class="text-[9px] text-slate-400">(Dành cho Tester & Đánh giá task T3C6D00)</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                        <!-- Nút Thành Công -->
+                        <button id="btn-simulate-success" onclick="handleSimulateSuccess()" class="py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black text-xs uppercase tracking-wider hover:brightness-110 shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 transition-all">
+                            <i class="fa-solid fa-circle-check text-sm"></i>
+                            <span>MÔ PHỎNG THÀNH CÔNG</span>
+                        </button>
+
+                        <!-- Khung Thất Bại kèm Lý do -->
+                        <div class="flex flex-col gap-1.5">
+                            <select id="sandbox-failure-reason" class="bg-[#0b0d12] border border-slate-700 text-slate-300 text-[11px] rounded-lg p-1.5 focus:outline-none">
+                                <option value="Tài khoản không đủ số dư">Lý do: Số dư không đủ</option>
+                                <option value="Người dùng hủy giao dịch">Lý do: Khách bấm Hủy</option>
+                                <option value="Mã OTP xác thực không đúng">Lý do: Sai mã OTP</option>
+                                <option value="Ngân hàng từ chối giao dịch">Lý do: Ngân hàng từ chối</option>
+                            </select>
+                            <button onclick="handleSimulateFailure()" class="py-2.5 px-3 rounded-lg bg-rose-950/80 border border-rose-500/50 text-rose-300 font-bold text-xs hover:bg-rose-900/90 flex items-center justify-center gap-1.5 transition-all">
+                                <i class="fa-solid fa-circle-xmark"></i>
+                                <span>MÔ PHỎNG THẤT BẠI</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW 2: MÀN HÌNH KẾT QUẢ THÀNH CÔNG (SUCCESS) -->
+            <div id="sandbox-success-view" class="space-y-6 text-center py-4 hidden">
+                <div class="w-16 h-16 rounded-full bg-emerald-500/20 border-2 border-emerald-400 mx-auto flex items-center justify-center text-emerald-400 text-3xl shadow-[0_0_20px_rgba(16,185,129,0.5)]">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+                <div>
+                    <span class="text-[10px] uppercase tracking-widest font-bold text-emerald-400">GIAO DỊCH HOÀN TẤT</span>
+                    <h2 class="text-2xl font-black text-white mt-1 uppercase">THANH TOÁN THÀNH CÔNG!</h2>
+                    <p class="text-xs text-slate-400 mt-1">Vé xem phim đã được chuyển sang trạng thái <b class="text-emerald-400">ĐÃ THANH TOÁN (DA_THANH_TOAN)</b>.</p>
+                </div>
+
+                <div class="glass-card p-4 rounded-2xl border border-white/10 text-xs text-left space-y-2 font-mono">
+                    <div class="flex justify-between">
+                        <span class="text-slate-400">Mã vé điện tử:</span>
+                        <span class="font-bold text-[#d4ff00]" id="success-ticket-code">BK-LUMEN-SUCCESS</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-400">Gửi đến email:</span>
+                        <span class="text-slate-200" id="success-user-email">khach@cinema.com</span>
+                    </div>
+                </div>
+
+                <div class="pt-2 flex flex-col sm:flex-row gap-3">
+                    <a href="my-tickets.html" class="flex-1 py-3.5 rounded-xl bg-gradient-to-r from-emerald-400 to-teal-400 text-slate-950 font-black text-xs uppercase tracking-wider shadow-lg shadow-emerald-400/25 hover:brightness-110 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-receipt"></i>
+                        <span>XEM TRANG VÉ CỦA TÔI</span>
+                    </a>
+                    <a href="../index.html" class="py-3.5 px-6 rounded-xl glass-panel text-slate-300 font-bold text-xs uppercase hover:text-white">
+                        VỀ TRANG CHỦ
+                    </a>
+                </div>
+            </div>
+
+            <!-- VIEW 3: MÀN HÌNH KẾT QUẢ THẤT BẠI (FAILURE) -->
+            <div id="sandbox-failure-view" class="space-y-6 text-center py-4 hidden">
+                <div class="w-16 h-16 rounded-full bg-rose-500/20 border-2 border-rose-500 mx-auto flex items-center justify-center text-rose-400 text-3xl shadow-[0_0_20px_rgba(244,63,94,0.5)]">
+                    <i class="fa-solid fa-xmark"></i>
+                </div>
+                <div>
+                    <span class="text-[10px] uppercase tracking-widest font-bold text-rose-400">GIAO DỊCH BỊ TỪ CHỐI</span>
+                    <h2 class="text-2xl font-black text-white mt-1 uppercase">THANH TOÁN THẤT BẠI</h2>
+                    <p class="text-xs text-slate-400 mt-1">Đơn vé vẫn đang được giữ chỗ tạm thời (GIU_CHO) để bạn có thể thử lại.</p>
+                </div>
+
+                <div class="glass-card p-4 rounded-2xl border border-rose-500/30 text-xs text-rose-300 bg-rose-950/20">
+                    <span class="font-bold">Lý do thất bại:</span>
+                    <p class="mt-1" id="failure-reason-text">Tài khoản không đủ số dư để thanh toán giao dịch này.</p>
+                </div>
+
+                <div class="pt-2 flex flex-col sm:flex-row gap-3">
+                    <button onclick="handleRetryPayment()" class="flex-1 py-3.5 rounded-xl bg-gradient-to-r from-[#ff5e1e] to-[#ea580c] text-white font-black text-xs uppercase tracking-wider hover:brightness-110 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-rotate-right"></i>
+                        <span>THỬ THANH TOÁN LẠI</span>
+                    </button>
+                    <button onclick="handleCloseSandbox()" class="py-3.5 px-6 rounded-xl glass-panel text-slate-300 font-bold text-xs uppercase hover:text-white">
+                        ĐỔI PHƯƠNG THỨC
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="../js/utils/storage.js"></script>
+    <script src="../js/utils/format.js"></script>
     <script src="../js/config/api.js"></script>
     <script src="../js/services/auth.service.js"></script>
-
-    <script>
-        let bookingData = null;
-
-        function loadBookingInfo() {
-            const raw = sessionStorage.getItem('current_booking');
-            if (raw) {
-                try {
-                    bookingData = JSON.parse(raw);
-                } catch(e) {}
-            }
-
-            if (!bookingData) {
-                bookingData = {
-                    movieTitle: 'Dune: Hành Tinh Cát 2',
-                    cinema: 'CGV Landmark 81',
-                    showtime: '18:30 (Hôm nay)',
-                    seats: ['A1', 'A2'],
-                    totalPrice: 180000
-                };
-            }
-
-            document.getElementById('pay-movie').innerText = bookingData.movieTitle;
-            document.getElementById('pay-cinema').innerText = bookingData.cinema;
-            document.getElementById('pay-showtime').innerText = bookingData.showtime;
-            document.getElementById('pay-seats').innerText = Array.isArray(bookingData.seats) ? bookingData.seats.join(', ') : bookingData.seats;
-            document.getElementById('pay-total').innerText = Number(bookingData.totalPrice).toLocaleString('vi-VN') + ' đ';
-
-            // Điền thông tin user nếu đã đăng nhập
-            if (window.StorageService && window.StorageService.isAuthenticated()) {
-                const user = window.StorageService.getUser();
-                if (user) {
-                    document.getElementById('pay-name').value = user.full_name || '';
-                    document.getElementById('pay-email').value = user.email || '';
-                }
-            }
-        }
-
-        function handleConfirmPayment() {
-            const name = document.getElementById('pay-name').value.trim();
-            const email = document.getElementById('pay-email').value.trim();
-
-            if (!name || !email) {
-                alert('Vui lòng nhập Họ tên và Email để nhận vé!');
-                return;
-            }
-
-            const seatsStr = Array.isArray(bookingData.seats) ? bookingData.seats.join(', ') : (bookingData.seats || '');
-            alert(`🎉 THANH TOÁN THÀNH CÔNG!\n\nVé xem phim "${bookingData.movieTitle}" (${seatsStr}) đã được gửi tới email ${email}.\nChúc bạn có buổi xem phim vui vẻ tại CINEMA 3D!`);
-            sessionStorage.removeItem('current_booking');
-            window.location.href = '../index.html';
-        }
-
-        window.onload = loadBookingInfo;
-    </script>
-    <script src="../js/services/auth.service.js"></script>
+    <script src="../js/services/payment.service.js"></script>
+    <script src="../js/pages/payment.js"></script>
     <script src="../js/components/header.js"></script>
 </body>
 </html>
