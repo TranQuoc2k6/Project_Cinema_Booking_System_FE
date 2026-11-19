@@ -11,6 +11,18 @@ const ShowtimeService = {
     return raw.replace(/\/api\/v1\/?$/, '');
   },
 
+  _getHeaders() {
+    const headers = { 'Content-Type': 'application/json' };
+    const token = (window.StorageService && window.StorageService.getToken()) ||
+                  localStorage.getItem('cinema_access_token') ||
+                  localStorage.getItem('token') ||
+                  sessionStorage.getItem('cinema_access_token');
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+    return headers;
+  },
+
   /**
    * Danh sách Cụm rạp mẫu chuẩn
    */
@@ -346,6 +358,127 @@ const ShowtimeService = {
    */
   getCinemasList() {
     return this._mockCinemas;
+  },
+
+  /**
+   * Admin: Lấy danh sách suất chiếu từ API (có phân trang, tìm kiếm, lọc)
+   */
+  async adminGetShowtimes({ page = 1, limit = 50, movieId, cinemaId, roomId, date, search, status } = {}) {
+    try {
+      const baseUrl = this._getBaseUrl();
+      const params = new URLSearchParams();
+      if (page) params.append('page', page);
+      if (limit) params.append('limit', limit);
+      if (movieId && movieId !== 'all') params.append('movie_id', movieId);
+      if (cinemaId && cinemaId !== 'all') params.append('cinema_id', cinemaId);
+      if (roomId && roomId !== 'all') params.append('room_id', roomId);
+      if (date && date !== 'all') params.append('date', date);
+      if (search && search.trim()) params.append('search', search.trim());
+      if (status && status !== 'all') params.append('status', status);
+
+      const url = `${baseUrl}/api/admin/showtimes?${params.toString()}`;
+      if (window.apiClient) {
+        const res = await window.apiClient.get(url);
+        return { success: true, data: res.data };
+      }
+      const res = await fetch(url, { headers: this._getHeaders() });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Lỗi tải danh sách suất chiếu');
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, message: error.response?.data?.detail || error.message };
+    }
+  },
+
+  /**
+   * Admin: Lấy chi tiết một suất chiếu
+   */
+  async adminGetShowtimeById(id) {
+    try {
+      const baseUrl = this._getBaseUrl();
+      const url = `${baseUrl}/api/admin/showtimes/${id}`;
+      if (window.apiClient) {
+        const res = await window.apiClient.get(url);
+        return { success: true, data: res.data };
+      }
+      const res = await fetch(url, { headers: this._getHeaders() });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Lỗi lấy chi tiết suất chiếu');
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, message: error.response?.data?.detail || error.message };
+    }
+  },
+
+  /**
+   * Admin: Thêm mới suất chiếu (chặn trùng giờ kèm 15 phút dọn phòng)
+   */
+  async adminCreateShowtime(payload) {
+    try {
+      const baseUrl = this._getBaseUrl();
+      const url = `${baseUrl}/api/admin/showtimes`;
+      if (window.apiClient) {
+        const res = await window.apiClient.post(url, payload);
+        return { success: true, data: res.data };
+      }
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: this._getHeaders(),
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Lỗi khi tạo suất chiếu mới');
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, message: error.response?.data?.detail || error.message };
+    }
+  },
+
+  /**
+   * Admin: Cập nhật / sửa thông tin suất chiếu
+   */
+  async adminUpdateShowtime(id, payload) {
+    try {
+      const baseUrl = this._getBaseUrl();
+      const url = `${baseUrl}/api/admin/showtimes/${id}`;
+      if (window.apiClient) {
+        const res = await window.apiClient.put(url, payload);
+        return { success: true, data: res.data };
+      }
+      const res = await fetch(url, {
+        method: 'PUT',
+        headers: this._getHeaders(),
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Lỗi khi cập nhật suất chiếu');
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, message: error.response?.data?.detail || error.message };
+    }
+  },
+
+  /**
+   * Admin: Hủy / xóa suất chiếu
+   */
+  async adminDeleteShowtime(id, force = false) {
+    try {
+      const baseUrl = this._getBaseUrl();
+      const url = `${baseUrl}/api/admin/showtimes/${id}${force ? '?force=true' : ''}`;
+      if (window.apiClient) {
+        const res = await window.apiClient.delete(url);
+        return { success: true, data: res.data };
+      }
+      const res = await fetch(url, {
+        method: 'DELETE',
+        headers: this._getHeaders()
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Lỗi khi xóa suất chiếu');
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, message: error.response?.data?.detail || error.message };
+    }
   }
 };
 
