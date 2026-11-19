@@ -58,7 +58,7 @@
     if (isAuth && user) {
       const avatar = user.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80';
       const displayName = user.full_name || user.email || 'Thành viên';
-      const roleLabel = isAdmin ? 'Quản Trị Viên' : 'Thành Viên 3D';
+      const roleLabel = isAdmin ? 'Quản Trị Viên' : 'Thành Viên LUMEN';
 
       authSection.innerHTML = `
         <div class="flex items-center gap-3">
@@ -75,10 +75,10 @@
           <div class="relative group" id="user-profile-dropdown">
             <button id="user-profile-menu-btn" 
                     type="button"
-                    class="flex items-center gap-2.5 p-1 sm:p-1.5 pr-2.5 sm:pr-3 rounded-full glass-panel bg-slate-900/90 border border-slate-700/80 hover:border-cyan-400/60 transition-all cursor-pointer">
+                    class="flex items-center gap-2.5 p-1 sm:p-1.5 pr-2.5 sm:pr-3 rounded-full glass-panel bg-slate-900/90 border border-slate-700/80 hover:border-[#ff5e1e]/60 transition-all cursor-pointer">
               <img src="${avatar}" 
                    alt="${displayName}" 
-                   class="w-7 h-7 sm:w-8 sm:h-8 rounded-full object-cover border border-cyan-400/60 shadow-sm"
+                   class="w-7 h-7 sm:w-8 sm:h-8 rounded-full object-cover border border-[#ff5e1e]/60 shadow-sm"
                    onerror="this.src='https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80'">
               
               <div class="hidden sm:flex flex-col text-left">
@@ -86,7 +86,7 @@
                 <span class="text-[9px] text-[#d4ff00] font-semibold tracking-wider uppercase">${roleLabel}</span>
               </div>
               
-              <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 group-hover:text-cyan-400 group-hover:rotate-180 transition-transform"></i>
+              <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 group-hover:text-[#ff5e1e] group-hover:rotate-180 transition-transform"></i>
             </button>
 
             <!-- Menu Dropdown -->
@@ -108,7 +108,7 @@
 
               <a href="${prefixes.pages}profile.html" 
                  class="flex items-center gap-2.5 px-4 py-2.5 text-xs text-slate-300 hover:text-white hover:bg-slate-800/50 font-medium transition-colors">
-                <i class="fa-regular fa-user w-4 text-center text-cyan-400"></i>
+                <i class="fa-regular fa-user w-4 text-center text-[#d4ff00]"></i>
                 <span>Hồ Sơ Cá Nhân</span>
               </a>
 
