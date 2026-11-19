@@ -243,6 +243,8 @@ async function loadMoviesFromBackend() {
 // =========================================================================
 // 1. RENDER 3D STAGE & CARDS
 // =========================================================================
+let hasDragged = false; // Phân biệt giữa Click chọn phim và Kéo lướt phim
+
 function renderStage() {
     const stage = document.getElementById('spatial-carousel');
     const dotsBar = document.getElementById('hud-dots-bar');
@@ -256,15 +258,21 @@ function renderStage() {
         card.className = 'movie-card-3d card-reflection glass-hud border border-white/20 overflow-hidden';
         card.dataset.index = idx;
         card.dataset.id = m.id;
+        card.style.cursor = 'pointer';
 
         card.innerHTML = `
-            <div class="relative w-full h-full overflow-hidden bg-slate-950">
-                <img src="${m.poster_url}" alt="${m.title}" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 pointer-events-none">
+            <!-- Neon Glow Pod for active focused card (GPU opacity) -->
+            <div class="card-active-glow pointer-events-none"></div>
+            <!-- Dynamic Depth Dimmer for side cards (GPU opacity) -->
+            <div class="card-depth-dimmer pointer-events-none"></div>
+
+            <div class="relative w-full h-full overflow-hidden bg-slate-950 pointer-events-none">
+                <img src="${m.poster_url}" alt="${m.title}" loading="eager" class="w-full h-full object-cover transition-transform duration-500 pointer-events-none">
                 
-                <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent pointer-events-none"></div>
 
                 <!-- Top Badges -->
-                <div class="absolute top-3 left-3 z-10 flex gap-1.5">
+                <div class="absolute top-3 left-3 z-20 flex gap-1.5 pointer-events-none">
                     <span class="px-2 py-0.5 rounded text-[10px] font-black font-mono-num bg-black/60 backdrop-blur-md text-white border border-white/20">
                         ${m.tech_badge.split(' ')[0]}
                     </span>
@@ -274,7 +282,7 @@ function renderStage() {
                 </div>
 
                 <!-- Bottom Title Preview -->
-                <div class="absolute bottom-4 left-4 right-4 z-10">
+                <div class="absolute bottom-4 left-4 right-4 z-20 pointer-events-none">
                     <span class="text-[10px] font-bold uppercase tracking-wider text-[#d4ff00]">${m.status_label}</span>
                     <h3 class="text-3d-card-title text-base sm:text-lg font-black leading-tight mt-1 truncate">${m.title}</h3>
                     <p class="text-[11px] text-slate-300 font-mono-num mt-1 flex items-center gap-1 font-semibold">
@@ -284,10 +292,11 @@ function renderStage() {
             </div>
         `;
 
-        // =====================================================================
-        // YÊU CẦU ĐẶC BIỆT: "khi tôi nhấn phim thì sẽ tự động cuộn sang phim đó nhé"
-        // =====================================================================
-        card.addEventListener('click', () => {
+        // Nhấp vào phim trực tiếp để tự động cuộn sang
+        card.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (hasDragged) return;
+
             if (idx !== currentIndex) {
                 playUiTone(520, 'triangle', 0.08, 0.06);
                 selectMovie(idx);
@@ -312,55 +321,64 @@ function renderStage() {
 }
 
 // =========================================================================
-// 2. BIẾN ĐỔI 3D COVERFLOW SPATIAL (Physics Perspective)
+// 2. BIẾN ĐỔI 3D COVERFLOW SPATIAL (Hardware-Accelerated 60FPS)
 // =========================================================================
 function updateSpatialTransforms() {
     const stage = document.getElementById('spatial-carousel');
     if (!stage) return;
     const cards = stage.querySelectorAll('.movie-card-3d');
     const isMobile = window.innerWidth < 768;
-    const spacingX = isMobile ? 130 : 210;
+    const spacingX = isMobile ? 125 : 205;
 
     cards.forEach((card, idx) => {
         const offset = idx - currentIndex;
         const absOffset = Math.abs(offset);
 
+        // Ẩn các phim nằm ngoài tầm nhìn (absOffset > 4) để giải phóng GPU
+        if (absOffset > 4) {
+            card.style.visibility = 'hidden';
+            card.style.pointerEvents = 'none';
+            card.classList.remove('is-active-card');
+            return;
+        }
+
+        card.style.visibility = 'visible';
+        card.style.pointerEvents = 'auto';
+        const dimmer = card.querySelector('.card-depth-dimmer');
+
         if (offset === 0) {
             // PHIM Ở TÂM ĐIỂM (ACTIVE FOCUSED MOVIE)
-            card.style.transform = `translateX(0px) translateZ(140px) rotateY(0deg) scale(1.08)`;
+            card.classList.add('is-active-card');
+            card.style.transform = 'translate3d(0px, 0px, 140px) rotateY(0deg) scale3d(1.08, 1.08, 1)';
             card.style.opacity = '1';
-            card.style.filter = 'brightness(1.1) drop-shadow(0 25px 40px rgba(0,0,0,0.8))';
             card.style.zIndex = '30';
-            card.style.borderColor = 'rgba(255, 94, 30, 0.8)';
-            card.style.boxShadow = '0 0 40px rgba(255, 94, 30, 0.45)';
+            if (dimmer) dimmer.style.opacity = '0';
         } else if (offset > 0) {
             // CÁC PHIM BÊN PHẢI (ROTATE PHẢI VÀ ĐẨY LÙI KHÔNG GIAN)
-            const tx = offset * spacingX + 70;
-            const tz = -160 - absOffset * 40;
-            const ry = -38;
-            const scale = Math.max(0.72, 1 - absOffset * 0.1);
-            const opacity = Math.max(0.18, 0.85 - absOffset * 0.22);
+            card.classList.remove('is-active-card');
+            const tx = offset * spacingX + 65;
+            const tz = -150 - absOffset * 35;
+            const ry = -36;
+            const scale = Math.max(0.72, 1 - absOffset * 0.09);
+            const opacity = Math.max(0.2, 0.85 - absOffset * 0.2);
 
-            card.style.transform = `translateX(${tx}px) translateZ(${tz}px) rotateY(${ry}deg) scale(${scale})`;
+            card.style.transform = `translate3d(${tx}px, 0px, ${tz}px) rotateY(${ry}deg) scale3d(${scale}, ${scale}, 1)`;
             card.style.opacity = opacity.toString();
-            card.style.filter = 'brightness(0.6) blur(1px)';
             card.style.zIndex = (20 - absOffset).toString();
-            card.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-            card.style.boxShadow = 'none';
+            if (dimmer) dimmer.style.opacity = Math.min(0.75, 0.25 + absOffset * 0.18).toFixed(2);
         } else {
             // CÁC PHIM BÊN TRÁI (ROTATE TRÁI VÀ ĐẨY LÙI KHÔNG GIAN)
-            const tx = offset * spacingX - 70;
-            const tz = -160 - absOffset * 40;
-            const ry = 38;
-            const scale = Math.max(0.72, 1 - absOffset * 0.1);
-            const opacity = Math.max(0.18, 0.85 - absOffset * 0.22);
+            card.classList.remove('is-active-card');
+            const tx = offset * spacingX - 65;
+            const tz = -150 - absOffset * 35;
+            const ry = 36;
+            const scale = Math.max(0.72, 1 - absOffset * 0.09);
+            const opacity = Math.max(0.2, 0.85 - absOffset * 0.2);
 
-            card.style.transform = `translateX(${tx}px) translateZ(${tz}px) rotateY(${ry}deg) scale(${scale})`;
+            card.style.transform = `translate3d(${tx}px, 0px, ${tz}px) rotateY(${ry}deg) scale3d(${scale}, ${scale}, 1)`;
             card.style.opacity = opacity.toString();
-            card.style.filter = 'brightness(0.6) blur(1px)';
             card.style.zIndex = (20 - absOffset).toString();
-            card.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-            card.style.boxShadow = 'none';
+            if (dimmer) dimmer.style.opacity = Math.min(0.75, 0.25 + absOffset * 0.18).toFixed(2);
         }
     });
 
@@ -389,13 +407,31 @@ function selectMovie(index) {
 }
 
 // =========================================================================
-// 4. CẬP NHẬT THÔNG TIN HUD THEO PHIM ĐƯỢC CHỌN
+// 4. CẬP NHẬT THÔNG TIN HUD THEO PHIM ĐƯỢC CHỌN (GPU Crossfade & Preload)
 // =========================================================================
+let activeBackdropLayer = 1;
+const preloadedBackdrops = new Set();
+
+function preloadAdjacentBackdrops() {
+    [currentIndex - 1, currentIndex, currentIndex + 1].forEach(i => {
+        if (i >= 0 && i < filteredMovies.length) {
+            const url = filteredMovies[i].backdrop_url || filteredMovies[i].poster_url;
+            if (url && !preloadedBackdrops.has(url)) {
+                preloadedBackdrops.add(url);
+                const img = new Image();
+                img.src = url;
+            }
+        }
+    });
+}
+
 function updateHudDetails() {
     const movie = filteredMovies[currentIndex];
     if (!movie) return;
 
-    const backdropEl = document.getElementById('cinematic-backdrop');
+    const layer1 = document.getElementById('cinematic-backdrop-1');
+    const layer2 = document.getElementById('cinematic-backdrop-2');
+    const singleBackdrop = document.getElementById('cinematic-backdrop'); // fallback
     const bloomPod = document.getElementById('ambient-bloom');
     const hudTitle = document.getElementById('hud-title');
     const hudStatus = document.getElementById('hud-status');
@@ -407,9 +443,25 @@ function updateHudDetails() {
     const hudIndexIndicator = document.getElementById('hud-index-indicator');
     const btnBook = document.getElementById('btn-hud-book');
 
-    if (backdropEl) {
-        backdropEl.style.backgroundImage = `url('${movie.backdrop_url || movie.poster_url}')`;
+    const targetBackdrop = movie.backdrop_url || movie.poster_url;
+
+    // GPU Crossfade giữa 2 layer để xóa bỏ hiện tượng giật khi đổi ảnh nền
+    if (layer1 && layer2) {
+        const activeLayer = activeBackdropLayer === 1 ? layer1 : layer2;
+        const nextLayer = activeBackdropLayer === 1 ? layer2 : layer1;
+
+        nextLayer.style.backgroundImage = `url('${targetBackdrop}')`;
+        nextLayer.classList.remove('opacity-0');
+        nextLayer.classList.add('opacity-100');
+
+        activeLayer.classList.remove('opacity-100');
+        activeLayer.classList.add('opacity-0');
+
+        activeBackdropLayer = activeBackdropLayer === 1 ? 2 : 1;
+    } else if (singleBackdrop) {
+        singleBackdrop.style.backgroundImage = `url('${targetBackdrop}')`;
     }
+
     if (bloomPod) {
         bloomPod.style.background = movie.accent_color || '#ff5e1e';
     }
@@ -447,47 +499,38 @@ function updateHudDetails() {
     if (btnBook) {
         btnBook.href = `pages/showtimes.html?movieId=${movie.id}`;
     }
+
+    preloadAdjacentBackdrops();
 }
 
 // =========================================================================
-// 5. REQUIREMENT: "chỉ dùng chuột để di chuyển giữa các phim nhé"
-// MOUSE ENGINE: Cuộn chuột (Wheel), Kéo chuột (Drag) & Nghiêng 3D (Parallax)
+// 5. MOUSE ENGINE: Nhấp chuột chuyển phim & Nghiêng 3D Parallax LERP 60FPS
+// (Đã loại bỏ hoàn toàn cuộn chuột để tránh nhảy phim ngoài ý muốn)
 // =========================================================================
 function initMouseInteractionEngine() {
     const stage = document.getElementById('spatial-carousel');
-    const trailerModal = document.getElementById('trailer-modal');
 
-    // A. CUỘN CHUỘT (Mouse Wheel Event)
-    let wheelTimer = null;
-    let wheelDelta = 0;
+    // A. PARALLAX 3D TỰ NHIÊN BẰNG LERP + REQUEST ANIMATION FRAME
+    let targetTiltX = 0;
+    let targetTiltY = 0;
+    let currentTiltX = 0;
+    let currentTiltY = 0;
+    let parallaxActive = false;
 
-    window.addEventListener('wheel', (e) => {
-        if (trailerModal && trailerModal.classList.contains('pointer-events-auto')) return;
+    function stepParallax() {
+        if (!stage) return;
+        currentTiltX += (targetTiltX - currentTiltX) * 0.1;
+        currentTiltY += (targetTiltY - currentTiltY) * 0.1;
+        stage.style.transform = `rotateX(${currentTiltX.toFixed(2)}deg) rotateY(${currentTiltY.toFixed(2)}deg)`;
 
-        wheelDelta += e.deltaY;
-        clearTimeout(wheelTimer);
+        if (Math.abs(targetTiltX - currentTiltX) > 0.01 || Math.abs(targetTiltY - currentTiltY) > 0.01) {
+            requestAnimationFrame(stepParallax);
+        } else {
+            parallaxActive = false;
+        }
+    }
 
-        wheelTimer = setTimeout(() => {
-            if (Math.abs(wheelDelta) > 30) {
-                if (wheelDelta > 0) {
-                    // Cuộn xuống / qua phải -> Phim tiếp theo
-                    if (currentIndex < filteredMovies.length - 1) {
-                        playUiTone(480, 'sine', 0.05, 0.03);
-                        selectMovie(currentIndex + 1);
-                    }
-                } else {
-                    // Cuộn lên / qua trái -> Phim trước đó
-                    if (currentIndex > 0) {
-                        playUiTone(480, 'sine', 0.05, 0.03);
-                        selectMovie(currentIndex - 1);
-                    }
-                }
-            }
-            wheelDelta = 0;
-        }, 40);
-    }, { passive: true });
-
-    // B. KÉO CHUỘT (Mouse Drag with Inertia)
+    // B. KÉO CHUỘT (Drag) & BẮT CLICK CHUYỂN PHIM TOÀN DIỆN
     if (stage) {
         let isDragging = false;
         let startX = 0;
@@ -495,28 +538,37 @@ function initMouseInteractionEngine() {
 
         stage.addEventListener('mousedown', (e) => {
             isDragging = true;
+            hasDragged = false;
             startX = e.clientX;
             currentX = e.clientX;
         });
 
         window.addEventListener('mousemove', (e) => {
-            if (!isDragging) {
-                // C. DI CHUỘT NGHIÊNG 3D PARALLAX
-                const cx = window.innerWidth / 2;
-                const cy = window.innerHeight / 2;
-                const tiltX = (e.clientY - cy) * 0.015;
-                const tiltY = (e.clientX - cx) * -0.015;
-                stage.style.transform = `rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
+            if (isDragging) {
+                currentX = e.clientX;
+                if (Math.abs(currentX - startX) > 12) {
+                    hasDragged = true;
+                }
                 return;
             }
-            currentX = e.clientX;
-        });
+            // Di chuột tính góc nghiêng Parallax
+            const cx = window.innerWidth / 2;
+            const cy = window.innerHeight / 2;
+            targetTiltX = (e.clientY - cy) * 0.012;
+            targetTiltY = (e.clientX - cx) * -0.012;
+
+            if (!parallaxActive) {
+                parallaxActive = true;
+                requestAnimationFrame(stepParallax);
+            }
+        }, { passive: true });
 
         window.addEventListener('mouseup', () => {
             if (!isDragging) return;
             isDragging = false;
             const diffX = currentX - startX;
 
+            // Kéo chuột với khoảng cách lớn (> 40px) để lướt phim
             if (Math.abs(diffX) > 40) {
                 if (diffX < 0 && currentIndex < filteredMovies.length - 1) {
                     playUiTone(440, 'triangle', 0.06, 0.04);
@@ -526,7 +578,54 @@ function initMouseInteractionEngine() {
                     selectMovie(currentIndex - 1);
                 }
             }
-            stage.style.transform = 'rotateX(0deg) rotateY(0deg)';
+
+            // Trả góc nghiêng 3D về vị trí tự nhiên
+            targetTiltX = 0;
+            targetTiltY = 0;
+            if (!parallaxActive) {
+                parallaxActive = true;
+                requestAnimationFrame(stepParallax);
+            }
+
+            // Đặt lại cờ sau 50ms để không ảnh hưởng sự kiện click
+            setTimeout(() => {
+                hasDragged = false;
+            }, 50);
+        });
+
+        // Bắt sự kiện Click thông minh trên Stage (cho cả trường hợp click trúng card lẫn click vùng lân cận)
+        stage.addEventListener('click', (e) => {
+            if (hasDragged) return;
+
+            // 1. Kiểm tra nếu click trúng thẻ phim bất kỳ
+            const card = e.target.closest('.movie-card-3d');
+            if (card && card.dataset.index !== undefined) {
+                const targetIdx = parseInt(card.dataset.index, 10);
+                if (!isNaN(targetIdx)) {
+                    if (targetIdx !== currentIndex) {
+                        playUiTone(520, 'triangle', 0.08, 0.06);
+                        selectMovie(targetIdx);
+                    } else {
+                        playUiTone(640, 'sine', 0.08, 0.04);
+                    }
+                    return;
+                }
+            }
+
+            // 2. Dự phòng: Nếu người dùng click vào khoảng không gian 3D bên phải hoặc bên trái phim tâm điểm
+            const rect = stage.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const stageWidth = rect.width;
+            const centerLeft = stageWidth / 2 - 140;
+            const centerRight = stageWidth / 2 + 140;
+
+            if (clickX > centerRight && currentIndex < filteredMovies.length - 1) {
+                playUiTone(520, 'triangle', 0.08, 0.06);
+                selectMovie(currentIndex + 1);
+            } else if (clickX < centerLeft && currentIndex > 0) {
+                playUiTone(520, 'triangle', 0.08, 0.06);
+                selectMovie(currentIndex - 1);
+            }
         });
     }
 
@@ -626,9 +725,14 @@ function initThreeBackground() {
     camera.position.z = 45;
     camera.position.y = 8;
 
-    const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+    const renderer = new THREE.WebGLRenderer({ 
+        canvas: canvas, 
+        alpha: true, 
+        antialias: true,
+        powerPreference: "high-performance"
+    });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
 
     const particleCount = 200;
     const geom = new THREE.BufferGeometry();

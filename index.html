@@ -138,14 +138,15 @@
 
         .backdrop-cinematic {
             position: fixed;
-            inset: 0;
+            inset: -20px;
             z-index: 1;
             background-size: cover;
             background-position: center;
-            filter: blur(48px) brightness(0.22) saturate(1.4);
-            transform: scale(1.15);
-            transition: background-image 0.85s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.85s ease;
+            filter: blur(24px) brightness(0.24) saturate(1.3);
+            transform: translate3d(0, 0, 0);
+            transition: opacity 0.5s ease-out;
             pointer-events: none;
+            will-change: opacity;
         }
 
         .vignette-overlay {
@@ -168,11 +169,11 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: grab;
+            cursor: default;
         }
 
         .spatial-stage:active {
-            cursor: grabbing;
+            cursor: default;
         }
 
         @media (min-width: 768px) {
@@ -181,19 +182,25 @@
             }
         }
 
-        /* 3D Movie Card */
+        /* 3D Movie Card - Hardware Accelerated Transitions */
         .movie-card-3d {
             position: absolute;
             width: 250px;
             height: 380px;
             border-radius: 20px;
             transform-style: preserve-3d;
-            transition: transform 0.65s cubic-bezier(0.19, 1, 0.22, 1), 
-                        filter 0.65s cubic-bezier(0.19, 1, 0.22, 1),
-                        opacity 0.65s ease,
-                        box-shadow 0.65s ease;
-            will-change: transform, filter, opacity;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), 
+                        opacity 0.45s ease-out,
+                        border-color 0.45s ease-out;
+            will-change: transform, opacity;
             cursor: pointer;
+            pointer-events: auto !important;
+        }
+
+        .movie-card-3d:not(.is-active-card):hover {
+            border-color: rgba(255, 94, 30, 0.75) !important;
         }
 
         @media (min-width: 768px) {
@@ -201,6 +208,45 @@
                 width: 300px;
                 height: 450px;
             }
+        }
+
+        /* Glow Pod Layer for Active Card - Offloads Box-Shadow to Opacity */
+        .card-active-glow {
+            position: absolute;
+            inset: -4px;
+            border-radius: 24px;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 94, 30, 0.75), rgba(212, 255, 0, 0.35) 60%, transparent 100%);
+            filter: blur(14px);
+            opacity: 0;
+            transition: opacity 0.45s ease-out;
+            pointer-events: none;
+            z-index: -1;
+            will-change: opacity;
+        }
+
+        .movie-card-3d.is-active-card .card-active-glow {
+            opacity: 1;
+        }
+
+        .movie-card-3d.is-active-card {
+            border-color: rgba(255, 94, 30, 0.85) !important;
+        }
+
+        /* High-performance Card Depth Dimmer */
+        .card-depth-dimmer {
+            position: absolute;
+            inset: 0;
+            background: rgba(3, 5, 8, 0.55);
+            border-radius: 20px;
+            opacity: 1;
+            transition: opacity 0.45s ease-out;
+            pointer-events: none;
+            z-index: 15;
+            will-change: opacity;
+        }
+
+        .movie-card-3d.is-active-card .card-depth-dimmer {
+            opacity: 0;
         }
 
         /* Reflection Effect */
@@ -241,15 +287,16 @@
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
-            width: 500px;
-            height: 500px;
+            transform: translate3d(-50%, -50%, 0);
+            width: 480px;
+            height: 480px;
             border-radius: 50%;
-            filter: blur(90px);
-            opacity: 0.45;
+            filter: blur(48px);
+            opacity: 0.38;
             pointer-events: none;
-            transition: background 0.8s ease, transform 0.6s ease;
+            transition: background 0.5s ease-out;
             z-index: -1;
+            will-change: background;
         }
 
         /* Equalizer Animation */
@@ -291,8 +338,9 @@
     <!-- 1. WebGL Background Canvas (Three.js Spatial Grid & Constellation) -->
     <canvas id="bg-canvas"></canvas>
 
-    <!-- 2. Dynamic Cinematic Backdrop -->
-    <div id="cinematic-backdrop" class="backdrop-cinematic"></div>
+    <!-- 2. Dynamic Cinematic Backdrop (Dual Layer GPU Crossfade) -->
+    <div id="cinematic-backdrop-1" class="backdrop-cinematic opacity-100"></div>
+    <div id="cinematic-backdrop-2" class="backdrop-cinematic opacity-0"></div>
     <div class="vignette-overlay"></div>
 
     <!-- 3. MAIN UI LAYER -->
@@ -367,13 +415,13 @@
                 </div>
 
                 <!-- Mouse Navigation Indicator -->
-                <div class="mouse-hint-pill inline-flex items-center gap-3 px-4 py-1.5 rounded-full glass-hud border border-white/15 text-xs text-slate-300 shadow-xl">
+                <div class="mouse-hint-pill inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-hud border border-white/15 text-xs text-slate-300 shadow-xl">
                     <span class="flex items-center gap-1.5 text-[#ff5e1e] font-semibold">
-                        <i class="fa-solid fa-computer-mouse text-sm animate-bounce"></i> Cuộn chuột để chuyển phim
+                        <i class="fa-solid fa-arrow-pointer text-xs"></i> Nhấn vào phim bên cạnh để chuyển đổi
                     </span>
                     <span class="text-slate-600">|</span>
                     <span class="text-[#d4ff00] font-semibold">
-                        <i class="fa-solid fa-arrow-pointer text-xs"></i> Nhấn phim để tự cuộn sang
+                        <i class="fa-solid fa-arrows-left-right text-xs"></i> Kéo chuột để lướt phim
                     </span>
                 </div>
             </div>
