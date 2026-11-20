@@ -16,7 +16,7 @@
     selectedCinemaId: 'all',    // 'all' hoặc ID cụ thể
     selectedFormat: 'all',      // 'all', '2D', '3D', 'IMAX', 'VIP'
     searchKeyword: '',          // Từ khóa tìm kiếm phim
-    hidePastShowtimes: false,   // Ẩn các suất chiếu đã trôi qua
+    hidePastShowtimes: true,    // Mặc định ẩn các suất chiếu đã trôi qua
     days: [],                   // 7 ngày tới
     allMovies: [],              // Danh sách phim
     allCinemas: [],             // Danh sách cụm rạp
@@ -334,6 +334,7 @@
     // 6. Checkbox ẩn suất chiếu đã qua
     const hidePastCheckbox = document.getElementById('hide-past-checkbox');
     if (hidePastCheckbox) {
+      hidePastCheckbox.checked = state.hidePastShowtimes;
       hidePastCheckbox.addEventListener('change', (e) => {
         state.hidePastShowtimes = e.target.checked;
         renderShowtimesContent();
@@ -356,7 +357,7 @@
     state.selectedCinemaId = 'all';
     state.selectedFormat = 'all';
     state.searchKeyword = '';
-    state.hidePastShowtimes = false;
+    state.hidePastShowtimes = true;
 
     // Reset input elements
     const movieSelect = document.getElementById('filter-movie-select');
@@ -372,7 +373,7 @@
     if (searchInput) searchInput.value = '';
 
     const hidePastCheckbox = document.getElementById('hide-past-checkbox');
-    if (hidePastCheckbox) hidePastCheckbox.checked = false;
+    if (hidePastCheckbox) hidePastCheckbox.checked = true;
 
     updateFormatButtonsState();
     updateMovieBanner();
