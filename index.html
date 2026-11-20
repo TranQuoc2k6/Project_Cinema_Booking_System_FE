@@ -514,39 +514,119 @@
 
         </main>
 
-        <!-- FOOTER -->
-        <footer class="relative z-10 bg-[#030508]/80 backdrop-blur-md border-t border-white/10 text-slate-400 py-10 mt-auto">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                <div class="space-y-3">
-                    <div class="flex items-center gap-2">
-                        <i class="fa-solid fa-cube text-[#ff5e1e] text-lg"></i>
-                        <span class="font-cinema text-xl font-black text-white tracking-wider text-3d-neon">LUMEN CINEMA</span>
+        <!-- FOOTER (Chuẩn Mẫu Điện Ảnh Galaxy Studio & Lumen Cinema) -->
+        <footer class="relative z-10 bg-[#0b0d12] border-t border-white/10 text-slate-400 pt-12 pb-8 mt-auto">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <!-- Hàng 4 Cột Thông Tin -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12 pb-10">
+                    <!-- Cột 1: GIỚI THIỆU -->
+                    <div>
+                        <h4 class="text-sm font-bold text-white uppercase tracking-wider mb-4">GIỚI THIỆU</h4>
+                        <ul class="space-y-2.5 text-xs text-slate-400 font-medium">
+                            <li><a href="#" class="hover:text-[#ff5e1e] transition-colors block">Về Chúng Tôi</a></li>
+                            <li><a href="#" class="hover:text-[#ff5e1e] transition-colors block">Thoả Thuận Sử Dụng</a></li>
+                            <li><a href="#" class="hover:text-[#ff5e1e] transition-colors block">Quy Chế Hoạt Động</a></li>
+                            <li><a href="#" class="hover:text-[#ff5e1e] transition-colors block">Chính Sách Bảo Mật</a></li>
+                        </ul>
                     </div>
-                    <p class="text-xs text-slate-500 leading-relaxed">
-                        Hệ thống rạp điện ảnh nghệ thuật thế hệ mới. Đạt chuẩn Swiss Design, IMAX Laser 3D & Dolby Atmos 7.1.4.
-                    </p>
+
+                    <!-- Cột 2: GÓC ĐIỆN ẢNH -->
+                    <div>
+                        <h4 class="text-sm font-bold text-white uppercase tracking-wider mb-4">GÓC ĐIỆN ẢNH</h4>
+                        <ul class="space-y-2.5 text-xs text-slate-400 font-medium">
+                            <li><a href="pages/movies.html" class="hover:text-[#ff5e1e] transition-colors block">Thể Loại Phim</a></li>
+                            <li><a href="#" class="hover:text-[#ff5e1e] transition-colors block">Bình Luận Phim</a></li>
+                            <li><a href="#" class="hover:text-[#ff5e1e] transition-colors block">Blog Điện Ảnh</a></li>
+                            <li><a href="pages/movies.html" class="hover:text-[#ff5e1e] transition-colors block">Phim Hay Tháng</a></li>
+                            <li><a href="pages/movies.html" class="hover:text-[#ff5e1e] transition-colors block">Phim IMAX</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Cột 3: HỖ TRỢ -->
+                    <div>
+                        <h4 class="text-sm font-bold text-white uppercase tracking-wider mb-4">HỖ TRỢ</h4>
+                        <ul class="space-y-2.5 text-xs text-slate-400 font-medium">
+                            <li><a href="#" class="hover:text-[#ff5e1e] transition-colors block">Góp Ý</a></li>
+                            <li><a href="#" class="hover:text-[#ff5e1e] transition-colors block">Sale & Services</a></li>
+                            <li><a href="pages/showtimes.html" class="hover:text-[#ff5e1e] transition-colors block">Rạp / Giá Vé</a></li>
+                            <li><a href="#" class="hover:text-[#ff5e1e] transition-colors block">Tuyển Dụng</a></li>
+                            <li><a href="#" class="hover:text-[#ff5e1e] transition-colors block">FAQ</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Cột 4: Logo, Mạng Xã Hội & Chứng Nhận Bộ Công Thương -->
+                    <div class="flex flex-col items-start md:items-end gap-4">
+                        <!-- Brand Logo -->
+                        <a href="index.html" class="flex items-center gap-3 group">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#ff5e1e] via-[#d4ff00] to-[#7c3aed] p-[2px] transform group-hover:rotate-12 transition-transform duration-300 shadow-[0_0_15px_rgba(255,94,30,0.5)]">
+                                <div class="w-full h-full bg-[#0b0d12] rounded-[10px] flex items-center justify-center">
+                                    <i class="fa-solid font-black fa-cube text-[#d4ff00] text-xl group-hover:scale-110 transition-transform"></i>
+                                </div>
+                            </div>
+                            <div class="flex flex-col text-left">
+                                <span class="text-xl font-black tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-[#ff5e1e] via-[#d4ff00] to-white">
+                                    LUMEN<span class="text-white font-light">CINEMA</span>
+                                </span>
+                                <span class="text-[8px] uppercase tracking-widest text-[#d4ff00] -mt-1 font-semibold">Studio & Theater HQ</span>
+                            </div>
+                        </a>
+
+                        <!-- Social Media Icons (Facebook, YouTube, Instagram) -->
+                        <div class="flex items-center gap-3 text-slate-300">
+                            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="hover:text-[#ff5e1e] transition-colors" title="Facebook">
+                                <i class="fa-brands fa-square-facebook text-2xl"></i>
+                            </a>
+                            <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" class="hover:text-[#ff5e1e] transition-colors" title="YouTube">
+                                <i class="fa-brands fa-youtube text-2xl"></i>
+                            </a>
+                            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="hover:text-[#ff5e1e] transition-colors" title="Instagram">
+                                <i class="fa-brands fa-square-instagram text-2xl"></i>
+                            </a>
+                        </div>
+
+                        <!-- Badge ĐÃ THÔNG BÁO BỘ CÔNG THƯƠNG -->
+                        <a href="http://online.gov.vn" target="_blank" rel="noopener noreferrer" class="inline-block transition-transform hover:scale-105" title="Đã thông báo Bộ Công Thương">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 155 38" class="h-9 w-auto">
+                                <rect x="22" y="4" width="130" height="30" rx="4" fill="#0071ba" />
+                                <text x="34" y="17" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="8.5" font-weight="900" letter-spacing="0.4">ĐÃ THÔNG BÁO</text>
+                                <text x="34" y="28" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="7.5" font-weight="700" letter-spacing="0.4">BỘ CÔNG THƯƠNG</text>
+                                <circle cx="19" cy="19" r="16.5" fill="#0071ba" stroke="#ffffff" stroke-width="2"/>
+                                <circle cx="19" cy="19" r="13" fill="none" stroke="#ffffff" stroke-width="0.8" stroke-dasharray="1.5 1"/>
+                                <path d="M12 19 L16.5 23.5 L26 14" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                    </div>
                 </div>
-                <div>
-                    <h4 class="text-sm font-bold text-white uppercase tracking-wider mb-3">Liên Kết Nhanh</h4>
-                    <ul class="space-y-2 text-xs">
-                        <li><a href="pages/movies.html" class="hover:text-[#ff5e1e] transition-colors">Danh sách phim</a></li>
-                        <li><a href="pages/showtimes.html" class="hover:text-[#ff5e1e] transition-colors">Lịch chiếu rạp</a></li>
-                        <li><a href="pages/booking.html" class="hover:text-[#ff5e1e] transition-colors">Sơ đồ ghế 3D</a></li>
-                    </ul>
+
+                <!-- Đường Kẻ Ngang Phân Cách & Thông Tin Công Ty Bên Dưới -->
+                <div class="border-t border-white/10 pt-8 pb-4">
+                    <div class="flex flex-col md:flex-row items-start md:items-center gap-6">
+                        <!-- Logo Doanh Nghiệp Bên Trái -->
+                        <a href="index.html" class="flex items-center gap-3 group shrink-0">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#ff5e1e] via-[#d4ff00] to-[#7c3aed] p-[2px] transform group-hover:rotate-12 transition-transform duration-300 shadow-[0_0_15px_rgba(255,94,30,0.5)]">
+                                <div class="w-full h-full bg-[#0b0d12] rounded-[10px] flex items-center justify-center">
+                                    <i class="fa-solid font-black fa-cube text-[#d4ff00] text-xl group-hover:scale-110 transition-transform"></i>
+                                </div>
+                            </div>
+                        </a>
+
+                        <!-- Chi Tiết Doanh Nghiệp (Khớp 100% Ảnh Mẫu) -->
+                        <div class="space-y-1 text-xs text-slate-400">
+                            <h5 class="text-sm font-bold text-white uppercase tracking-wider">CÔNG TY CỔ PHẦN PHIM THIÊN NGÂN</h5>
+                            <p>MST: 0101595681</p>
+                            <p>3/9 Võ Văn Tần, Phường Xuân Hòa, Thành phố Hồ Chí Minh, Việt Nam</p>
+                            <p class="flex flex-wrap items-center gap-x-4 gap-y-1 pt-0.5">
+                                <span class="flex items-center gap-1.5"><i class="fa-solid fa-phone text-[11px] text-[#ff5e1e]"></i> 028.39.333.303</span>
+                                <span class="text-slate-600 hidden sm:inline">-</span>
+                                <span class="flex items-center gap-1.5"><i class="fa-solid fa-headset text-[11px] text-[#d4ff00]"></i> 19002224 (9:00 - 22:00)</span>
+                                <span class="text-slate-600 hidden sm:inline">-</span>
+                                <span class="flex items-center gap-1.5"><i class="fa-solid fa-paper-plane text-[11px] text-[#ff5e1e]"></i> hotro@galaxystudio.vn</span>
+                            </p>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <h4 class="text-sm font-bold text-white uppercase tracking-wider mb-3">Tài Khoản</h4>
-                    <ul class="space-y-2 text-xs">
-                        <li><a href="pages/login.html" class="hover:text-[#ff5e1e] transition-colors">Đăng nhập</a></li>
-                        <li><a href="pages/register.html" class="hover:text-[#ff5e1e] transition-colors">Đăng ký thành viên</a></li>
-                        <li><a href="pages/my-tickets.html" class="hover:text-[#ff5e1e] transition-colors">Vé điện tử của tôi</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="text-sm font-bold text-white uppercase tracking-wider mb-3">Hotline Trải Nghiệm</h4>
-                    <p class="text-lg font-black text-[#ff5e1e] font-mono-num">1900 8899 LUMEN</p>
-                    <p class="text-xs text-slate-500 mt-1">concierge@lumencinema.vn</p>
-                </div>
+
             </div>
         </footer>
 
