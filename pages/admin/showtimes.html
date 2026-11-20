@@ -123,9 +123,17 @@
             </h1>
             <p class="page-subtitle">Sắp xếp khung giờ phát hành phim, điều phối phòng chiếu theo công nghệ và thiết lập bảng giá vé cơ sở</p>
           </div>
-          <button class="btn btn-primary" onclick="openShowtimeModal()">
-            <i class="fa-solid fa-plus"></i> Thêm suất chiếu mới
-          </button>
+          <div class="d-flex align-center gap-xs" style="flex-wrap: wrap;">
+            <button class="btn btn-primary" onclick="openShowtimeModal()">
+              <i class="fa-solid fa-plus"></i> Thêm suất chiếu mới
+            </button>
+            <button class="btn btn-secondary" onclick="autoGenerateShowtimes()" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.3)); border-color: rgba(52, 211, 153, 0.4); color: #34d399;" title="Tự động phân bổ suất chiếu cho các ngày tới">
+              <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Tự động sinh suất chiếu
+            </button>
+            <button class="btn btn-secondary" onclick="cleanupPastShowtimes()" title="Xóa các suất chiếu cũ không có vé">
+              <i class="fa-solid fa-broom mr-1"></i> Dọn suất chiếu cũ
+            </button>
+          </div>
         </div>
 
         <!-- FILTER TOOLBAR -->

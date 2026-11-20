@@ -694,3 +694,62 @@ window.deleteShowtime = async function (id) {
     notify(err.message || 'Không thể xóa suất chiếu', 'danger');
   }
 };
+
+// Tự động sinh suất chiếu thông minh cho các ngày tiếp theo
+window.autoGenerateShowtimes = async function () {
+  const days = prompt("Hệ thống sẽ tự động lập lịch phân bổ phim cho các phòng chiếu mà không bị trùng giờ.\n\nNhập số ngày tiếp theo cần sinh suất chiếu (từ 1 đến 14 ngày):", "7");
+  if (!days) return;
+
+  const numDays = parseInt(days, 10);
+  if (isNaN(numDays) || numDays < 1 || numDays > 14) {
+    notify("Số ngày không hợp lệ! Vui lòng nhập từ 1 đến 14.", "warning");
+    return;
+  }
+
+  notify(`Đang tiến hành tự động phân bổ và sinh suất chiếu cho ${numDays} ngày tiếp theo...`, "info");
+
+  try {
+    if (window.ShowtimeService && typeof window.ShowtimeService.adminAutoGenerateShowtimes === 'function') {
+      const res = await window.ShowtimeService.adminAutoGenerateShowtimes({ days: numDays });
+      if (res && res.success) {
+        const msg = res.data?.message || `Đã tự động tạo thành công ${res.data?.created_count || 0} suất chiếu!`;
+        notify(msg, "success");
+        await loadShowtimesFromApi();
+      } else {
+        notify(res ? res.message : "Không thể tự động sinh suất chiếu", "danger");
+      }
+    } else {
+      notify("ShowtimeService chưa hỗ trợ API auto-generate", "warning");
+    }
+  } catch (err) {
+    console.error('[Showtimes Admin] Auto-generate error:', err);
+    notify(err.message || "Lỗi khi tự động sinh suất chiếu", "danger");
+  }
+};
+
+// Dọn dẹp các suất chiếu phim cũ đã kết thúc
+window.cleanupPastShowtimes = async function () {
+  if (!confirm("Bạn có chắc chắn muốn dọn dẹp các suất chiếu cũ trước hôm nay không có vé đã đặt?")) {
+    return;
+  }
+
+  notify("Đang tiến hành dọn dẹp các suất chiếu cũ...", "info");
+
+  try {
+    if (window.ShowtimeService && typeof window.ShowtimeService.adminCleanupPastShowtimes === 'function') {
+      const res = await window.ShowtimeService.adminCleanupPastShowtimes({ days: 0 });
+      if (res && res.success) {
+        const msg = res.data?.message || `Đã dọn dẹp thành công các suất chiếu cũ!`;
+        notify(msg, "success");
+        await loadShowtimesFromApi();
+      } else {
+        notify(res ? res.message : "Không thể dọn dẹp suất chiếu cũ", "danger");
+      }
+    } else {
+      notify("ShowtimeService chưa hỗ trợ API cleanup", "warning");
+    }
+  } catch (err) {
+    console.error('[Showtimes Admin] Cleanup error:', err);
+    notify(err.message || "Lỗi khi dọn dẹp suất chiếu cũ", "danger");
+  }
+};

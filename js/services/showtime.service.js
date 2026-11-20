@@ -577,6 +577,52 @@ const ShowtimeService = {
     } catch (error) {
       return { success: false, message: error.response?.data?.detail || error.message };
     }
+  },
+
+  /**
+   * Admin: Tự động sinh suất chiếu cho các ngày tiếp theo
+   */
+  async adminAutoGenerateShowtimes({ days = 7 } = {}) {
+    try {
+      const baseUrl = this._getBaseUrl();
+      const url = `${baseUrl}/api/admin/showtimes/auto-generate?days=${days}`;
+      if (window.apiClient) {
+        const res = await window.apiClient.post(url);
+        return { success: true, data: res.data };
+      }
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: this._getHeaders(),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Lỗi khi tự động sinh suất chiếu');
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, message: error.response?.data?.detail || error.message };
+    }
+  },
+
+  /**
+   * Admin: Dọn dẹp các suất chiếu phim cũ đã kết thúc
+   */
+  async adminCleanupPastShowtimes({ days = 0 } = {}) {
+    try {
+      const baseUrl = this._getBaseUrl();
+      const url = `${baseUrl}/api/admin/showtimes/cleanup-past?days=${days}`;
+      if (window.apiClient) {
+        const res = await window.apiClient.post(url);
+        return { success: true, data: res.data };
+      }
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: this._getHeaders(),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Lỗi khi dọn dẹp suất chiếu cũ');
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, message: error.response?.data?.detail || error.message };
+    }
   }
 };
 
