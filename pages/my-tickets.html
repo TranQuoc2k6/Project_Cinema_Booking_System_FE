@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vé Điện Tử & Quản Lý Đơn Vé - LUMEN CINEMA</title>
+    <title>Vé Của Tôi - LUMEN CINEMA</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -48,18 +48,12 @@
         }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-        @media print {
-            body * { visibility: hidden; }
-            #printable-ticket, #printable-ticket * { visibility: visible; }
-            #printable-ticket { position: absolute; left: 0; top: 0; width: 100%; color: #000; background: #fff; }
-        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
 
     <!-- Header Navigation -->
-    <header class="sticky top-[10px] mx-[10px] rounded-2xl z-40 glass-panel border border-white/10 transition-all duration-300">
+    <header class="sticky top-[10px] mx-[10px] rounded-2xl z-50 glass-panel border border-white/10 transition-all duration-300">
         <div class="w-full px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <a href="../index.html" class="flex items-center gap-3 group">
                 <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#ff5e1e] via-[#d4ff00] to-[#7c3aed] p-[2px] transform group-hover:rotate-12 transition-transform duration-300 shadow-[0_0_15px_rgba(255,94,30,0.5)]">
@@ -101,28 +95,15 @@
 
     <!-- Main Content -->
     <main class="flex-1 max-w-5xl mx-auto px-4 py-10 w-full">
-        <!-- Toast Notification Alert -->
-        <div id="toast-banner" class="hidden mb-6 p-4 rounded-2xl flex items-center justify-between border shadow-xl transition-all duration-300">
-            <div class="flex items-center gap-3">
-                <i id="toast-icon" class="text-xl"></i>
-                <span id="toast-text" class="text-xs sm:text-sm font-semibold"></span>
-            </div>
-            <button onclick="dismissToast()" class="text-slate-400 hover:text-white text-xs px-2 py-1">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-        </div>
-
         <!-- Title & Filter Tabs -->
         <div class="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800/80 mb-8 shadow-2xl">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <h1 class="text-2xl sm:text-3xl font-black text-white uppercase tracking-tight flex items-center gap-3">
                         <span class="w-3 h-8 bg-gradient-to-b from-[#ff5e1e] to-[#d4ff00] rounded-full inline-block"></span>
-                        Vé Của Tôi & Vé Điện Tử
+                        Vé Của Tôi
                     </h1>
-                    <p class="text-xs sm:text-sm text-slate-400 mt-1">
-                        Xem chi tiết mã vé điện tử, suất chiếu, phòng, ghế và chính sách hủy vé trước giờ chiếu 2 tiếng (trả ghế tự động).
-                    </p>
+                    <p class="text-xs sm:text-sm text-slate-400 mt-1">Quản lý toàn bộ vé đã đặt, kiểm tra mã vé điện tử và trạng thái thanh toán</p>
                 </div>
 
                 <!-- Tabs Filter: Tất cả | Sắp chiếu | Đã xem | Đã huỷ -->
@@ -153,12 +134,6 @@
         </div>
     </main>
 
-    <!-- ============================================================== -->
-    <!-- MODAL 1: CHI TIẾT VÉ ĐIỆN TỬ (E-TICKET MODAL)                  -->
-    <!-- ============================================================== -->
-    <div id="ticket-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md hidden opacity-0 transition-opacity duration-300 overflow-y-auto">
-        <div id="printable-ticket" class="glass-panel w-full max-w-lg rounded-3xl p-6 sm:p-8 border border-white/15 text-left relative shadow-2xl my-8">
-            <button onclick="closeTicketModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-900 border border-white/10 text-slate-400 hover:text-white flex items-center justify-center transition-colors">
         <!-- FOOTER (Chuẩn Mẫu Điện Ảnh Galaxy Studio & Lumen Cinema) -->
         <footer class="relative z-10 bg-[#0b0d12] border-t border-white/10 text-slate-400 pt-12 pb-8 mt-auto">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -281,149 +256,15 @@
             <button onclick="closeQrModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-900 text-slate-400 hover:text-white flex items-center justify-center">
                 <i class="fa-solid fa-xmark"></i>
             </button>
-
-            <!-- Cinema Brand Top -->
-            <div class="flex items-center justify-between border-b border-white/10 pb-4 mb-5">
-                <div class="flex items-center gap-2">
-                    <span class="w-2.5 h-6 bg-[#ff5e1e] rounded-full inline-block"></span>
-                    <span class="text-lg font-black tracking-wider text-white">LUMEN <span class="text-[#d4ff00]">CINEMA</span></span>
-                </div>
-                <span class="text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 rounded bg-[#ff5e1e]/20 text-[#ff5e1e] border border-[#ff5e1e]/40">
-                    VÉ ĐIỆN TỬ • E-TICKET
-                </span>
+            <div class="w-12 h-12 rounded-2xl bg-[#ff5e1e]/20 border border-[#ff5e1e]/40 flex items-center justify-center text-[#ff5e1e] text-2xl mx-auto mb-3">
+                <i class="fa-solid fa-qrcode"></i>
             </div>
-
-            <!-- Movie & Poster Section -->
-            <div class="flex gap-4 items-start mb-6">
-                <img id="modal-movie-poster" src="" alt="Poster" class="w-20 h-28 sm:w-24 sm:h-36 rounded-xl object-cover border border-slate-700 shadow-md shrink-0">
-                <div class="flex-1">
-                    <div id="modal-status-badge" class="mb-1.5"></div>
-                    <h3 id="modal-movie-title" class="text-lg sm:text-xl font-black text-white leading-tight"></h3>
-                    <p class="text-xs text-slate-400 mt-1" id="modal-movie-duration">
-                        <i class="fa-regular fa-clock text-[#ff5e1e] mr-1"></i> <span id="modal-duration-text"></span>
-                    </p>
-                    <div class="mt-2 text-xs font-mono bg-black/40 px-3 py-1.5 rounded-lg border border-white/5 inline-flex items-center gap-2">
-                        <span class="text-slate-400">Mã vé:</span>
-                        <b class="text-[#d4ff00] tracking-wider" id="modal-booking-code"></b>
-                        <button onclick="copyTicketCode()" title="Sao chép mã vé" class="text-slate-400 hover:text-white ml-1">
-                            <i class="fa-regular fa-copy"></i>
-                        </button>
-                    </div>
-                </div>
+            <h3 class="text-base font-black text-white uppercase tracking-wider mb-1" id="qr-modal-title">MÃ VÉ VÀO RẠP</h3>
+            <p class="text-xs text-slate-400 mb-4" id="qr-modal-code">BK-XXXXX</p>
+            <div class="bg-white p-4 rounded-2xl inline-block shadow-inner mb-4">
+                <img id="qr-img" src="" alt="QR Code" class="w-48 h-48 mx-auto">
             </div>
-
-            <!-- Ticket Specs Grid: Rạp, Phòng, Ghế, Giờ -->
-            <div class="grid grid-cols-2 gap-3 p-4 rounded-2xl bg-black/30 border border-white/5 text-xs mb-5">
-                <div>
-                    <span class="text-slate-400 block text-[11px] mb-0.5"><i class="fa-solid fa-location-dot text-rose-500 mr-1"></i> Rạp chiếu</span>
-                    <b class="text-slate-200 block" id="modal-cinema-name"></b>
-                    <span class="text-[10px] text-slate-500 block truncate" id="modal-cinema-address"></span>
-                </div>
-                <div>
-                    <span class="text-slate-400 block text-[11px] mb-0.5"><i class="fa-solid fa-door-open text-[#d4ff00] mr-1"></i> Phòng chiếu</span>
-                    <b class="text-[#d4ff00] block" id="modal-room-info"></b>
-                    <span class="text-[10px] text-slate-400 block" id="modal-room-type"></span>
-                </div>
-                <div>
-                    <span class="text-slate-400 block text-[11px] mb-0.5"><i class="fa-regular fa-calendar-check text-[#ff5e1e] mr-1"></i> Suất chiếu</span>
-                    <b class="text-white block text-sm font-black" id="modal-showtime-time"></b>
-                    <span class="text-[10px] text-slate-400 block" id="modal-showtime-date"></span>
-                </div>
-                <div>
-                    <span class="text-slate-400 block text-[11px] mb-0.5"><i class="fa-solid fa-couch text-[#d4ff00] mr-1"></i> Ghế đã chọn</span>
-                    <b class="text-[#d4ff00] block text-sm font-black" id="modal-seats-list"></b>
-                    <span class="text-[10px] text-slate-400 block" id="modal-seats-count"></span>
-                </div>
-            </div>
-
-            <!-- QR Code Section -->
-            <div class="text-center py-3 px-4 rounded-2xl bg-white/5 border border-white/5 mb-5">
-                <p class="text-[11px] text-slate-300 font-bold mb-2 uppercase tracking-wider">
-                    <i class="fa-solid fa-qrcode text-[#d4ff00] mr-1"></i> Mã QR Soát Vé Tại Cổng
-                </p>
-                <div class="bg-white p-3 rounded-2xl inline-block shadow-inner mx-auto">
-                    <img id="modal-qr-img" src="" alt="QR Code" class="w-36 h-36 mx-auto">
-                </div>
-                <p class="text-[10px] text-slate-400 mt-2">Xuất trình mã QR này hoặc mã vé cho nhân viên tại rạp để vào phòng chiếu.</p>
-            </div>
-
-            <!-- Price & Policy Box -->
-            <div class="flex items-center justify-between border-t border-white/10 pt-4 mb-4">
-                <div>
-                    <span class="text-[11px] text-slate-400 uppercase font-bold block">Tổng tiền</span>
-                    <span class="text-xl font-black text-[#d4ff00] font-mono" id="modal-total-price">0 đ</span>
-                </div>
-                <div id="modal-cancel-status-container" class="text-right">
-                    <!-- Sẽ render trạng thái hủy hoặc điều kiện hủy -->
-                </div>
-            </div>
-
-            <!-- Cancellation Policy Note -->
-            <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-[11px] text-slate-400 space-y-1 mb-5">
-                <div class="flex items-center gap-1.5 text-slate-300 font-bold">
-                    <i class="fa-solid fa-circle-info text-[#ff5e1e]"></i>
-                    <span>Chính sách hủy vé & hoàn ghế:</span>
-                </div>
-                <p>Khách hàng được quyền hủy vé trước giờ chiếu ít nhất <b>2 tiếng</b>. Sau khi hủy, ghế sẽ lập tức được trả về trạng thái trống cho khách khác đặt.</p>
-            </div>
-
-            <!-- Modal Action Buttons -->
-            <div class="flex flex-col sm:flex-row gap-2.5 pt-2" id="modal-actions-container">
-                <button onclick="printTicket()" class="flex-1 py-3 px-4 rounded-xl glass-panel text-slate-200 hover:text-white hover:bg-slate-800 text-xs font-bold transition-all flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-print"></i> In / Lưu vé
-                </button>
-                <button id="modal-btn-cancel-ticket" onclick="handleCancelFromModal()" class="flex-1 py-3 px-4 rounded-xl bg-rose-500/10 hover:bg-rose-500 text-rose-400 hover:text-white border border-rose-500/40 text-xs font-bold transition-all flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-ban"></i> Hủy vé này
-                </button>
-                <button onclick="closeTicketModal()" class="py-3 px-5 rounded-xl bg-[#0b0d12] hover:bg-slate-800 text-slate-400 hover:text-white text-xs font-bold transition-all">
-                    Đóng
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ============================================================== -->
-    <!-- MODAL 2: XÁC NHẬN HỦY VÉ (CANCEL CONFIRMATION DIALOG)          -->
-    <!-- ============================================================== -->
-    <div id="cancel-confirm-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
-        <div class="glass-panel w-full max-w-md rounded-3xl p-6 sm:p-8 border border-rose-500/30 text-center relative shadow-2xl">
-            <div class="w-16 h-16 rounded-2xl bg-rose-500/20 border border-rose-500/40 text-rose-400 text-3xl mx-auto flex items-center justify-center mb-4">
-                <i class="fa-solid fa-triangle-exclamation"></i>
-            </div>
-            <h3 class="text-xl font-black text-white uppercase tracking-wider mb-2">XÁC NHẬN HỦY VÉ</h3>
-            <p class="text-xs text-slate-300 mb-4" id="cancel-confirm-desc">
-                Bạn có chắc chắn muốn hủy đơn vé xem phim này?
-            </p>
-
-            <div class="p-4 rounded-2xl bg-black/40 border border-white/5 text-xs text-left space-y-2 mb-5 font-mono">
-                <div class="flex justify-between">
-                    <span class="text-slate-400">Mã vé:</span>
-                    <b class="text-[#d4ff00]" id="confirm-ticket-code">#BK-XXXX</b>
-                </div>
-                <div class="flex justify-between">
-                    <span class="text-slate-400">Tên phim:</span>
-                    <b class="text-white truncate max-w-[200px]" id="confirm-movie-title">Phim</b>
-                </div>
-                <div class="flex justify-between">
-                    <span class="text-slate-400">Ghế sẽ trả lại:</span>
-                    <b class="text-rose-400" id="confirm-seats-list">E05, E06</b>
-                </div>
-            </div>
-
-            <div class="p-3 rounded-xl bg-rose-950/30 border border-rose-500/30 text-[11px] text-rose-300 text-left mb-6">
-                <i class="fa-solid fa-shield-halved mr-1"></i>
-                <b>Lưu ý:</b> Thao tác này sẽ hủy vé và giải phóng ghế lập tức để khách hàng khác có thể đặt. Không thể hoàn tác sau khi xác nhận.
-            </div>
-
-            <div class="flex gap-3">
-                <button onclick="closeCancelConfirmModal()" class="flex-1 py-3 rounded-xl glass-panel text-slate-300 hover:text-white font-bold text-xs">
-                    Không, giữ vé
-                </button>
-                <button id="btn-do-cancel" onclick="executeCancelTicket()" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-rose-600 to-red-600 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-rose-600/30 hover:brightness-110 flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-check"></i>
-                    <span>Xác nhận hủy</span>
-                </button>
-            </div>
+            <p class="text-[11px] text-slate-400">Đưa mã QR này cho nhân viên soát vé tại rạp để in vé giấy hoặc vào phòng chiếu.</p>
         </div>
     </div>
 
@@ -437,29 +278,6 @@
 
     <script>
         let currentTab = 'all';
-        let allTicketsData = [];
-        let pendingCancelTicket = null;
-        let activeModalTicket = null;
-
-        function showToast(message, type = 'success') {
-            const banner = document.getElementById('toast-banner');
-            const text = document.getElementById('toast-text');
-            const icon = document.getElementById('toast-icon');
-
-            text.innerText = message;
-            if (type === 'success') {
-                banner.className = 'mb-6 p-4 rounded-2xl flex items-center justify-between border shadow-xl bg-emerald-950/70 border-emerald-500/40 text-emerald-300';
-                icon.className = 'fa-solid fa-circle-check text-emerald-400 text-xl';
-            } else {
-                banner.className = 'mb-6 p-4 rounded-2xl flex items-center justify-between border shadow-xl bg-rose-950/70 border-rose-500/40 text-rose-300';
-                icon.className = 'fa-solid fa-circle-exclamation text-rose-400 text-xl';
-            }
-            banner.classList.remove('hidden');
-        }
-
-        function dismissToast() {
-            document.getElementById('toast-banner').classList.add('hidden');
-        }
 
         function setTab(tab, btn) {
             currentTab = tab;
@@ -503,8 +321,6 @@
                 return;
             }
 
-            allTicketsData = res.data;
-
             container.innerHTML = res.data.map(ticket => {
                 const st = ticket.showtime;
                 const movie = st.movie;
@@ -514,7 +330,7 @@
                 const formattedDate = startTime.toLocaleDateString('vi-VN', { weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric' });
                 const seatList = ticket.seats.map(s => s.seat_number).join(', ') || 'Chưa xếp ghế';
 
-                // Trạng thái vé & màu sắc badge
+                // Trạng thái thanh toán & màu sắc
                 let statusBadge = '';
                 if (ticket.status === 'DA_THANH_TOAN' || ticket.payment_status === 'PAID') {
                     statusBadge = '<span class="px-2.5 py-1 rounded-md text-[10px] font-black uppercase bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">ĐÃ THANH TOÁN</span>';
@@ -526,37 +342,15 @@
                     statusBadge = '<span class="px-2.5 py-1 rounded-md text-[10px] font-black uppercase bg-slate-800 text-slate-400 border border-slate-700">HẾT HẠN</span>';
                 }
 
-                // Nút hủy vé: Khách huỷ được vé trước giờ chiếu 2 tiếng (trả ghế)
-                let cancelButtonHtml = '';
-                if (ticket.can_cancel) {
-                    cancelButtonHtml = `
-                        <button onclick="promptCancelTicket(${ticket.id})" class="px-3.5 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500 text-rose-400 hover:text-white border border-rose-500/30 text-xs font-bold transition-all flex items-center gap-1.5 shadow" title="Hủy vé trước giờ chiếu 2 tiếng để trả ghế">
-                            <i class="fa-solid fa-ban text-xs"></i> Hủy vé
-                        </button>
-                    `;
-                } else if (ticket.status === 'DA_THANH_TOAN' || ticket.status === 'GIU_CHO') {
-                    cancelButtonHtml = `
-                        <button disabled title="${ticket.cancel_reason || 'Không thể hủy vé vì đã quá hạn 2 tiếng trước giờ chiếu'}" class="px-3.5 py-2 rounded-xl bg-slate-900/60 text-slate-500 border border-slate-800 text-xs font-semibold cursor-not-allowed flex items-center gap-1.5">
-                            <i class="fa-solid fa-lock text-[10px]"></i> Không thể hủy
-                        </button>
-                    `;
-                } else if (ticket.status === 'DA_HUY') {
-                    cancelButtonHtml = `
-                        <span class="text-[11px] text-rose-400/80 font-medium flex items-center gap-1">
-                            <i class="fa-solid fa-circle-check text-[10px]"></i> Đã trả ghế
-                        </span>
-                    `;
-                }
-
                 return `
-                    <div id="ticket-card-${ticket.id}" class="glass-card p-5 sm:p-6 rounded-3xl border border-slate-800/80 hover:border-slate-700 transition-all flex flex-col md:flex-row gap-5 items-start md:items-center justify-between">
+                    <div class="glass-card p-5 sm:p-6 rounded-3xl border border-slate-800/80 hover:border-slate-700 transition-all flex flex-col md:flex-row gap-5 items-start md:items-center justify-between">
                         <!-- Left: Poster + Movie Details -->
                         <div class="flex gap-4 items-center w-full md:w-auto">
                             <img src="${movie.poster_url || 'https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=200'}" class="w-16 h-24 sm:w-20 sm:h-28 rounded-2xl object-cover border border-slate-700/60 shadow-md shrink-0">
                             <div class="flex-1">
                                 <div class="flex items-center gap-2 mb-1">
                                     ${statusBadge}
-                                    <span class="text-[10px] font-bold text-slate-400 font-mono tracking-wider">#${ticket.booking_code}</span>
+                                    <span class="text-[10px] font-bold text-slate-500 font-mono tracking-wider">#${ticket.booking_code}</span>
                                 </div>
                                 <h3 class="text-base sm:text-lg font-black text-white hover:text-[#ff5e1e] transition-colors">${movie.title}</h3>
                                 <p class="text-xs text-slate-300 mt-0.5">
@@ -572,192 +366,33 @@
                         </div>
 
                         <!-- Right: Total Price + Action Buttons -->
-                        <div class="flex md:flex-col items-center md:items-end justify-between w-full md:w-auto pt-3 md:pt-0 border-t md:border-t-0 border-slate-800 shrink-0 gap-3">
+                        <div class="flex md:flex-col items-center md:items-end justify-between w-full md:w-auto pt-3 md:pt-0 border-t md:border-t-0 border-slate-800 shrink-0 gap-2">
                             <div class="text-left md:text-right">
                                 <span class="text-[10px] uppercase font-bold text-slate-500 block">Tổng tiền</span>
                                 <span class="text-lg font-black text-[#d4ff00] font-mono">${Number(ticket.total_price).toLocaleString('vi-VN')} đ</span>
                             </div>
-                            <div class="flex items-center gap-2">
-                                <button onclick="openTicketModal(${ticket.id})" class="px-4 py-2 rounded-xl bg-[#131722] hover:bg-[#ff5e1e] hover:text-white border border-white/10 text-slate-200 text-xs font-bold transition-all flex items-center gap-1.5 shadow">
-                                    <i class="fa-solid fa-ticket text-xs"></i> Xem vé điện tử
-                                </button>
-                                ${cancelButtonHtml}
-                            </div>
+                            <button onclick="openQrModal('${ticket.booking_code}', '${movie.title}')" class="px-4 py-2 rounded-xl bg-[#131722] hover:bg-[#ff5e1e] hover:text-white border border-white/10 text-slate-200 text-xs font-bold transition-all flex items-center gap-1.5 shadow">
+                                <i class="fa-solid fa-qrcode text-xs"></i> Xem mã QR
+                            </button>
                         </div>
                     </div>
                 `;
             }).join('');
-
-            // Tự động mở vé nếu có param booking_code hoặc booking_id trên URL
-            checkUrlTicketHighlight();
         }
 
-        function checkUrlTicketHighlight() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const targetCode = urlParams.get('booking_code');
-            const targetId = urlParams.get('booking_id');
-
-            if (targetCode || targetId) {
-                const target = allTicketsData.find(t => 
-                    (targetCode && t.booking_code === targetCode) || 
-                    (targetId && String(t.id) === String(targetId))
-                );
-                if (target) {
-                    const card = document.getElementById(`ticket-card-${target.id}`);
-                    if (card) {
-                        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        card.classList.add('border-[#ff5e1e]', 'shadow-[0_0_30px_rgba(255,94,30,0.4)]');
-                    }
-                    openTicketModal(target.id);
-                }
-            }
-        }
-
-        // ==========================================================
-        // VÉ ĐIỆN TỬ MODAL LOGIC
-        // ==========================================================
-        function openTicketModal(ticketId) {
-            const ticket = allTicketsData.find(t => t.id === ticketId);
-            if (!ticket) return;
-
-            activeModalTicket = ticket;
-            const st = ticket.showtime;
-            const movie = st.movie;
-            const cinema = st.cinema;
-            const startTime = new Date(st.start_time);
-            const formattedTime = startTime.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
-            const formattedDate = startTime.toLocaleDateString('vi-VN', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' });
-            const seatList = ticket.seats.map(s => s.seat_number).join(', ') || 'Chưa xếp ghế';
-
-            document.getElementById('modal-movie-title').innerText = movie.title;
-            document.getElementById('modal-movie-poster').src = movie.poster_url || 'https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=200';
-            document.getElementById('modal-duration-text').innerText = `${movie.duration_minutes || 120} phút`;
-            document.getElementById('modal-booking-code').innerText = ticket.booking_code;
-            document.getElementById('modal-cinema-name').innerText = cinema.name;
-            document.getElementById('modal-cinema-address').innerText = cinema.address || 'Hệ thống rạp LUMEN Cinema';
-            document.getElementById('modal-room-info').innerText = st.room_name;
-            document.getElementById('modal-room-type').innerText = `Định dạng: ${st.room_type || '2D Digital'}`;
-            document.getElementById('modal-showtime-time').innerText = formattedTime;
-            document.getElementById('modal-showtime-date').innerText = formattedDate;
-            document.getElementById('modal-seats-list').innerText = seatList;
-            document.getElementById('modal-seats-count').innerText = `${ticket.seats.length} ghế`;
-            document.getElementById('modal-total-price').innerText = `${Number(ticket.total_price).toLocaleString('vi-VN')} đ`;
-
-            // Badge trạng thái
-            const badgeContainer = document.getElementById('modal-status-badge');
-            if (ticket.status === 'DA_THANH_TOAN') {
-                badgeContainer.innerHTML = '<span class="px-2.5 py-1 rounded text-[10px] font-black uppercase bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">ĐÃ THANH TOÁN (HỢP LỆ)</span>';
-            } else if (ticket.status === 'GIU_CHO') {
-                badgeContainer.innerHTML = '<span class="px-2.5 py-1 rounded text-[10px] font-black uppercase bg-amber-500/20 text-amber-400 border border-amber-500/40">CHỜ THANH TOÁN</span>';
-            } else if (ticket.status === 'DA_HUY') {
-                badgeContainer.innerHTML = '<span class="px-2.5 py-1 rounded text-[10px] font-black uppercase bg-rose-500/20 text-rose-400 border border-rose-500/40">ĐÃ HỦY VÉ (GHẾ ĐÃ TRẢ)</span>';
-            } else {
-                badgeContainer.innerHTML = '<span class="px-2.5 py-1 rounded text-[10px] font-black uppercase bg-slate-800 text-slate-400 border border-slate-700">HẾT HẠN</span>';
-            }
-
-            // QR Code
-            document.getElementById('modal-qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(ticket.booking_code)}`;
-
-            // Cancellation state inside modal
-            const cancelStatusContainer = document.getElementById('modal-cancel-status-container');
-            const cancelBtn = document.getElementById('modal-btn-cancel-ticket');
-
-            if (ticket.can_cancel) {
-                cancelStatusContainer.innerHTML = '<span class="text-[11px] text-emerald-400 font-bold block"><i class="fa-solid fa-circle-check mr-1"></i> Đủ điều kiện hủy vé</span><span class="text-[10px] text-slate-400">Trước giờ chiếu > 2h</span>';
-                cancelBtn.classList.remove('hidden');
-            } else {
-                if (ticket.status === 'DA_HUY') {
-                    cancelStatusContainer.innerHTML = '<span class="text-[11px] text-rose-400 font-bold block">Đơn vé đã hủy</span>';
-                } else {
-                    cancelStatusContainer.innerHTML = `<span class="text-[11px] text-amber-400 font-bold block"><i class="fa-solid fa-lock mr-1"></i> Hết hạn hủy</span><span class="text-[10px] text-slate-400 truncate max-w-[150px] block">${ticket.cancel_reason || 'Quá hạn 2h'}</span>`;
-                }
-                cancelBtn.classList.add('hidden');
-            }
-
-            const modal = document.getElementById('ticket-modal');
+        function openQrModal(code, title) {
+            document.getElementById('qr-modal-code').innerText = `Mã vé: ${code} • ${title}`;
+            // Dùng API QR code chuẩn từ qrserver
+            document.getElementById('qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(code)}`;
+            const modal = document.getElementById('qr-modal');
             modal.classList.remove('hidden');
             setTimeout(() => modal.classList.remove('opacity-0'), 10);
         }
 
-        function closeTicketModal() {
-            const modal = document.getElementById('ticket-modal');
+        function closeQrModal() {
+            const modal = document.getElementById('qr-modal');
             modal.classList.add('opacity-0');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                activeModalTicket = null;
-            }, 300);
-        }
-
-        function copyTicketCode() {
-            if (!activeModalTicket) return;
-            navigator.clipboard.writeText(activeModalTicket.booking_code);
-            showToast(`Đã sao chép mã vé: ${activeModalTicket.booking_code}`, 'success');
-        }
-
-        function printTicket() {
-            window.print();
-        }
-
-        function handleCancelFromModal() {
-            if (!activeModalTicket) return;
-            const t = activeModalTicket;
-            closeTicketModal();
-            promptCancelTicket(t.id);
-        }
-
-        // ==========================================================
-        // DIALOG XÁC NHẬN HỦY VÉ & GIẢI PHÓNG GHẾ
-        // ==========================================================
-        function promptCancelTicket(ticketId) {
-            const ticket = allTicketsData.find(t => t.id === ticketId);
-            if (!ticket) return;
-
-            pendingCancelTicket = ticket;
-            const seatList = ticket.seats.map(s => s.seat_number).join(', ') || 'Không rõ';
-
-            document.getElementById('confirm-ticket-code').innerText = `#${ticket.booking_code}`;
-            document.getElementById('confirm-movie-title').innerText = ticket.showtime.movie.title;
-            document.getElementById('confirm-seats-list').innerText = seatList;
-            document.getElementById('cancel-confirm-desc').innerText = `Bạn có chắc chắn muốn hủy đơn vé xem phim "${ticket.showtime.movie.title}"?`;
-
-            const modal = document.getElementById('cancel-confirm-modal');
-            modal.classList.remove('hidden');
-            setTimeout(() => modal.classList.remove('opacity-0'), 10);
-        }
-
-        function closeCancelConfirmModal() {
-            const modal = document.getElementById('cancel-confirm-modal');
-            modal.classList.add('opacity-0');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                pendingCancelTicket = null;
-            }, 300);
-        }
-
-        async function executeCancelTicket() {
-            if (!pendingCancelTicket) return;
-            const ticketId = pendingCancelTicket.id;
-            const ticketCode = pendingCancelTicket.booking_code;
-            const btn = document.getElementById('btn-do-cancel');
-
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang hủy vé & trả ghế...';
-
-            const res = await window.BookingService.cancelBooking(ticketId);
-
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fa-solid fa-check"></i> <span>Xác nhận hủy</span>';
-            closeCancelConfirmModal();
-
-            if (res.success) {
-                const released = res.data?.released_seats?.join(', ') || '';
-                const msg = `Hủy thành công đơn vé #${ticketCode}! Ghế [${released}] đã được trả về trạng thái trống.`;
-                showToast(msg, 'success');
-                // Tải lại danh sách vé ngay lập tức
-                loadTickets();
-            } else {
-                showToast(res.message || 'Hủy vé không thành công. Vui lòng kiểm tra lại điều kiện hủy trước 2 tiếng.', 'error');
-            }
+            setTimeout(() => modal.classList.add('hidden'), 300);
         }
 
         window.onload = function() {

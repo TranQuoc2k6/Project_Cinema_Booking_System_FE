@@ -86,7 +86,7 @@ const BookingService = {
   },
 
   /**
-   * Lấy chi tiết đơn vé theo ID (Task T3C6D1A)
+   * Lấy chi tiết đơn vé theo ID
    * @param {number|string} bookingId 
    * @returns {Promise<object>}
    */
@@ -106,60 +106,6 @@ const BookingService = {
       return {
         success: false,
         message: error.response?.data?.detail || error.message
-      };
-    }
-  },
-
-  /**
-   * Lấy chi tiết vé điện tử theo mã vé booking_code (Task T3C6D1A)
-   * @param {string} bookingCode 
-   * @returns {Promise<object>}
-   */
-  async getBookingByCode(bookingCode) {
-    try {
-      const baseUrl = this._getBaseUrl();
-      const url = `${baseUrl}/api/bookings/code/${encodeURIComponent(bookingCode)}`;
-      if (window.apiClient) {
-        const res = await window.apiClient.get(url);
-        return { success: true, data: res.data };
-      }
-      const res = await fetch(url, { headers: this._getHeaders() });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail || 'Không tìm thấy đơn vé');
-      return { success: true, data };
-    } catch (error) {
-      return {
-        success: false,
-        message: error.response?.data?.detail || error.message
-      };
-    }
-  },
-
-  /**
-   * Khách hàng hủy vé trước giờ chiếu ít nhất 2 tiếng (Task T3C6D1A)
-   * Giải phóng ghế và cập nhật trạng thái đơn vé sang DA_HUY.
-   * @param {number|string} bookingId 
-   * @returns {Promise<object>}
-   */
-  async cancelBooking(bookingId) {
-    try {
-      const baseUrl = this._getBaseUrl();
-      const url = `${baseUrl}/api/bookings/${bookingId}/cancel`;
-      if (window.apiClient) {
-        const res = await window.apiClient.post(url);
-        return { success: true, data: res.data };
-      }
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: this._getHeaders()
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail || 'Không thể hủy đơn vé');
-      return { success: true, data };
-    } catch (error) {
-      return {
-        success: false,
-        message: error.response?.data?.detail || error.message || 'Lỗi khi kết nối máy chủ để hủy vé'
       };
     }
   },
