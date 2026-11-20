@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lịch Chiếu Phim - LUMEN CINEMA</title>
     
-    <!-- Google Fonts: Montserrat (Điện ảnh), Plus Jakarta Sans (Giao diện) & JetBrains Mono (Số liệu) -->
+    <!-- Google Fonts: Inter (Giao diện chuẩn), Montserrat (Điện ảnh) & JetBrains Mono (Số liệu) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Montserrat:ital,wght@0,600;0,700;0,800;0,900;1,800;1,900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&family=Montserrat:ital,wght@0,600;0,700;0,800;0,900;1,800;1,900&display=swap" rel="stylesheet">
     
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -37,7 +37,7 @@
                         }
                     },
                     fontFamily: {
-                        sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+                        sans: ['Inter', 'sans-serif'],
                         cinema: ['Montserrat', 'sans-serif'],
                         mono: ['JetBrains Mono', 'monospace'],
                     }
@@ -51,7 +51,7 @@
         }
 
         body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
+            font-family: 'Inter', sans-serif; 
             background-color: #0b0d12; 
             color: #f8fafc; 
             margin: 0;
@@ -146,16 +146,12 @@
         <!-- ================================================================= -->
         <!-- HEADER NAVIGATION (ĐỒNG BỘ 100% VỚI TRANG CHỦ)                     -->
         <!-- ================================================================= -->
-        <header class="sticky top-[10px] mx-[10px] sm:mx-6 rounded-2xl z-50 glass-panel border border-white/10 transition-all duration-300">
-            <div class="w-full px-4 sm:px-6 h-20 flex items-center justify-between">
+        <header class="sticky top-[10px] mx-[10px] rounded-2xl z-50 glass-panel border border-white/10 transition-all duration-300">
+            <div class="w-full px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
                 
                 <!-- Brand Logo 3D Glow -->
                 <a href="../index.html" class="flex items-center gap-3 group">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#ff5e1e] via-[#d4ff00] to-[#7c3aed] p-[2px] transform group-hover:rotate-12 transition-transform duration-300 shadow-[0_0_15px_rgba(255,94,30,0.5)]">
-                        <div class="w-full h-full bg-[#0b0d12] rounded-[10px] flex items-center justify-center">
-                            <i class="fa-solid font-black fa-cube text-[#d4ff00] text-xl group-hover:scale-110 transition-transform"></i>
-                        </div>
-                    </div>
+                    <img src="../assets/images/logo/logo.png" alt="LUMEN CINEMA" class="w-10 h-10 object-contain drop-shadow-[0_0_12px_rgba(255,180,0,0.45)] group-hover:scale-105 transition-transform duration-300">
                     <div class="flex flex-col">
                         <span class="text-2xl font-black tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-[#ff5e1e] via-[#d4ff00] to-white">
                             LUMEN<span class="text-white font-light">CINEMA</span>
@@ -172,9 +168,8 @@
                     <a href="movies.html" class="text-sm font-medium text-slate-300 hover:text-[#ff5e1e] transition-colors flex items-center gap-1.5">
                         <i class="fa-solid fa-film text-xs"></i> Phim Chiếu
                     </a>
-                    <a href="showtimes.html" class="text-sm font-semibold text-[#ff5e1e] flex items-center gap-1.5 transition-colors relative py-1">
+                    <a href="showtimes.html" class="text-sm font-semibold text-[#ff5e1e] flex items-center gap-1.5 transition-colors">
                         <i class="fa-solid fa-calendar-days text-xs"></i> Lịch Chiếu
-                        <span class="absolute bottom-0 left-0 w-full h-0.5 bg-[#ff5e1e] rounded-full shadow-[0_0_8px_#ff5e1e]"></span>
                     </a>
                 </nav>
 
@@ -469,11 +464,7 @@
                     <div class="flex flex-col items-start md:items-end gap-4">
                         <!-- Brand Logo -->
                         <a href="../index.html" class="flex items-center gap-3 group">
-                            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#ff5e1e] via-[#d4ff00] to-[#7c3aed] p-[2px] transform group-hover:rotate-12 transition-transform duration-300 shadow-[0_0_15px_rgba(255,94,30,0.5)]">
-                                <div class="w-full h-full bg-[#0b0d12] rounded-[10px] flex items-center justify-center">
-                                    <i class="fa-solid font-black fa-cube text-[#d4ff00] text-xl group-hover:scale-110 transition-transform"></i>
-                                </div>
-                            </div>
+                            <img src="../assets/images/logo/logo.png" alt="LUMEN CINEMA" class="w-10 h-10 object-contain drop-shadow-[0_0_12px_rgba(255,180,0,0.45)] group-hover:scale-105 transition-transform duration-300">
                             <div class="flex flex-col text-left">
                                 <span class="text-xl font-black tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-[#ff5e1e] via-[#d4ff00] to-white">
                                     LUMEN<span class="text-white font-light">CINEMA</span>
@@ -514,11 +505,7 @@
                     <div class="flex flex-col md:flex-row items-start md:items-center gap-6">
                         <!-- Logo Doanh Nghiệp Bên Trái -->
                         <a href="../index.html" class="flex items-center gap-3 group shrink-0">
-                            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#ff5e1e] via-[#d4ff00] to-[#7c3aed] p-[2px] transform group-hover:rotate-12 transition-transform duration-300 shadow-[0_0_15px_rgba(255,94,30,0.5)]">
-                                <div class="w-full h-full bg-[#0b0d12] rounded-[10px] flex items-center justify-center">
-                                    <i class="fa-solid font-black fa-cube text-[#d4ff00] text-xl group-hover:scale-110 transition-transform"></i>
-                                </div>
-                            </div>
+                            <img src="../assets/images/logo/logo.png" alt="LUMEN CINEMA" class="w-10 h-10 object-contain drop-shadow-[0_0_12px_rgba(255,180,0,0.45)] group-hover:scale-105 transition-transform duration-300">
                         </a>
 
                         <!-- Chi Tiết Doanh Nghiệp (Khớp 100% Ảnh Mẫu) -->

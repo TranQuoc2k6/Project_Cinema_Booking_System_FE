@@ -169,6 +169,87 @@
       if (match) {
         link.classList.remove('text-slate-300', 'font-medium');
         link.classList.add('text-[#ff5e1e]', 'font-bold');
+      } else {
+        link.classList.remove('text-[#ff5e1e]', 'font-bold');
+        link.classList.add('text-slate-300', 'font-medium');
+      }
+    });
+  }
+
+  // Tối ưu hóa chuyển đổi mượt mà giữa các trang (Smooth Navigation & Instant Prefetching)
+  function setupSmoothNavigation() {
+    // 1. Kích hoạt Cross-Document View Transitions (Chrome 126+, Safari 18+)
+    if (!document.getElementById('lumen-view-transition-meta')) {
+      const meta = document.createElement('meta');
+      meta.id = 'lumen-view-transition-meta';
+      meta.name = 'view-transition';
+      meta.content = 'same-origin';
+      document.head.appendChild(meta);
+    }
+
+    // 2. Tự động gắn favicon logo thương hiệu LC nếu trang chưa có
+    const prefixes = getPathPrefixes();
+    if (!document.querySelector('link[rel="icon"]')) {
+      const fav = document.createElement('link');
+      fav.rel = 'icon';
+      fav.type = 'image/png';
+      fav.href = `${prefixes.root}assets/images/logo/favicon.png`;
+      document.head.appendChild(fav);
+    }
+
+    // 2. CSS Giữ cố định Navbar khi chuyển trang & hiệu ứng mượt
+    if (!document.getElementById('lumen-nav-transition-styles')) {
+      const style = document.createElement('style');
+      style.id = 'lumen-nav-transition-styles';
+      style.textContent = `
+        @view-transition {
+          navigation: auto;
+        }
+        header.glass-panel {
+          view-transition-name: main-header;
+        }
+        ::view-transition-old(root),
+        ::view-transition-new(root) {
+          animation-duration: 0.18s;
+          animation-timing-function: cubic-bezier(0.2, 0, 0.2, 1);
+        }
+        header nav a {
+          transition: color 0.18s ease, transform 0.18s ease;
+        }
+        header nav a:hover {
+          transform: translateY(-1px);
+        }
+        @keyframes lumenFadeIn {
+          from { opacity: 0.92; transform: translateY(2px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        main {
+          animation: lumenFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    // 3. Tải trước tài nguyên tức thì khi di chuột vào liên kết (Instant Prefetch on Hover)
+    const links = document.querySelectorAll('header nav a, header a.group');
+    const prefetchedUrls = new Set();
+
+    function prefetchTarget(href) {
+      if (!href || prefetchedUrls.has(href) || href.startsWith('#') || href.startsWith('javascript:')) return;
+      prefetchedUrls.add(href);
+      const prefetchLink = document.createElement('link');
+      prefetchLink.rel = 'prefetch';
+      prefetchLink.href = href;
+      prefetchLink.as = 'document';
+      document.head.appendChild(prefetchLink);
+    }
+
+    links.forEach(link => {
+      const href = link.getAttribute('href');
+      if (href) {
+        link.addEventListener('mouseenter', () => prefetchTarget(href), { passive: true });
+        link.addEventListener('touchstart', () => prefetchTarget(href), { passive: true });
+        link.addEventListener('focus', () => prefetchTarget(href), { passive: true });
       }
     });
   }
@@ -195,6 +276,7 @@
   window.renderAppHeader = function () {
     renderHeaderAuth();
     highlightActiveNav();
+    setupSmoothNavigation();
   };
   window.updateHeaderAuth = window.renderAppHeader;
 
