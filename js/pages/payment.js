@@ -223,6 +223,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (successCode) successCode.innerText = bookingData.bookingCode || 'BK-LUMEN-SUCCESS';
     if (successEmail) successEmail.innerText = bookingData.customerEmail || 'email của bạn';
 
+    const myTicketsLink = document.querySelector('a[href*="my-tickets.html"]');
+    if (myTicketsLink && bookingData.bookingCode) {
+      myTicketsLink.href = `my-tickets.html?booking_code=${encodeURIComponent(bookingData.bookingCode)}`;
+    }
+
     // Xóa giỏ vé tạm
     sessionStorage.removeItem('current_booking');
   };
