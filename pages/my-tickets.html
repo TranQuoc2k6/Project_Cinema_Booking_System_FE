@@ -153,12 +153,6 @@
         </div>
     </main>
 
-    <!-- ============================================================== -->
-    <!-- MODAL 1: CHI TIẾT VÉ ĐIỆN TỬ (E-TICKET MODAL)                  -->
-    <!-- ============================================================== -->
-    <div id="ticket-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md hidden opacity-0 transition-opacity duration-300 overflow-y-auto">
-        <div id="printable-ticket" class="glass-panel w-full max-w-lg rounded-3xl p-6 sm:p-8 border border-white/15 text-left relative shadow-2xl my-8">
-            <button onclick="closeTicketModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-900 border border-white/10 text-slate-400 hover:text-white flex items-center justify-center transition-colors">
         <!-- FOOTER (Chuẩn Mẫu Điện Ảnh Galaxy Studio & Lumen Cinema) -->
         <footer class="relative z-10 bg-[#0b0d12] border-t border-white/10 text-slate-400 pt-12 pb-8 mt-auto">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -275,10 +269,13 @@
             </div>
         </footer>
 
-    <!-- Modal QR Code & Ticket Detail -->
-    <div id="qr-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
-        <div class="glass-panel w-full max-w-sm rounded-3xl p-6 border border-slate-700/80 text-center relative shadow-2xl">
-            <button onclick="closeQrModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-900 text-slate-400 hover:text-white flex items-center justify-center">
+
+    <!-- ============================================================== -->
+    <!-- MODAL 1: CHI TIẾT VÉ ĐIỆN TỬ (E-TICKET MODAL)                  -->
+    <!-- ============================================================== -->
+    <div id="ticket-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md hidden opacity-0 transition-opacity duration-300 overflow-y-auto">
+        <div id="printable-ticket" class="glass-panel w-full max-w-lg rounded-3xl p-6 sm:p-8 border border-white/15 text-left relative shadow-2xl my-8">
+            <button onclick="closeTicketModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-900 border border-white/10 text-slate-400 hover:text-white flex items-center justify-center transition-colors">
                 <i class="fa-solid fa-xmark"></i>
             </button>
 
