@@ -132,6 +132,19 @@ class SeatMap {
 
     let html = `
       <div class="seat-map-wrapper w-full flex flex-col items-center select-none">
+        ${(this.seatData.is_weekend || this.seatData.is_peak_hour) ? `
+        <!-- Surcharge Notice Banner -->
+        <div class="surcharge-notice w-full max-w-xl mb-6 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500/10 via-[#ff5e1e]/10 to-transparent border border-amber-500/30 flex flex-wrap items-center justify-between gap-2 text-xs">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-tags text-[#ff5e1e]"></i>
+            <span class="text-slate-200 font-semibold">Phụ thu suất chiếu:</span>
+            ${this.seatData.is_weekend ? `<span class="px-2 py-0.5 rounded-md bg-amber-500/20 border border-amber-500/40 text-[10px] font-bold text-amber-300">Cuối tuần (+${Number(this.seatData.weekend_surcharge || 10000).toLocaleString('vi-VN')} đ)</span>` : ''}
+            ${this.seatData.is_peak_hour ? `<span class="px-2 py-0.5 rounded-md bg-orange-500/20 border border-orange-500/40 text-[10px] font-bold text-orange-300">Giờ vàng (+${Number(this.seatData.peak_hour_surcharge || 10000).toLocaleString('vi-VN')} đ)</span>` : ''}
+          </div>
+          <span class="text-[10px] text-slate-400 italic">Đã cộng vào giá từng ghế</span>
+        </div>
+        ` : ''}
+
         <!-- Màn hình 3D Laser Arc -->
         <div class="screen-area w-full max-w-xl mb-10 flex flex-col items-center">
           <div class="screen-arc w-full h-10 rounded-t-[100%] flex items-center justify-center border-t-2 border-[#ff5e1e] shadow-[0_12px_30px_rgba(255,94,30,0.35)] bg-gradient-to-b from-[#ff5e1e]/60 via-[#ff5e1e]/10 to-transparent">
