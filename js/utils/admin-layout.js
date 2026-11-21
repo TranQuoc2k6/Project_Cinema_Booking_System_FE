@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
   highlightActiveMenu();
   initMobileSidebar();
   initLogoutButtons();
+  initModalDismissHandlers();
 });
 
 /**
@@ -101,6 +102,24 @@ function initLogoutButtons() {
         window.AdminAuth.logout();
       }
     });
+  });
+}
+
+/**
+ * 5. Tự động đóng Modal khi bấm phím ESC hoặc bấm ra ngoài Backdrop/Overlay
+ */
+function initModalDismissHandlers() {
+  document.addEventListener('click', function (e) {
+    if (e.target.classList.contains('modal-backdrop') || e.target.classList.contains('modal-overlay')) {
+      e.target.classList.remove('show');
+    }
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      const openModals = document.querySelectorAll('.modal-backdrop.show, .modal-overlay.show');
+      openModals.forEach(m => m.classList.remove('show'));
+    }
   });
 }
 

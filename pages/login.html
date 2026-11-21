@@ -3,7 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Đăng Nhập - CINEMA 3D</title>
+  <title>Đăng Nhập - LUMEN CINEMA</title>
+    <!-- Favicon / Tab Icon -->
+    <link rel="icon" type="image/png" href="../assets/images/logo/favicon.png">
+    <link rel="icon" type="image/x-icon" href="../assets/images/logo/favicon.ico">
+    <link rel="apple-touch-icon" href="../assets/images/logo/apple-touch-icon.png">
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -12,7 +16,7 @@
       theme: {
         extend: {
           colors: {
-            brand: { dark: '#070a12', card: '#0f172a', cyan: '#06b6d4', rose: '#f43f5e' }
+            brand: { dark: '#0b0d12', surface: '#131722', card: '#131722', tangerine: '#ff5e1e', lime: '#d4ff00', violet: '#7c3aed' }
           }
         }
       }
@@ -21,8 +25,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    body { font-family: 'Inter', sans-serif; background-color: #070a12; color: #f8fafc; }
-    .glass-panel { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); }
+    body { font-family: 'Inter', sans-serif; background-color: #0b0d12; color: #f8fafc; }
+    .glass-panel { background: rgba(19, 23, 34, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
     .glass-card { background: rgba(30, 41, 59, 0.5); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
     .form-control.is-invalid { border-color: #ef4444 !important; background-color: rgba(239, 68, 68, 0.05); }
     .auth-alert-box { display: none; padding: 0.75rem 1rem; border-radius: 0.75rem; font-size: 13px; margin-bottom: 1rem; }
@@ -33,20 +37,22 @@
 <body class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
   
   <!-- Glow backgrounds -->
-  <div class="absolute -top-32 -left-32 w-96 h-96 bg-cyan-500/15 rounded-full blur-3xl pointer-events-none"></div>
-  <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-rose-500/15 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="absolute -top-32 -left-32 w-96 h-96 bg-[#ff5e1e]/15 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-[#d4ff00]/10 rounded-full blur-3xl pointer-events-none"></div>
 
   <div class="glass-panel w-full max-w-md p-8 sm:p-10 rounded-3xl border border-slate-700/80 shadow-2xl relative z-10">
     <div class="text-center mb-8">
-      <a href="../index.html" class="inline-flex items-center gap-3 mb-3">
-        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-rose-500 to-cyan-400 p-[2px]">
-          <div class="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center">
-            <i class="fa-solid fa-cube text-cyan-400 text-2xl"></i>
-          </div>
+      <a href="../index.html" class="inline-flex items-center gap-3 mb-3 group">
+        <img src="../assets/images/logo/logo.png" alt="LUMEN CINEMA" class="w-12 h-12 object-contain drop-shadow-[0_0_15px_rgba(255,180,0,0.5)] group-hover:scale-105 transition-transform duration-300">
+        <div class="flex flex-col text-left">
+          <span class="text-2xl font-black tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-[#ff5e1e] via-[#d4ff00] to-white">
+            LUMEN<span class="text-white font-light">CINEMA</span>
+          </span>
+          <span class="text-[9px] uppercase tracking-widest text-[#d4ff00] -mt-1 font-semibold">Studio & Theater HQ</span>
         </div>
       </a>
-      <h1 class="text-2xl font-black text-white uppercase tracking-wider">ĐĂNG NHẬP 3D</h1>
-      <p class="text-xs text-slate-400 mt-1">Hệ Thống Đặt Vé Điện Ảnh Cinema 3D</p>
+      <h1 class="text-xl font-black text-white uppercase tracking-wider mt-1">ĐĂNG NHẬP HỆ THỐNG</h1>
+      <p class="text-xs text-slate-400 mt-0.5">Hệ thống rạp điện ảnh LUMEN CINEMA</p>
     </div>
 
     <!-- Alert Box -->
@@ -56,7 +62,7 @@
       <div>
         <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5" for="login-email">Email đăng nhập</label>
         <div class="relative">
-          <input type="email" id="login-email" class="form-control w-full bg-slate-900/90 border border-slate-700 text-slate-200 text-xs rounded-xl py-3 pl-10 pr-4 focus:outline-none focus:border-cyan-500 transition-colors" placeholder="user@example.com" autocomplete="email">
+          <input type="email" id="login-email" class="form-control w-full bg-slate-900/90 border border-slate-700 text-slate-200 text-xs rounded-xl py-3 pl-10 pr-4 focus:outline-none focus:border-[#ff5e1e] transition-colors" placeholder="user@example.com" autocomplete="email">
           <i class="fa-solid fa-envelope absolute left-3.5 top-3.5 text-xs text-slate-500"></i>
         </div>
       </div>
@@ -64,7 +70,7 @@
       <div>
         <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5" for="login-password">Mật khẩu</label>
         <div class="relative">
-          <input type="password" id="login-password" class="form-control w-full bg-slate-900/90 border border-slate-700 text-slate-200 text-xs rounded-xl py-3 pl-10 pr-10 focus:outline-none focus:border-cyan-500 transition-colors" placeholder="••••••••" autocomplete="current-password">
+          <input type="password" id="login-password" class="form-control w-full bg-slate-900/90 border border-slate-700 text-slate-200 text-xs rounded-xl py-3 pl-10 pr-10 focus:outline-none focus:border-[#ff5e1e] transition-colors" placeholder="••••••••" autocomplete="current-password">
           <i class="fa-solid fa-lock absolute left-3.5 top-3.5 text-xs text-slate-500"></i>
           <button type="button" class="absolute right-3 top-3 text-xs text-slate-500 hover:text-slate-300" onclick="togglePasswordVisibility('login-password', this)">👁️</button>
         </div>
@@ -72,13 +78,13 @@
 
       <div class="flex items-center justify-between text-xs pt-1">
         <label class="flex items-center gap-2 text-slate-400 cursor-pointer">
-          <input type="checkbox" id="login-remember" checked class="rounded text-cyan-500 focus:ring-0">
+          <input type="checkbox" id="login-remember" checked class="rounded text-[#ff5e1e] focus:ring-0">
           <span>Ghi nhớ đăng nhập</span>
         </label>
-        <a href="#" onclick="alert('Vui lòng liên hệ Admin để khôi phục mật khẩu!')" class="text-cyan-400 hover:underline">Quên mật khẩu?</a>
+        <a href="#" onclick="alert('Vui lòng liên hệ Admin để khôi phục mật khẩu!')" class="text-[#ff5e1e] hover:underline">Quên mật khẩu?</a>
       </div>
 
-      <button type="submit" id="btn-login-submit" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 via-teal-400 to-emerald-400 text-slate-950 font-black text-xs uppercase tracking-wider shadow-lg shadow-cyan-500/25 hover:brightness-110 transition-all mt-4">
+      <button type="submit" id="btn-login-submit" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#ff5e1e] to-[#ea580c] text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-[#ff5e1e]/30 hover:brightness-110 transition-all mt-4">
         🔐 ĐĂNG NHẬP
       </button>
     </form>
@@ -97,7 +103,7 @@
     </div>
 
     <div class="text-center mt-6 text-xs text-slate-400">
-      Chưa có tài khoản? <a href="register.html" class="text-cyan-400 font-bold hover:underline">Đăng ký ngay</a>
+      Chưa có tài khoản? <a href="register.html" class="text-[#ff5e1e] font-bold hover:underline">Đăng ký ngay</a>
     </div>
 
     <div class="text-center mt-4">

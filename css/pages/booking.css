@@ -1,0 +1,92 @@
+/**
+ * ==========================================================================
+ * BOOKING & SEAT MAP STYLES (css/pages/booking.css)
+ * Hiệu ứng không gian 3D, phối màu trạng thái ghế & đồng hồ đếm ngược (Task T3C6AF7)
+ * ==========================================================================
+ */
+
+/* Màn hình Laser 3D cong */
+.screen-area {
+  perspective: 800px;
+}
+
+.screen-arc {
+  transform: rotateX(-12deg) scaleY(0.92);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.screen-arc:hover {
+  transform: rotateX(-8deg) scaleY(0.95);
+  box-shadow: 0 16px 36px rgba(255, 94, 30, 0.45);
+}
+
+/* Nút ghế & hiệu ứng chuyển động */
+.seat {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  transition: all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+  will-change: transform, box-shadow;
+}
+
+/* Hover ghế trống */
+.seat-available:hover:not([disabled]) {
+  transform: translateY(-3px) scale(1.12);
+  box-shadow: 0 6px 14px rgba(255, 94, 30, 0.4);
+}
+
+/* Ghế đang chọn (Neon Lime) */
+.seat-selected {
+  animation: seatPop 0.22s ease-out;
+  box-shadow: 0 0 16px rgba(212, 255, 0, 0.85), inset 0 0 4px rgba(255, 255, 255, 0.8);
+}
+
+@keyframes seatPop {
+  0% { transform: scale(0.9); }
+  60% { transform: scale(1.22); }
+  100% { transform: scale(1.1); }
+}
+
+/* Ghế đang giữ chỗ tạm thời (Amber Pulse) */
+.seat-held {
+  animation: heldPulse 1.8s infinite ease-in-out;
+}
+
+@keyframes heldPulse {
+  0%, 100% { opacity: 0.8; border-color: rgba(245, 158, 11, 0.6); }
+  50% { opacity: 0.4; border-color: rgba(245, 158, 11, 0.2); }
+}
+
+/* Ghế đã đặt / đã bán */
+.seat-booked {
+  cursor: not-allowed !important;
+  opacity: 0.32;
+  filter: grayscale(0.6);
+}
+
+/* Đồng hồ đếm ngược cảnh báo */
+.timer-warning {
+  animation: timerBlink 0.8s infinite ease-in-out;
+}
+
+@keyframes timerBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* Thanh cuộn sơ đồ ghế trên thiết bị nhỏ */
+.seat-grid-container::-webkit-scrollbar {
+  height: 6px;
+}
+
+.seat-grid-container::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 9999px;
+}
+
+.seat-grid-container::-webkit-scrollbar-thumb {
+  background: rgba(255, 94, 30, 0.4);
+  border-radius: 9999px;
+}

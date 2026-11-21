@@ -1,0 +1,218 @@
+/* ==========================================================================
+   CINEMA 3D ADMIN PORTAL - RESPONSIVE DESIGN SYSTEM
+   ========================================================================== */
+
+/* 1. Large Screens (<= 1200px) */
+@media (max-width: 1200px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* 2. Tablet Screen (<= 1024px) */
+@media (max-width: 1024px) {
+  .admin-sidebar {
+    transform: translateX(-100%);
+    box-shadow: 10px 0 35px rgba(0, 0, 0, 0.85);
+    z-index: 50;
+  }
+
+  .admin-sidebar.show {
+    transform: translateX(0);
+  }
+
+  .admin-main {
+    margin-left: 0 !important;
+  }
+
+  .mobile-menu-toggle {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .sidebar-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 45;
+  }
+
+  .sidebar-backdrop.show {
+    display: block;
+  }
+
+  .toolbar-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.85rem;
+  }
+
+  .toolbar-bar .search-input-group {
+    max-width: 100% !important;
+    width: 100%;
+  }
+
+  .toolbar-bar .filter-actions {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .toolbar-bar .filter-actions .form-select {
+    flex: 1;
+    min-width: 140px;
+  }
+
+  /* Filter bars for Cinemas & Rooms */
+  .admin-filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.85rem;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .admin-filter-bar .filter-group-inputs {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .admin-filter-bar .filter-group-inputs .search-input-group {
+    max-width: 100% !important;
+    width: 100%;
+    flex: 1 1 100%;
+  }
+
+  .admin-filter-bar .filter-group-inputs .form-select {
+    max-width: 100% !important;
+    flex: 1;
+    min-width: 140px;
+  }
+}
+
+/* 3. Mobile Screens (<= 768px) */
+@media (max-width: 768px) {
+  .system-status-badge {
+    display: none;
+  }
+
+  .admin-header {
+    padding: 0 1rem;
+    height: 60px;
+  }
+
+  .admin-content {
+    padding: 1.25rem 1rem;
+  }
+
+  .page-title-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .page-title-bar .btn,
+  .page-title-bar .header-actions {
+    width: 100%;
+  }
+
+  .page-title-bar .btn {
+    justify-content: center;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem;
+  }
+
+  /* Modals on mobile */
+  .modal-dialog {
+    max-width: 95vw;
+    margin: 1rem;
+    border-radius: var(--border-radius-lg);
+  }
+
+  .modal-body {
+    padding: 1rem;
+    max-height: 70vh;
+  }
+
+  .modal-footer {
+    padding: 0.85rem 1rem;
+    flex-direction: column-reverse;
+    gap: 0.5rem;
+  }
+
+  .modal-footer .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Form columns collapsing */
+  div[style*="grid-template-columns"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Admin Filter Bars on Mobile */
+  .admin-filter-bar .filter-group-inputs {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-filter-bar .filter-group-inputs .form-select {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: unset;
+  }
+
+  /* Seat Map Modal Toolbars on Mobile */
+  .seat-tool-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .brush-buttons {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .seat-stats-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}
+
+/* 4. Small Mobile (<= 480px) */
+@media (max-width: 480px) {
+  .admin-table th,
+  .admin-table td {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  .btn {
+    padding: 0.5rem 0.85rem;
+    font-size: 0.85rem;
+  }
+
+  .header-profile-widget .admin-meta {
+    display: none;
+  }
+
+  .toast {
+    min-width: calc(100vw - 2rem);
+    right: 1rem;
+    left: 1rem;
+    bottom: 1rem;
+  }
+}

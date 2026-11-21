@@ -1,0 +1,682 @@
+/* ==========================================================================
+   ADMIN PAGES SPECIFIC STYLES - CINEMAS, ROOMS & SEAT MAP EDITOR
+   ========================================================================== */
+
+/* Large Modal for Seat Map & Configuration */
+.modal-dialog.modal-xl {
+  max-width: 1080px;
+  width: 95vw;
+}
+
+/* Tab navigation inside modal */
+.seat-config-tabs {
+  display: flex;
+  gap: var(--spacing-sm);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
+}
+
+.seat-tab-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: var(--font-sm);
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.seat-tab-btn:hover {
+  color: var(--text-white);
+  background: var(--bg-surface-elevated);
+}
+
+.seat-tab-btn.active {
+  color: #fff;
+  background: var(--color-primary);
+  box-shadow: 0 0 14px var(--color-primary-glow);
+}
+
+/* Filter toolbars for Cinemas & Rooms */
+.admin-filter-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.filter-group-inputs {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+/* Stats Badges in Seat Modal */
+.seat-stats-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-md);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  padding: 0.75rem 1.25rem;
+  margin-bottom: var(--spacing-lg);
+}
+
+.seat-stat-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--font-sm);
+}
+
+.seat-stat-item strong {
+  color: #fff;
+  font-size: 1.1rem;
+}
+
+/* Screen curve representation */
+.cinema-screen-container {
+  text-align: center;
+  margin: 1.5rem auto 2.5rem;
+  max-width: 650px;
+  position: relative;
+}
+
+.cinema-screen-bar {
+  height: 8px;
+  background: linear-gradient(90deg, transparent, #ff5e1e, #d4ff00, transparent);
+  border-radius: 50% 50% 0 0;
+  box-shadow: 0 4px 20px rgba(255, 94, 30, 0.45);
+  transform: perspective(300px) rotateX(-20deg);
+}
+
+.cinema-screen-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  color: #94a3b8;
+  margin-top: 0.5rem;
+  text-transform: uppercase;
+}
+
+/* Seat Toolbar / Brush Picker */
+.seat-tool-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.brush-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.brush-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.85rem;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: var(--border-radius-sm);
+  border: 2px solid transparent;
+  cursor: pointer;
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  transition: all var(--transition-fast);
+}
+
+.brush-btn:hover {
+  background: var(--bg-surface-elevated);
+  color: #fff;
+}
+
+.brush-btn.active {
+  border-color: #38bdf8;
+  color: #fff;
+  background: rgba(56, 189, 248, 0.15);
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.25);
+}
+
+.brush-btn.brush-standard.active {
+  border-color: #64748b;
+  background: rgba(100, 116, 139, 0.2);
+}
+
+.brush-btn.brush-vip.active {
+  border-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+}
+
+.brush-btn.brush-couple.active {
+  border-color: #f43f5e;
+  background: rgba(244, 63, 94, 0.2);
+  color: #fda4af;
+}
+
+.brush-btn.brush-disabled.active {
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+}
+
+/* Seat Matrix Grid Container */
+.seat-matrix-wrapper {
+  overflow-x: auto;
+  overflow-y: visible;
+  padding: 1.5rem 0.5rem;
+  background: #090d16;
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--border-color);
+  min-height: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.seat-row-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  user-select: none;
+}
+
+.seat-row-label-btn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  color: #94a3b8;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.seat-row-label-btn:hover {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+}
+
+.seat-row-seats {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Individual Seat Styling */
+.admin-seat-cell {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  position: relative;
+  user-select: none;
+}
+
+.admin-seat-cell:hover {
+  transform: translateY(-2px) scale(1.1);
+  z-index: 5;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+}
+
+/* Standard Seat */
+.admin-seat-cell.type-standard {
+  background: #1e293b;
+  border: 1px solid #475569;
+  color: #cbd5e1;
+}
+
+.admin-seat-cell.type-standard:hover {
+  border-color: #94a3b8;
+}
+
+/* VIP Seat */
+.admin-seat-cell.type-vip {
+  background: linear-gradient(135deg, #78350f, #b45309);
+  border: 1px solid #e6ca85;
+  color: #fef3c7;
+  box-shadow: 0 0 6px rgba(230, 202, 133, 0.4);
+}
+
+.admin-seat-cell.type-vip:hover {
+  border-color: #fde68a;
+  box-shadow: 0 0 12px rgba(230, 202, 133, 0.7);
+}
+
+/* Couple Seat */
+.admin-seat-cell.type-couple {
+  width: 58px;
+  background: linear-gradient(135deg, #4c1d95, #6d28d9);
+  border: 1px solid #7c3aed;
+  color: #ede9fe;
+  box-shadow: 0 0 6px rgba(124, 58, 237, 0.4);
+}
+
+.admin-seat-cell.type-couple:hover {
+  border-color: #a78bfa;
+  box-shadow: 0 0 12px rgba(124, 58, 237, 0.7);
+}
+
+/* Disabled / Inactive Seat */
+.admin-seat-cell.is-disabled {
+  background: #0f172a;
+  border: 1px dashed #334155;
+  color: #64748b;
+  opacity: 0.45;
+}
+
+.admin-seat-cell.is-disabled::after {
+  content: '✕';
+  position: absolute;
+  font-size: 12px;
+  color: #ef4444;
+}
+
+/* Selected Seat in Selection Mode */
+.admin-seat-cell.is-selected {
+  outline: 2px solid #d4ff00;
+  outline-offset: 1px;
+  box-shadow: 0 0 12px #d4ff00 !important;
+}
+
+/* Legend inside modal */
+.seat-map-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.legend-swatch {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+}
+
+
+/* ==========================================================================
+   DASHBOARD ANALYTICS & 3D VISUALIZATION STYLES (SRS 1.4)
+   ========================================================================== */
+
+/* Time Filter Pills */
+.time-filter-pills {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 4px;
+  border-radius: 9999px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(12px);
+}
+
+.pill-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pill-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.pill-btn.active {
+  color: #fff;
+  background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+  box-shadow: 0 0 14px rgba(6, 182, 212, 0.5);
+}
+
+/* 3D Towers Chart */
+.towers-chart-wrapper {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  height: 200px;
+  padding: 24px 10px 10px;
+  border-bottom: 1px solid var(--border-color);
+  position: relative;
+  gap: 8px;
+}
+
+.tower-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.tower-col:hover {
+  transform: translateY(-4px);
+}
+
+.tower-val {
+  font-size: 11px;
+  font-weight: 800;
+  color: #94a3b8;
+  white-space: nowrap;
+  letter-spacing: -0.2px;
+  transition: color 0.2s ease;
+}
+
+.tower-col:hover .tower-val {
+  color: #38bdf8;
+}
+
+.tower-bar {
+  width: 100%;
+  max-width: 38px;
+  min-height: 8px;
+  background: linear-gradient(180deg, #06b6d4 0%, rgba(6, 182, 212, 0.25) 100%);
+  border-radius: 8px 8px 4px 4px;
+  box-shadow: 0 0 16px rgba(6, 182, 212, 0.35);
+  position: relative;
+  transition: height 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+}
+
+.tower-bar.peak {
+  background: linear-gradient(180deg, #f43f5e 0%, rgba(244, 63, 94, 0.3) 100%);
+  box-shadow: 0 0 24px rgba(244, 63, 94, 0.5);
+}
+
+.tower-bar.today {
+  outline: 2px dashed rgba(212, 255, 0, 0.6);
+  outline-offset: 3px;
+}
+
+.tower-cap {
+  position: absolute;
+  top: -5px;
+  left: 0;
+  right: 0;
+  height: 10px;
+  border-radius: 50%;
+  background: #67e8f9;
+  box-shadow: 0 0 10px #06b6d4;
+}
+
+.tower-bar.peak .tower-cap {
+  background: #fda4af;
+  box-shadow: 0 0 12px #f43f5e;
+}
+
+.tower-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 700;
+  text-align: center;
+}
+
+.tower-col:hover .tower-label {
+  color: #fff;
+}
+
+/* Tooltip on Tower Hover */
+.tower-tooltip {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%) translateY(5px);
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 15px rgba(6, 182, 212, 0.3);
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  z-index: 20;
+}
+
+.tower-col:hover .tower-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+.tower-tooltip strong {
+  display: block;
+  color: #38bdf8;
+  font-size: 12px;
+  margin-bottom: 2px;
+}
+
+/* Occupancy Rate Item */
+.occupancy-list-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.occupancy-item {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 10px 14px;
+  border-radius: 10px;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.occupancy-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateX(4px);
+}
+
+.occupancy-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.occupancy-subtext {
+  font-size: 11px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+/* Box Office Revenue by Movie Grid */
+.movie-boxoffice-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--spacing-lg);
+  margin-top: var(--spacing-md);
+}
+
+.boxoffice-card {
+  background: linear-gradient(135deg, rgba(20, 26, 46, 0.8) 0%, rgba(15, 20, 36, 0.95) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 14px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.boxoffice-card:hover {
+  border-color: rgba(6, 182, 212, 0.4);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4), 0 0 20px rgba(6, 182, 212, 0.2);
+  transform: translateY(-3px);
+}
+
+.boxoffice-rank {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 900;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  z-index: 2;
+}
+
+.boxoffice-card.rank-1 .boxoffice-rank {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  border-color: #fbbf24;
+  color: #000;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.6);
+}
+
+.boxoffice-card.rank-2 .boxoffice-rank {
+  background: linear-gradient(135deg, #94a3b8, #64748b);
+  border-color: #cbd5e1;
+  color: #000;
+}
+
+.boxoffice-card.rank-3 .boxoffice-rank {
+  background: linear-gradient(135deg, #b45309, #78350f);
+  border-color: #d97706;
+  color: #fff;
+}
+
+.boxoffice-poster-wrapper {
+  width: 68px;
+  height: 98px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
+  position: relative;
+}
+
+.boxoffice-poster {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.boxoffice-card:hover .boxoffice-poster {
+  transform: scale(1.06);
+}
+
+.boxoffice-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.boxoffice-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.boxoffice-revenue {
+  font-size: 15px;
+  font-weight: 800;
+  color: #38bdf8;
+  letter-spacing: -0.2px;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.boxoffice-tickets {
+  font-size: 11px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.boxoffice-progress-bar {
+  height: 5px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 9999px;
+  overflow: hidden;
+  position: relative;
+}
+
+.boxoffice-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #06b6d4, #3b82f6);
+  border-radius: 9999px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.boxoffice-card.rank-1 .boxoffice-progress-fill {
+  background: linear-gradient(90deg, #f59e0b, #ef4444);
+}

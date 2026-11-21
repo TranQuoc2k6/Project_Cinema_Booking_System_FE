@@ -1,49 +1,145 @@
 /* ==========================================================================
-   CSS VARIABLES & DESIGN TOKENS - CINEMA BOOKING SYSTEM
+   CSS VARIABLES & DESIGN TOKENS - LUMEN CINEMA & STUDIO HQ SYSTEM
+   Neo-Editorial Swiss Architecture meets Tokyo Cyber-Aesthetics
+   Bảng màu: Obsidian Titanium (#0b0d12), Electric Tangerine (#ff5e1e),
+             Acid Lime (#d4ff00), Warm Champagne Gold (#e6ca85), Velvet Violet (#7c3aed)
    ========================================================================== */
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap');
+
 :root {
-  /* Brand Colors */
-  --color-primary: #e50914;
-  --color-primary-hover: #b20710;
-  --color-primary-light: rgba(229, 9, 20, 0.15);
-  --color-secondary: #0ea5e9;
-  --color-secondary-hover: #0284c7;
+  /* ========================================================================
+     1. LUMEN NEO-EDITORIAL ACCENT COLOR PALETTE
+     ======================================================================== */
+  --color-primary: #ff5e1e;          /* Electric Tangerine */
+  --color-primary-hover: #ea580c;
+  --color-primary-light: rgba(255, 94, 30, 0.15);
+  --color-primary-glow: rgba(255, 94, 30, 0.55);
+  --color-primary-deep: #c2410c;
 
-  /* Status Colors */
-  --color-success: #10b981;
+  --color-accent: #d4ff00;           /* Acid Lime (High-contrast Swiss Poster) */
+  --color-accent-hover: #b8dc00;
+  --color-accent-light: rgba(212, 255, 0, 0.15);
+  --color-accent-glow: rgba(212, 255, 0, 0.55);
+  --color-accent-deep: #84cc16;
+
+  --color-secondary: #7c3aed;        /* Velvet Violet (Sweetbox & ScreenX) */
+  --color-secondary-hover: #6d28d9;
+  --color-secondary-light: rgba(124, 58, 237, 0.18);
+  --color-secondary-glow: rgba(124, 58, 237, 0.5);
+  --color-secondary-deep: #5b21b6;
+
+  --color-gold: #e6ca85;             /* Warm Champagne Gold (VIP / Royal) */
+  --color-gold-hover: #d8b96f;
+  --color-gold-light: rgba(230, 202, 133, 0.18);
+  --color-gold-glow: rgba(230, 202, 133, 0.5);
+
+  --color-lime: #d4ff00;
+  --color-lime-glow: rgba(212, 255, 0, 0.6);
+
+  /* Status / Feedback Colors */
+  --color-success: #10b981;          /* Neon Emerald */
   --color-success-bg: rgba(16, 185, 129, 0.15);
-  --color-warning: #f59e0b;
+  --color-success-border: rgba(16, 185, 129, 0.4);
+  --color-success-glow: rgba(16, 185, 129, 0.55);
+
+  --color-warning: #f59e0b;          /* Cyber Amber */
   --color-warning-bg: rgba(245, 158, 11, 0.15);
-  --color-danger: #ef4444;
+  --color-warning-border: rgba(245, 158, 11, 0.4);
+
+  --color-danger: #ef4444;           /* Vivid Red */
   --color-danger-bg: rgba(239, 68, 68, 0.15);
-  --color-info: #3b82f6;
-  --color-info-bg: rgba(59, 130, 246, 0.15);
+  --color-danger-border: rgba(239, 68, 68, 0.4);
 
-  /* Dark Theme Palette (Cinema Admin Theme) */
-  --bg-body: #0b1120;
-  --bg-sidebar: #0f172a;
-  --bg-sidebar-hover: #1e293b;
-  --bg-card: #1e293b;
-  --bg-card-hover: #273549;
-  --bg-surface: #1e293b;
-  --bg-surface-elevated: #334155;
-  --bg-input: #0f172a;
+  --color-info: #0284c7;             /* Precision Cobalt */
+  --color-info-bg: rgba(2, 132, 199, 0.15);
+  --color-info-border: rgba(2, 132, 199, 0.4);
 
-  /* Border & Divider */
-  --border-color: #334155;
-  --border-light: #475569;
-  --border-focus: #e50914;
+  /* ========================================================================
+     2. OBSIDIAN TITANIUM & SURFACE ELEVATED
+     ======================================================================== */
+  --bg-deep-space: #0b0d12;
+  --bg-body: #0b0d12;
+  --bg-sidebar: rgba(19, 23, 34, 0.92);
+  --bg-sidebar-hover: rgba(31, 36, 51, 0.7);
+  --bg-card: rgba(19, 23, 34, 0.82);
+  --bg-card-hover: rgba(27, 33, 49, 0.9);
+  --bg-surface: rgba(19, 23, 34, 0.72);
+  --bg-surface-elevated: rgba(31, 36, 51, 0.88);
+  --bg-input: rgba(11, 13, 18, 0.85);
 
-  /* Typography Colors */
+  /* ========================================================================
+     3. 3D GLASSMORPHISM & SPECULAR LIGHT TOKENS
+     ======================================================================== */
+  --glass-bg: rgba(19, 23, 34, 0.78);
+  --glass-bg-elevated: rgba(25, 30, 45, 0.88);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-border-light: rgba(255, 255, 255, 0.16);
+  --glass-border-hover: rgba(255, 94, 30, 0.45);
+  --glass-border-focus: rgba(255, 94, 30, 0.65);
+  --glass-blur: blur(20px);
+  --glass-blur-deep: blur(28px);
+  --glass-specular-gradient: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.03) 40%, transparent 100%);
+  --glass-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.75), 0 0 25px rgba(255, 94, 30, 0.08);
+
+  /* ========================================================================
+     4. 3D PERSPECTIVE & TRANSFORM TOKENS
+     ======================================================================== */
+  --perspective-deep: 1200px;
+  --perspective-card: 1000px;
+  --transform-3d-hover: translateY(-8px) rotateX(4deg) scale(1.02);
+  --transform-3d-tilt: perspective(1000px) rotateX(6deg) rotateY(-4deg);
+  --transform-3d-press: translateY(2px) scale(0.985);
+
+  /* ========================================================================
+     5. DYNAMIC LUMEN CINEMA GRADIENTS
+     ======================================================================== */
+  --gradient-primary: linear-gradient(135deg, #ff5e1e 0%, #ea580c 100%);
+  --gradient-accent: linear-gradient(135deg, #d4ff00 0%, #a3e635 100%);
+  --gradient-secondary: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+  --gradient-gold: linear-gradient(135deg, #e6ca85 0%, #b45309 100%);
+  --gradient-emerald: linear-gradient(135deg, #10b981 0%, #d4ff00 100%);
+  --gradient-cinema: linear-gradient(135deg, #ff5e1e 0%, #d4ff00 50%, #7c3aed 100%);
+  --gradient-cinema-glow: linear-gradient(135deg, rgba(255, 94, 30, 0.4) 0%, rgba(212, 255, 0, 0.3) 50%, rgba(124, 58, 237, 0.4) 100%);
+  --gradient-surface: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.01) 100%);
+  --gradient-3d-border: linear-gradient(135deg, rgba(255, 94, 30, 0.6) 0%, rgba(212, 255, 0, 0.4) 50%, rgba(124, 58, 237, 0.6) 100%);
+  --gradient-carbon: linear-gradient(145deg, #131722 0%, #0b0d12 100%);
+
+  /* ========================================================================
+     6. MULTI-LAYER 3D SHADOW TOKENS
+     ======================================================================== */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.55);
+  --shadow-lg: 0 18px 45px rgba(0, 0, 0, 0.75);
+  --shadow-3d-card: 0 20px 40px -15px rgba(0, 0, 0, 0.85), 0 0 30px rgba(255, 94, 30, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  --shadow-3d-card-hover: 0 30px 60px -15px rgba(0, 0, 0, 0.95), 0 0 45px rgba(255, 94, 30, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  --shadow-3d-btn: 0 10px 25px -5px rgba(255, 94, 30, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  --shadow-neon-cyan: 0 0 30px rgba(255, 94, 30, 0.45);
+  --shadow-neon-rose: 0 0 30px rgba(212, 255, 0, 0.45);
+  --shadow-neon-violet: 0 0 30px rgba(124, 58, 237, 0.45);
+  --shadow-neon-emerald: 0 0 30px rgba(16, 185, 129, 0.45);
+
+  /* ========================================================================
+     7. BORDER & DIVIDERS
+     ======================================================================== */
+  --border-color: rgba(255, 255, 255, 0.08);
+  --border-light: rgba(255, 255, 255, 0.15);
+  --border-focus: #ff5e1e;
+
+  /* ========================================================================
+     8. TYPOGRAPHY
+     ======================================================================== */
   --text-main: #f8fafc;
+  --text-white: #ffffff;
   --text-muted: #94a3b8;
   --text-sub: #64748b;
-  --text-white: #ffffff;
-  --text-primary: #e50914;
+  --text-primary: #ff5e1e;
+  --text-accent: #d4ff00;
+  --text-secondary: #7c3aed;
+  --text-gold: #e6ca85;
 
-  /* Typography Sizing */
-  --font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: 'Outfit', 'Inter', -apple-system, sans-serif;
   --font-xs: 0.75rem;    /* 12px */
   --font-sm: 0.875rem;   /* 14px */
   --font-base: 1rem;     /* 16px */
@@ -52,7 +148,9 @@
   --font-2xl: 1.5rem;    /* 24px */
   --font-3xl: 1.875rem;  /* 30px */
 
-  /* Spacing */
+  /* ========================================================================
+     9. SPACING SCALE & BORDER RADIUS
+     ======================================================================== */
   --spacing-xs: 0.25rem;
   --spacing-sm: 0.5rem;
   --spacing-md: 1rem;
@@ -60,22 +158,23 @@
   --spacing-xl: 2rem;
   --spacing-2xl: 3rem;
 
-  /* Layout Dimensions */
-  --sidebar-width: 260px;
-  --sidebar-collapsed-width: 72px;
-  --header-height: 70px;
   --border-radius-sm: 6px;
   --border-radius-md: 10px;
   --border-radius-lg: 16px;
+  --border-radius-xl: 24px;
+  --border-radius-2xl: 32px;
   --border-radius-full: 9999px;
 
-  /* Shadows */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
-  --shadow-glow: 0 0 20px rgba(229, 9, 20, 0.35);
+  /* ========================================================================
+     10. ANIMATION & TRANSITION TIMINGS
+     ======================================================================== */
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.25s ease;
+  --transition-smooth: 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-spring: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  --transition-bounce: 0.6s cubic-bezier(0.68, -0.6, 0.32, 1.6);
 
-  /* Transitions */
-  --transition-fast: 0.15s ease-in-out;
-  --transition-base: 0.25s ease-in-out;
+  /* Layout Dimensions */
+  --sidebar-width: 275px;
+  --header-height: 76px;
 }

@@ -3,7 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CINEMA 3D - Đặt Vé Xem Phim Điện Ảnh Hiện Đại</title>
+    <title>LUMEN CINEMA - STUDIO & THEATER HQ</title>
+    <!-- Favicon / Tab Icon -->
+    <link rel="icon" type="image/png" href="assets/images/logo/favicon.png">
+    <link rel="icon" type="image/x-icon" href="assets/images/logo/favicon.ico">
+    <link rel="apple-touch-icon" href="assets/images/logo/apple-touch-icon.png">
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -13,513 +18,625 @@
                 extend: {
                     colors: {
                         brand: {
-                            dark: '#070a12',
-                            card: '#0f172a',
-                            cyan: '#06b6d4',
-                            rose: '#f43f5e',
-                            purple: '#8b5cf6',
-                            gold: '#f59e0b'
+                            dark: '#0b0d12',
+                            surface: '#0b0f19',
+                            card: '#111726',
+                            chrome: '#1e293b',
+                            tangerine: '#ff5e1e',
+                            lime: '#d4ff00',
+                            gold: '#e6ca85',
+                            violet: '#7c3aed',
+                            cyan: '#00d2ff'
                         }
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
+                        cinema: ['Montserrat', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
                     }
                 }
             }
         }
     </script>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+
+    <!-- Google Fonts: Inter (Giao diện chuẩn), Montserrat (Điện ảnh Hollywood 3D) & JetBrains Mono (Thông số kỹ thuật) - Hỗ trợ 100% Tiếng Việt có dấu -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&family=Montserrat:ital,wght@0,600;0,700;0,800;0,900;1,800;1,900&display=swap" rel="stylesheet">
+    
     <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Three.js Library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Three.js 3D Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
     <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        html {
+            overflow-x: hidden;
+            width: 100%;
+            max-width: 100vw;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #070a12;
+            background-color: #0b0d12;
             color: #f8fafc;
             overflow-x: hidden;
+            width: 100%;
+            max-width: 100vw;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .font-cinema { font-family: 'Montserrat', sans-serif; }
+        .font-mono-num { font-family: 'JetBrains Mono', monospace; }
+
+        /* =========================================================================
+           HỆ THỐNG PHÔNG CHỮ NỔI KHỐI 3D (3D EMBOSSED & CINEMATIC DEPTH TYPOGRAPHY)
+           Thiết kế phồng chữ, tạo bóng đổ quang học 3 lớp và chiều sâu kim loại
+           ========================================================================= */
+        
+        /* 1. Tiêu đề Phim 3D Ánh Bạc Titan (Silver Titan 3D Extrusion) */
+        .text-3d-cinema {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 35%, #cbd5e1 70%, #94a3b8 100%) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            /* Đổ bóng đa lớp tạo độ phồng 3D dày dặn và sắc cạnh */
+            filter: drop-shadow(0 2px 1px rgba(0, 0, 0, 0.95))
+                    drop-shadow(0 6px 12px rgba(0, 0, 0, 0.85))
+                    drop-shadow(0 15px 30px rgba(0, 0, 0, 0.95)) !important;
+            display: inline-block;
+            max-width: 100%;
+            word-break: break-word;
+        }
+
+        /* 2. Tiêu đề Nổi Khối Màu Cam Neon (Fiery 3D Glow) */
+        .text-3d-neon {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            background: linear-gradient(180deg, #ffffff 0%, #fed7aa 30%, #ff5e1e 75%, #c2410c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.95))
+                    drop-shadow(0 0 20px rgba(255, 94, 30, 0.55))
+                    drop-shadow(0 0 45px rgba(255, 94, 30, 0.3));
+        }
+
+        /* 3. Tiêu đề Nổi Khối Vàng Hoàng Gia (Imperial 3D Gold) */
+        .text-3d-gold {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            background: linear-gradient(180deg, #fffbeb 0%, #fde68a 35%, #f59e0b 70%, #b45309 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.95))
+                    drop-shadow(0 0 20px rgba(245, 158, 11, 0.45));
+        }
+
+        /* 4. Tiêu đề Thẻ Phim 3D Sắc Nét Chống Nhoe Dấu Tiếng Việt */
+        .text-3d-card-title {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            letter-spacing: -0.015em;
+            color: #ffffff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.95), 0 0 10px rgba(0, 0, 0, 0.85);
         }
 
         /* Webkit scrollbar Customization */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #070a12;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #1e293b;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #06b6d4;
-        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0b0d12; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ff5e1e; }
 
-        /* Glassmorphism Styles */
-        .glass-panel {
-            background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .glass-card {
-            background: rgba(30, 41, 59, 0.5);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .glass-card:hover {
-            border-color: rgba(6, 182, 212, 0.5);
-            box-shadow: 0 0 25px rgba(6, 182, 212, 0.2);
-        }
-
-        /* Glow effects */
-        .glow-cyan {
-            box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
-        }
-        .glow-rose {
-            box-shadow: 0 0 20px rgba(244, 63, 94, 0.4);
-        }
-        .text-glow-cyan {
-            text-shadow: 0 0 10px rgba(6, 182, 212, 0.6);
-        }
-
-        /* Canvas Overlay */
+        /* Ambient Canvas & Dynamic Backdrops */
         #bg-canvas {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            z-index: -1;
+            z-index: 0;
             pointer-events: none;
         }
 
-        /* Custom 3D Hero Carousel Styles */
-        .carousel-container {
-            perspective: 1200px;
-            transform-style: preserve-3d;
+        .backdrop-cinematic {
+            position: fixed;
+            inset: -20px;
+            z-index: 1;
+            background-size: cover;
+            background-position: center;
+            filter: blur(24px) brightness(0.24) saturate(1.3);
+            transform: translate3d(0, 0, 0);
+            transition: opacity 0.5s ease-out;
+            pointer-events: none;
+            will-change: opacity;
         }
-        
-        .carousel-card {
-            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.6s, filter 0.6s;
+
+        .vignette-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 2;
+            background: radial-gradient(circle at 50% 45%, rgba(3, 5, 8, 0.25) 0%, rgba(3, 5, 8, 0.85) 75%, #030508 100%),
+                        linear-gradient(to bottom, rgba(3,5,8,0.7) 0%, transparent 25%, transparent 70%, #030508 100%);
+            pointer-events: none;
+        }
+
+        /* 3D Spatial Coverflow Stage */
+        .spatial-stage {
+            perspective: 1400px;
+            perspective-origin: 50% 50%;
+            transform-style: preserve-3d;
+            position: relative;
+            width: 100%;
+            height: 440px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: default;
+            touch-action: pan-y;
+        }
+
+        .spatial-stage:active {
+            cursor: default;
+        }
+
+        @media (min-width: 768px) {
+            .spatial-stage {
+                height: 550px;
+            }
+        }
+
+        /* 3D Movie Card - Hardware Accelerated Transitions */
+        .movie-card-3d {
+            position: absolute;
+            width: 250px;
+            height: 380px;
+            border-radius: 20px;
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), 
+                        opacity 0.45s ease-out,
+                        border-color 0.45s ease-out;
+            will-change: transform, opacity;
+            cursor: pointer;
+            pointer-events: auto !important;
+        }
+
+        .movie-card-3d:not(.is-active-card):hover {
+            border-color: rgba(255, 94, 30, 0.75) !important;
+        }
+
+        @media (max-width: 360px) {
+            .spatial-stage {
+                height: 380px;
+            }
+            .movie-card-3d {
+                width: 175px;
+                height: 270px;
+                border-radius: 14px;
+            }
+        }
+
+        @media (min-width: 361px) and (max-width: 480px) {
+            .spatial-stage {
+                height: 430px;
+            }
+            .movie-card-3d {
+                width: 210px;
+                height: 320px;
+                border-radius: 16px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .movie-card-3d {
+                width: 280px;
+                height: 420px;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .movie-card-3d {
+                width: 300px;
+                height: 450px;
+            }
+        }
+
+        /* Glow Pod Layer for Active Card - Offloads Box-Shadow to Opacity */
+        .card-active-glow {
+            position: absolute;
+            inset: -4px;
+            border-radius: 24px;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 94, 30, 0.75), rgba(212, 255, 0, 0.35) 60%, transparent 100%);
+            filter: blur(14px);
+            opacity: 0;
+            transition: opacity 0.45s ease-out;
+            pointer-events: none;
+            z-index: -1;
+            will-change: opacity;
+        }
+
+        .movie-card-3d.is-active-card .card-active-glow {
+            opacity: 1;
+        }
+
+        .movie-card-3d.is-active-card {
+            border-color: rgba(255, 94, 30, 0.85) !important;
+        }
+
+        /* High-performance Card Depth Dimmer */
+        .card-depth-dimmer {
+            position: absolute;
+            inset: 0;
+            background: rgba(11, 13, 18, 0.55);
+            border-radius: 20px;
+            opacity: 1;
+            transition: opacity 0.45s ease-out;
+            pointer-events: none;
+            z-index: 15;
+            will-change: opacity;
+        }
+
+        .movie-card-3d.is-active-card .card-depth-dimmer {
+            opacity: 0;
+        }
+
+        /* Reflection Effect */
+        .card-reflection {
+            -webkit-box-reflect: below 14px linear-gradient(transparent 65%, rgba(0, 0, 0, 0.5) 100%);
+        }
+
+        /* Glassmorphism Styles */
+        .glass-panel {
+            background: rgba(11, 15, 25, 0.75);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .glass-hud {
+            background: rgba(11, 15, 25, 0.7);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+        }
+
+        .glass-pill {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .glass-pill:hover, .glass-pill.active {
+            background: rgba(255, 94, 30, 0.2);
+            border-color: #ff5e1e;
+            box-shadow: 0 0 20px rgba(255, 94, 30, 0.35);
+        }
+
+        /* Ambient Glow Pod */
+        .ambient-glow-pod {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate3d(-50%, -50%, 0);
+            width: 260px;
+            height: 260px;
+            border-radius: 50%;
+            filter: blur(36px);
+            opacity: 0.38;
+            pointer-events: none;
+            transition: background 0.5s ease-out;
+            z-index: -1;
+            will-change: background;
+            max-width: 80vw;
+            max-height: 80vw;
+        }
+
+        @media (min-width: 768px) {
+            .ambient-glow-pod {
+                width: 480px;
+                height: 480px;
+                filter: blur(48px);
+            }
+        }
+
+        /* Equalizer Animation */
+        .eq-wave {
+            display: inline-flex;
+            align-items: flex-end;
+            gap: 3px;
+            height: 16px;
+        }
+        .eq-bar-item {
+            width: 3px;
+            background: #ff5e1e;
+            border-radius: 2px;
+            animation: eqBounce 1.2s ease-in-out infinite alternate;
+        }
+        .eq-bar-item:nth-child(1) { height: 35%; animation-delay: 0.1s; }
+        .eq-bar-item:nth-child(2) { height: 95%; animation-delay: 0.3s; }
+        .eq-bar-item:nth-child(3) { height: 55%; animation-delay: 0.2s; }
+        .eq-bar-item:nth-child(4) { height: 100%; animation-delay: 0.4s; }
+
+        @keyframes eqBounce {
+            0% { height: 25%; }
+            50% { height: 100%; }
+            100% { height: 45%; }
+        }
+
+        .mouse-hint-pill {
+            animation: floatHint 2.4s ease-in-out infinite;
+        }
+
+        @keyframes floatHint {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
         }
     </style>
 </head>
-<body class="relative min-h-screen">
+<body class="relative min-h-screen overflow-x-hidden">
 
-    <!-- WebGL Background Canvas (Three.js 3D Particles & Grid) -->
+    <!-- 1. WebGL Background Canvas (Three.js Spatial Grid & Constellation) -->
     <canvas id="bg-canvas"></canvas>
 
-    <!-- Header / Navigation Bar -->
-    <header class="sticky top-[10px] mx-[10px] rounded-2xl z-50 glass-panel border border-slate-800/80 transition-all duration-300">
-        <div class="w-full px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-            
-            <!-- Logo 3D Glow -->
-            <a href="index.html" class="flex items-center gap-3 group">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-rose-500 via-purple-600 to-cyan-400 p-[2px] transform group-hover:rotate-12 transition-transform duration-300">
-                    <div class="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
-                        <i class="fa-solid font-black fa-cube text-cyan-400 text-xl group-hover:scale-110 transition-transform"></i>
+    <!-- 2. Dynamic Cinematic Backdrop (Dual Layer GPU Crossfade) -->
+    <div id="cinematic-backdrop-1" class="backdrop-cinematic opacity-100"></div>
+    <div id="cinematic-backdrop-2" class="backdrop-cinematic opacity-0"></div>
+    <div class="vignette-overlay"></div>
+
+    <!-- 3. MAIN UI LAYER -->
+    <div class="relative z-10 flex flex-col min-h-screen">
+
+        <!-- Header / Navigation Bar -->
+        <header id="main-header" class="sticky top-2 sm:top-[10px] mx-1 sm:mx-[10px] rounded-2xl z-50 glass-panel border border-white/10 transition-all duration-300">
+            <div class="w-full px-2 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
+                
+                <!-- Logo 3D Glow (Đầy đủ logo & chữ trên mọi màn hình Mobile S, M, L, Tablet, Desktop) -->
+                <a href="index.html" class="flex items-center gap-1.5 min-[360px]:gap-2 sm:gap-2.5 lg:gap-3 group shrink-0">
+                    <img src="assets/images/logo/logo.png" alt="LUMEN CINEMA" class="w-6 h-6 min-[360px]:w-7 min-[360px]:h-7 sm:w-8 sm:h-8 lg:w-10 lg:h-10 object-contain shrink-0 drop-shadow-[0_0_12px_rgba(255,180,0,0.45)] group-hover:scale-105 transition-transform duration-300">
+                    <div class="flex flex-col shrink-0">
+                        <span class="text-[12px] min-[360px]:text-[13px] min-[400px]:text-sm sm:text-lg lg:text-2xl font-black tracking-wide sm:tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-[#ff5e1e] via-[#d4ff00] to-white leading-none sm:leading-tight whitespace-nowrap pr-1">
+                            LUMEN<span class="text-white font-light">CINEMA</span>
+                        </span>
+                        <span class="text-[6.5px] min-[360px]:text-[7.5px] sm:text-[9px] uppercase tracking-widest text-[#d4ff00] font-semibold block leading-tight mt-0.5 whitespace-nowrap">Studio & Theater HQ</span>
                     </div>
+                </a>
+
+                <!-- Navigation Links (Chỉ hiển thị trên Desktop >= 1024px để iPad 768px không bị chèn chữ) -->
+                <nav class="hidden lg:flex flex-1 justify-center items-center gap-4 xl:gap-8 px-4">
+                    <a href="index.html" class="text-xs lg:text-sm font-semibold text-[#ff5e1e] flex items-center gap-1 lg:gap-1.5 transition-colors whitespace-nowrap">
+                        <i class="fa-solid fa-house text-xs"></i> Trang chủ
+                    </a>
+                    <a href="pages/movies.html" class="text-xs lg:text-sm font-medium text-slate-300 hover:text-[#ff5e1e] transition-colors flex items-center gap-1 lg:gap-1.5 whitespace-nowrap">
+                        <i class="fa-solid fa-film text-xs"></i> Phim Chiếu
+                    </a>
+                    <a href="pages/showtimes.html" class="text-xs lg:text-sm font-medium text-slate-300 hover:text-[#ff5e1e] transition-colors flex items-center gap-1 lg:gap-1.5 whitespace-nowrap">
+                        <i class="fa-solid fa-calendar-days text-xs"></i> Lịch Chiếu
+                    </a>
+                </nav>
+
+                <!-- Action Buttons / User Profile + Mobile Nav Toggle -->
+                <div class="flex items-center gap-1.5 sm:gap-3 shrink-0">
+                    <div class="flex items-center gap-1.5 sm:gap-2.5" id="header-auth-section">
+                        <!-- Nút Đăng Nhập (Mobile: icon button tròn viền gradient neon, sm+: pill mở rộng có chữ) -->
+                        <a href="pages/login.html" class="relative group p-[1px] rounded-full overflow-hidden focus:outline-none shrink-0" title="Đăng Nhập">
+                            <span class="absolute inset-0 bg-gradient-to-r from-[#d4ff00] to-[#ff5e1e] opacity-80 group-hover:opacity-100 transition-opacity"></span>
+                            <div class="relative w-7 h-7 sm:w-auto sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-[#030508] flex items-center justify-center gap-1.5 text-xs font-semibold text-white group-hover:bg-[#0b0f19] transition-colors">
+                                <i class="fa-solid fa-arrow-right-to-bracket text-[#ff5e1e] text-xs"></i>
+                                <span class="hidden sm:inline whitespace-nowrap">Đăng Nhập</span>
+                            </div>
+                        </a>
+                        <!-- Nút Đăng Ký (Mobile: icon button tròn viền gradient neon, sm+: pill mở rộng có chữ) -->
+                        <a href="pages/register.html" class="relative group p-[1px] rounded-full overflow-hidden focus:outline-none shrink-0" title="Đăng Ký">
+                            <span class="absolute inset-0 bg-gradient-to-r from-[#ff5e1e] to-[#d4ff00] group-hover:opacity-100 transition-opacity"></span>
+                            <div class="relative w-7 h-7 sm:w-auto sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-[#030508] flex items-center justify-center gap-1.5 text-xs font-semibold text-white group-hover:bg-[#0b0f19] transition-colors">
+                                <i class="fa-solid fa-user-plus text-[#d4ff00] text-xs"></i>
+                                <span class="hidden sm:inline whitespace-nowrap">Đăng Ký</span>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Nút menu mobile & tablet tinh tế (< 1024px) -->
+                    <button id="mobile-nav-toggle" type="button" aria-label="Mở menu" class="lg:hidden flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-xl glass-pill text-slate-300 hover:text-white border border-white/10 hover:border-[#ff5e1e]/50 transition-colors shrink-0">
+                        <i class="fa-solid fa-bars text-xs sm:text-sm"></i>
+                    </button>
                 </div>
-                <div class="flex flex-col">
-                    <span class="text-2xl font-black tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-fuchsia-400 to-rose-500 text-glow-cyan">
-                        CINEMA<span class="text-white font-light">3D</span>
+
+            </div>
+
+            <!-- Mobile & Tablet Dropdown Navigation (< 1024px) -->
+            <div id="mobile-nav-menu" class="hidden lg:hidden px-4 pb-4 pt-1 border-t border-white/10 flex-col gap-1.5">
+                <a href="index.html" class="px-3 py-2 rounded-xl text-xs font-bold text-[#ff5e1e] bg-[#ff5e1e]/10 border border-[#ff5e1e]/20 flex items-center gap-2">
+                    <i class="fa-solid fa-house w-4 text-center"></i> Trang chủ
+                </a>
+                <a href="pages/movies.html" class="px-3 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 flex items-center gap-2 transition-colors">
+                    <i class="fa-solid fa-film w-4 text-center text-cyan-400"></i> Phim Chiếu Rạp
+                </a>
+                <a href="pages/showtimes.html" class="px-3 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 flex items-center gap-2 transition-colors">
+                    <i class="fa-solid fa-calendar-days w-4 text-center text-[#d4ff00]"></i> Lịch Chiếu Phim
+                </a>
+            </div>
+        </header>
+
+        <!-- MAIN HERO & 3D SPATIAL CAROUSEL (Chỉ dùng chuột điều khiển & Click tự động cuộn) -->
+        <main class="flex-1 flex flex-col justify-between pt-3 sm:pt-4 pb-8 sm:pb-12 px-2 sm:px-6">
+
+            <!-- Category Filter Pills & Mouse Instruction Hint -->
+            <div class="max-w-7xl mx-auto w-full flex items-center justify-between gap-4 my-2">
+                <!-- Mode Filter Tabs (Tự động kéo dài vừa vặn 100% theo từng màn hình, không bị che và không cần kéo thanh ngang) -->
+                <div class="w-full lg:w-auto flex items-center justify-between sm:justify-center gap-1 sm:gap-2 p-1 sm:p-1.5 rounded-full glass-hud border border-white/10">
+                    <button class="nav-filter-btn flex-1 lg:flex-initial text-center justify-center px-1.5 min-[360px]:px-2.5 sm:px-5 lg:px-6 py-2 sm:py-2.5 rounded-full text-[10.5px] min-[360px]:text-[11.5px] sm:text-xs font-semibold glass-pill active transition-all whitespace-nowrap flex items-center shrink-0 min-w-0" data-filter="all">
+                        <i class="fa-solid fa-layer-group text-[10.5px] sm:text-xs mr-1 sm:mr-1.5 text-[#ff5e1e] shrink-0"></i>
+                        <span>Tất cả<span class="hidden min-[380px]:inline"> phim</span></span>
+                    </button>
+                    <button class="nav-filter-btn flex-1 lg:flex-initial text-center justify-center px-1.5 min-[360px]:px-2.5 sm:px-5 lg:px-6 py-2 sm:py-2.5 rounded-full text-[10.5px] min-[360px]:text-[11.5px] sm:text-xs font-semibold glass-pill transition-all whitespace-nowrap flex items-center shrink-0 min-w-0" data-filter="now_showing">
+                        <i class="fa-solid fa-fire text-[10.5px] sm:text-xs mr-1 sm:mr-1.5 text-emerald-400 shrink-0"></i>
+                        <span>Đang <span class="hidden min-[380px]:inline">công </span>chiếu</span>
+                    </button>
+                    <button class="nav-filter-btn flex-1 lg:flex-initial text-center justify-center px-1.5 min-[360px]:px-2.5 sm:px-5 lg:px-6 py-2 sm:py-2.5 rounded-full text-[10.5px] min-[360px]:text-[11.5px] sm:text-xs font-semibold glass-pill transition-all whitespace-nowrap flex items-center shrink-0 min-w-0" data-filter="coming_soon">
+                        <i class="fa-solid fa-calendar-days text-[10.5px] sm:text-xs mr-1 sm:mr-1.5 text-amber-400 shrink-0"></i>
+                        <span>Sắp <span class="hidden min-[380px]:inline">công </span>chiếu</span>
+                    </button>
+                </div>
+
+                <!-- Mouse Navigation Indicator (Chỉ hiển thị trên máy tính màn hình lớn >= 1024px, ẩn hoàn toàn trên iPad & Điện thoại) -->
+                <div class="mouse-hint-pill hidden lg:inline-flex items-center gap-2 px-4 py-2 rounded-full glass-hud border border-white/15 text-xs text-slate-300 shadow-xl shrink-0">
+                    <span class="flex items-center gap-1.5 text-[#ff5e1e] font-semibold">
+                        <i class="fa-solid fa-arrow-pointer text-xs"></i> Nhấn vào phim bên cạnh để chuyển đổi
                     </span>
-                    <span class="text-[9px] uppercase tracking-widest text-cyan-400/80 -mt-1 font-semibold">Trải Nghiệm Điện Ảnh</span>
+                    <span class="text-slate-600">|</span>
+                    <span class="text-[#d4ff00] font-semibold">
+                        <i class="fa-solid fa-arrows-left-right text-xs"></i> Kéo chuột để lướt phim
+                    </span>
                 </div>
-            </a>
-
-            <!-- Navigation Links -->
-            <nav class="hidden md:flex flex-1 justify-center items-center gap-6 lg:gap-8">
-                <a href="index.html" class="text-sm font-semibold text-cyan-400 flex items-center gap-1.5">
-                    <i class="fa-solid fa-house text-xs"></i> Trang chủ
-                </a>
-                <a href="pages/movies.html" class="text-sm font-medium text-slate-300 hover:text-cyan-400 transition-colors flex items-center gap-1.5">
-                    <i class="fa-solid fa-film text-xs"></i> Phim Chiếu
-                </a>
-                <a href="pages/showtimes.html" class="text-sm font-medium text-slate-300 hover:text-cyan-400 transition-colors flex items-center gap-1.5">
-                    <i class="fa-solid fa-calendar-days text-xs"></i> Lịch Chiếu
-                </a>
-                <a href="pages/booking.html" class="text-sm font-medium text-slate-300 hover:text-cyan-400 transition-colors flex items-center gap-1.5">
-                    <i class="fa-solid fa-ticket text-xs"></i> Đặt Vé
-                </a>
-            </nav>
-
-            <!-- Action Buttons / User Profile -->
-            <div class="flex items-center gap-3" id="header-auth-section">
-                <!-- Sẽ được điền động bằng auth state (login/logout/user) -->
-                <a href="pages/login.html" class="hidden sm:inline-flex px-4 py-2 rounded-full glass-panel text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition-colors">
-                    Đăng Nhập
-                </a>
-                <a href="pages/register.html" class="relative group p-[1px] rounded-full overflow-hidden focus:outline-none">
-                    <span class="absolute inset-0 bg-gradient-to-r from-cyan-500 to-rose-500 group-hover:opacity-100 transition-opacity"></span>
-                    <div class="relative px-4 py-2 rounded-full bg-slate-950 flex items-center gap-2 text-xs font-semibold text-white group-hover:bg-slate-900 transition-colors">
-                        <i class="fa-solid fa-user-plus text-cyan-400"></i>
-                        <span>Đăng Ký</span>
-                    </div>
-                </a>
             </div>
 
+            <!-- 3D CAROUSEL STAGE -->
+            <div id="spatial-carousel-container" class="relative w-full max-w-7xl mx-auto my-auto py-2 sm:py-4 overflow-x-clip">
+                <!-- Dynamic Ambient Glow Bloom Pod -->
+                <div id="ambient-bloom" class="ambient-glow-pod bg-[#ff5e1e]"></div>
+
+                <div id="spatial-carousel" class="spatial-stage" role="region" aria-label="3D Spatial Cinema Carousel">
+                    <!-- Cards will be dynamically injected by home.js -->
+                    <p id="banner-loading" class="text-slate-400 text-sm">
+                        <i class="fa-solid fa-spinner fa-spin mr-2"></i> Đang tải không gian điện ảnh 3D...
+                    </p>
+                </div>
+
+                <!-- Left / Right Click Nav Controls (Nhỏ gọn trên Mobile để không che poster) -->
+                <button id="prev-btn" class="absolute left-1 sm:left-6 top-1/2 -translate-y-1/2 w-7 h-7 sm:w-12 sm:h-12 rounded-full glass-hud flex items-center justify-center text-slate-300 hover:text-white hover:border-[#ff5e1e]/60 transition-all hover:scale-110 z-30 shadow-2xl">
+                    <i class="fa-solid fa-chevron-left text-xs sm:text-lg"></i>
+                </button>
+                <button id="next-btn" class="absolute right-1 sm:right-6 top-1/2 -translate-y-1/2 w-7 h-7 sm:w-12 sm:h-12 rounded-full glass-hud flex items-center justify-center text-slate-300 hover:text-white hover:border-[#ff5e1e]/60 transition-all hover:scale-110 z-30 shadow-2xl">
+                    <i class="fa-solid fa-chevron-right text-xs sm:text-lg"></i>
+                </button>
+            </div>
+
+            <!-- ACTIVE MOVIE DETAIL SHOWCASE PANEL (Holographic HUD) -->
+            <section id="movie-hud-panel" class="w-full max-w-5xl mx-auto glass-hud rounded-2xl sm:rounded-3xl p-3 sm:p-8 border border-white/15 shadow-[0_30px_90px_rgba(0,0,0,0.8)] transition-all duration-500">
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 sm:gap-6">
+                    
+                    <!-- Left: Movie Metadata & Synopsis -->
+                    <div class="flex-1 space-y-2 sm:space-y-3">
+                        <div class="flex flex-wrap items-center gap-1 sm:gap-2">
+                            <span id="hud-status" class="px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                                Đang công chiếu
+                            </span>
+                            <span id="hud-age-rating" class="px-1.5 sm:px-2 py-0.5 rounded text-[10px] sm:text-xs font-black font-mono-num bg-red-600/30 text-red-400 border border-red-500/40">
+                                18+
+                            </span>
+                            <span id="hud-tech-badge" class="px-1.5 sm:px-2 py-0.5 rounded text-[10px] sm:text-xs font-black font-mono-num bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
+                                IMAX LASER 3D
+                            </span>
+                            <span id="hud-duration" class="text-[11px] sm:text-xs text-slate-400 font-mono-num flex items-center gap-1">
+                                <i class="fa-regular fa-clock text-[#ff5e1e]"></i> 131 phút
+                            </span>
+                        </div>
+
+                        <!-- Big 3D Movie Title (Chữ phồng 3D đa tầng, hỗ trợ tiếng Việt có dấu chuẩn 100%) -->
+                        <h1 id="hud-title" class="text-3d-cinema text-lg sm:text-3xl md:text-4xl lg:text-5xl font-black leading-tight tracking-tight my-0.5 sm:my-1">
+                            Dune: Hành Tinh Cát 2
+                        </h1>
+
+                        <!-- Genres Pills -->
+                        <div id="hud-genres" class="flex flex-wrap gap-1 sm:gap-2 text-[10px] sm:text-xs">
+                            <!-- Populated dynamically -->
+                        </div>
+
+                        <!-- Synopsis Description -->
+                        <p id="hud-synopsis" class="text-slate-300 text-xs sm:text-sm line-clamp-2 max-w-2xl leading-relaxed font-normal">
+                            Paul Atreides liên minh cùng Chani và tộc người Fremen trong cuộc báo thù đẫm máu chống lại những kẻ đã hủy diệt gia tộc anh.
+                        </p>
+                    </div>
+
+                    <!-- Right: Action CTA Buttons -->
+                    <div class="flex flex-col sm:flex-row md:flex-col gap-2 sm:gap-3 w-full md:w-auto shrink-0">
+                        <a id="btn-hud-book" href="pages/showtimes.html" class="w-full sm:w-auto px-4 sm:px-8 py-2.5 sm:py-4 rounded-xl sm:rounded-2xl bg-gradient-to-r from-[#ff5e1e] via-[#ea580c] to-[#d4ff00] hover:brightness-110 text-white font-cinema font-black text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-[0_0_30px_rgba(255,94,30,0.5)] transition-all hover:scale-105 active:scale-95 text-center">
+                            <i class="fa-solid fa-ticket-simple text-sm sm:text-base"></i>
+                            <span>Đặt vé ngay</span>
+                        </a>
+
+                        <button id="btn-hud-trailer" class="w-full sm:w-auto px-4 sm:px-6 py-2.5 sm:py-4 rounded-xl sm:rounded-2xl glass-hud hover:bg-white/10 text-slate-100 font-cinema font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 border border-white/20 transition-all hover:scale-105 active:scale-95">
+                            <i class="fa-solid fa-play text-red-500"></i>
+                            <span>Xem Trailer HD</span>
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- Bottom Dot Index Strip -->
+                <div class="mt-6 pt-4 border-t border-white/10 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs text-slate-400">Siêu phẩm thứ:</span>
+                        <span id="hud-index-indicator" class="font-mono-num text-xs font-bold text-[#d4ff00]">01 / 09</span>
+                    </div>
+
+                    <!-- Mini Dots Bar -->
+                    <div id="hud-dots-bar" class="flex items-center gap-1.5">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- FOOTER (Quản lý tập trung từ js/components/footer.js) -->
+        <footer id="main-footer" class="relative z-10 bg-[#0b0d12] border-t border-white/10 text-slate-400 pt-12 pb-8 mt-auto"></footer>
+
+    </div>
+
+    <!-- 4. MODAL TRAILER HD CINEMA POPUP -->
+    <div id="trailer-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-xl opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="relative w-full max-w-4xl aspect-video rounded-3xl overflow-hidden glass-hud border border-white/20 shadow-2xl">
+            <button id="btn-close-trailer" class="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-black/60 hover:bg-red-600 text-white flex items-center justify-center transition-colors">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <iframe id="trailer-iframe" class="w-full h-full" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </div>
-    </header>
-
-    <!-- Main Content Wrapper -->
-    <main class="relative z-10">
-
-        <!-- HERO SECTION: 3D Perspective Card Carousel -->
-        <section id="hero" class="relative pt-8 pb-16 overflow-hidden">
-            <div class="text-center max-w-3xl mx-auto px-4 mb-8">
-                <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-cyan-950/80 text-cyan-400 border border-cyan-500/30 mb-3">
-                    <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
-                    SIÊU PHẨM ĐIỆN ẢNH CHIẾU RẠP 3D
-                </span>
-                <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-white uppercase">
-                    Thế Giới Điện Ảnh <span class="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-rose-500 to-purple-500">Chuyển Động 3D</span>
-                </h1>
-                <p class="mt-2 text-slate-400 text-sm sm:text-base">
-                    Trải nghiệm thị giác vượt giới hạn với công nghệ chiếu IMAX 3D, Dolby Atmos chân thực từng chi tiết.
-                </p>
-            </div>
-
-            <!-- 3D Carousel Container -->
-            <div class="relative max-w-7xl mx-auto px-4 flex flex-col items-center">
-                <div id="carousel-cards" class="carousel-container relative w-full h-[460px] sm:h-[520px] flex items-center justify-center">
-
-                    <!-- Card 1 -->
-                    <div class="carousel-card absolute w-[280px] sm:w-[360px] rounded-2xl glass-card overflow-hidden shadow-2xl cursor-pointer" data-index="0">
-                        <div class="relative h-[380px] sm:h-[420px] overflow-hidden">
-                            <img src="https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1000&auto=format&fit=crop" alt="Avatar" class="w-full h-full object-cover">
-                            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
-                            <div class="absolute top-4 left-4 flex gap-2">
-                                <span class="bg-cyan-500 text-slate-950 font-black text-[10px] px-2.5 py-1 rounded-md shadow">IMAX 3D</span>
-                            </div>
-                            <div class="absolute top-4 right-4 bg-slate-950/80 backdrop-blur px-2.5 py-1 rounded-full border border-amber-500/40 flex items-center gap-1">
-                                <i class="fa-solid fa-star text-amber-400 text-xs"></i>
-                                <span class="text-xs font-bold text-amber-300">9.2</span>
-                            </div>
-                            <div class="absolute bottom-4 left-4 right-4">
-                                <span class="text-xs font-semibold text-cyan-400">Khoa Học Viễn Tưởng</span>
-                                <h3 class="text-xl sm:text-2xl font-black text-white leading-tight mt-1">AVATAR: DÒNG DÒNG NƯỚC</h3>
-                                <p class="text-xs text-slate-300 line-clamp-2 mt-1">Cuộc phiêu lưu 3D ngoạn mục trở lại hành tinh Pandora huyền bí.</p>
-                            </div>
-                        </div>
-                        <div class="p-4 bg-slate-950/90 flex items-center justify-between border-t border-slate-800">
-                            <div class="text-xs text-slate-400"><i class="fa-regular fa-clock text-cyan-400 mr-1"></i> 192 Phút</div>
-                            <a href="pages/booking.html?movieId=1" class="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-extrabold text-xs tracking-wider shadow-lg shadow-cyan-500/25 transition-all">
-                                ĐẶT VÉ NGAY
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Card 2 -->
-                    <div class="carousel-card absolute w-[280px] sm:w-[360px] rounded-2xl glass-card overflow-hidden shadow-2xl cursor-pointer" data-index="1">
-                        <div class="relative h-[380px] sm:h-[420px] overflow-hidden">
-                            <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1000&auto=format&fit=crop" alt="Dune 2" class="w-full h-full object-cover">
-                            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
-                            <div class="absolute top-4 left-4 flex gap-2">
-                                <span class="bg-rose-500 text-white font-black text-[10px] px-2.5 py-1 rounded-md shadow">DOLBY 3D</span>
-                            </div>
-                            <div class="absolute top-4 right-4 bg-slate-950/80 backdrop-blur px-2.5 py-1 rounded-full border border-amber-500/40 flex items-center gap-1">
-                                <i class="fa-solid fa-star text-amber-400 text-xs"></i>
-                                <span class="text-xs font-bold text-amber-300">8.9</span>
-                            </div>
-                            <div class="absolute bottom-4 left-4 right-4">
-                                <span class="text-xs font-semibold text-rose-400">Hành Động / Sử Thi</span>
-                                <h3 class="text-xl sm:text-2xl font-black text-white leading-tight mt-1">DUNE: HÀNH TINH CÁT 2</h3>
-                                <p class="text-xs text-slate-300 line-clamp-2 mt-1">Hành trình trả thù và bảo vệ vũ trụ của Paul Atreides trên sa mạc Arrakis.</p>
-                            </div>
-                        </div>
-                        <div class="p-4 bg-slate-950/90 flex items-center justify-between border-t border-slate-800">
-                            <div class="text-xs text-slate-400"><i class="fa-regular fa-clock text-rose-400 mr-1"></i> 166 Phút</div>
-                            <a href="pages/booking.html?movieId=3" class="px-4 py-2 rounded-xl bg-gradient-to-r from-rose-500 to-purple-600 hover:from-rose-400 hover:to-purple-500 text-white font-extrabold text-xs tracking-wider shadow-lg shadow-rose-500/25 transition-all">
-                                ĐẶT VÉ NGAY
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Card 3 -->
-                    <div class="carousel-card absolute w-[280px] sm:w-[360px] rounded-2xl glass-card overflow-hidden shadow-2xl cursor-pointer" data-index="2">
-                        <div class="relative h-[380px] sm:h-[420px] overflow-hidden">
-                            <img src="https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1000&auto=format&fit=crop" alt="Cyber Matrix" class="w-full h-full object-cover">
-                            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
-                            <div class="absolute top-4 left-4 flex gap-2">
-                                <span class="bg-purple-600 text-white font-black text-[10px] px-2.5 py-1 rounded-md shadow">REAL 3D</span>
-                            </div>
-                            <div class="absolute top-4 right-4 bg-slate-950/80 backdrop-blur px-2.5 py-1 rounded-full border border-amber-500/40 flex items-center gap-1">
-                                <i class="fa-solid fa-star text-amber-400 text-xs"></i>
-                                <span class="text-xs font-bold text-amber-300">8.6</span>
-                            </div>
-                            <div class="absolute bottom-4 left-4 right-4">
-                                <span class="text-xs font-semibold text-purple-400">Cyberpunk / Viễn Tưởng</span>
-                                <h3 class="text-xl sm:text-2xl font-black text-white leading-tight mt-1">LẬT MẶT 7: MỘT ĐIỀU ƯỚC</h3>
-                                <p class="text-xs text-slate-300 line-clamp-2 mt-1">Bộ phim gia đình đầy cảm xúc về tình mẫu tử thiêng liêng.</p>
-                            </div>
-                        </div>
-                        <div class="p-4 bg-slate-950/90 flex items-center justify-between border-t border-slate-800">
-                            <div class="text-xs text-slate-400"><i class="fa-regular fa-clock text-purple-400 mr-1"></i> 138 Phút</div>
-                            <a href="pages/booking.html?movieId=2" class="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-400 hover:to-pink-500 text-white font-extrabold text-xs tracking-wider shadow-lg shadow-purple-500/25 transition-all">
-                                ĐẶT VÉ NGAY
-                            </a>
-                        </div>
-                    </div>
-
-                </div>
-
-                <!-- Carousel Controls -->
-                <div class="flex items-center gap-6 mt-4">
-                    <button id="prev-btn" class="w-12 h-12 rounded-full glass-panel flex items-center justify-center text-slate-300 hover:text-cyan-400 hover:border-cyan-500/50 transition-all hover:scale-110">
-                        <i class="fa-solid fa-chevron-left text-lg"></i>
-                    </button>
-                    <div class="flex gap-2">
-                        <span class="dot-indicator w-8 h-2 rounded-full bg-cyan-400 transition-all duration-300"></span>
-                        <span class="dot-indicator w-2.5 h-2 rounded-full bg-slate-700 transition-all duration-300"></span>
-                        <span class="dot-indicator w-2.5 h-2 rounded-full bg-slate-700 transition-all duration-300"></span>
-                    </div>
-                    <button id="next-btn" class="w-12 h-12 rounded-full glass-panel flex items-center justify-center text-slate-300 hover:text-cyan-400 hover:border-cyan-500/50 transition-all hover:scale-110">
-                        <i class="fa-solid fa-chevron-right text-lg"></i>
-                    </button>
-                </div>
-            </div>
-        </section>
-
-        <!-- MOVIE GRID SECTION -->
-        <section id="movies" class="max-w-7xl mx-auto px-4 py-12">
-            <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4 border-b border-slate-800 pb-6">
-                <div>
-                    <h2 class="text-2xl sm:text-3xl font-black text-white uppercase tracking-tight flex items-center gap-3">
-                        <span class="w-3 h-8 bg-gradient-to-b from-cyan-400 to-rose-500 rounded-full inline-block"></span>
-                        Phim Đang Công Chiếu
-                    </h2>
-                    <p class="text-xs sm:text-sm text-slate-400 mt-1">Danh sách phim cập nhật từ hệ thống Cinema Booking</p>
-                </div>
-                <a href="pages/movies.html" class="text-xs font-bold text-cyan-400 hover:text-cyan-300 flex items-center gap-1.5 transition-colors">
-                    Xem tất cả phim <i class="fa-solid fa-arrow-right"></i>
-                </a>
-            </div>
-
-            <div id="movies-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <!-- Đổ dữ liệu từ API hoặc Fallback -->
-            </div>
-        </section>
-
-    </main>
-
-    <!-- FOOTER -->
-    <footer class="relative z-10 bg-slate-950 border-t border-slate-800 text-slate-400 py-12">
-        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div class="space-y-3">
-                <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-cube text-cyan-400 text-lg"></i>
-                    <span class="text-xl font-black text-white tracking-wider">CINEMA 3D</span>
-                </div>
-                <p class="text-xs text-slate-500 leading-relaxed">
-                    Hệ thống rạp chiếu phim hàng đầu Việt Nam. Mang lại trải nghiệm xem phim hoàn hảo đỉnh cao công nghệ.
-                </p>
-            </div>
-            <div>
-                <h4 class="text-sm font-bold text-white uppercase tracking-wider mb-3">Liên Kết Nhanh</h4>
-                <ul class="space-y-2 text-xs">
-                    <li><a href="pages/movies.html" class="hover:text-cyan-400">Danh sách phim</a></li>
-                    <li><a href="pages/showtimes.html" class="hover:text-cyan-400">Lịch chiếu</a></li>
-                    <li><a href="pages/booking.html" class="hover:text-cyan-400">Đặt vé</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4 class="text-sm font-bold text-white uppercase tracking-wider mb-3">Tài Khoản</h4>
-                <ul class="space-y-2 text-xs">
-                    <li><a href="pages/login.html" class="hover:text-cyan-400">Đăng nhập</a></li>
-                    <li><a href="pages/register.html" class="hover:text-cyan-400">Đăng ký</a></li>
-                    <li><a href="pages/profile.html" class="hover:text-cyan-400">Thông tin cá nhân</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4 class="text-sm font-bold text-white uppercase tracking-wider mb-3">Hỗ Trợ</h4>
-                <p class="text-xs text-slate-400">Hotline:</p>
-                <p class="text-lg font-black text-cyan-400 mt-1">1900 6868 3D</p>
-                <p class="text-xs text-slate-500 mt-2">support@cinema3d.vn</p>
-            </div>
-        </div>
-    </footer>
+    </div>
 
     <!-- SCRIPTS -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="js/utils/storage.js"></script>
     <script src="js/config/api.js"></script>
     <script src="js/services/auth.service.js"></script>
-
+    <script src="js/services/movie.service.js"></script>
+    <script src="js/components/header.js"></script>
+    <script src="js/components/footer.js"></script>
+    <script src="js/pages/home.js"></script>
     <script>
-        // Three.js Background
-        let scene, camera, renderer, particles, gridHelper;
-        function init3DBackground() {
-            const canvas = document.getElementById('bg-canvas');
-            scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.z = 40;
-            camera.position.y = 10;
-            renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-            const particleCount = 180;
-            const geometry = new THREE.BufferGeometry();
-            const positions = new Float32Array(particleCount * 3);
-            const colors = new Float32Array(particleCount * 3);
-            const cyan = new THREE.Color('#06b6d4');
-            const rose = new THREE.Color('#f43f5e');
-
-            for (let i = 0; i < particleCount * 3; i += 3) {
-                positions[i] = (Math.random() - 0.5) * 120;
-                positions[i + 1] = (Math.random() - 0.5) * 80;
-                positions[i + 2] = (Math.random() - 0.5) * 80;
-                const c = Math.random() > 0.5 ? cyan : rose;
-                colors[i] = c.r; colors[i + 1] = c.g; colors[i + 2] = c.b;
+        // Toggle mobile navigation menu mượt mà
+        (function() {
+            const toggle = document.getElementById('mobile-nav-toggle');
+            const menu = document.getElementById('mobile-nav-menu');
+            if (toggle && menu) {
+                toggle.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    menu.classList.toggle('hidden');
+                    menu.classList.toggle('flex');
+                });
+                document.addEventListener('click', function(e) {
+                    if (!menu.contains(e.target) && !toggle.contains(e.target) && !menu.classList.contains('hidden')) {
+                        menu.classList.add('hidden');
+                        menu.classList.remove('flex');
+                    }
+                });
             }
-            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-
-            const material = new THREE.PointsMaterial({ size: 0.8, vertexColors: true, transparent: true, opacity: 0.7 });
-            particles = new THREE.Points(geometry, material);
-            scene.add(particles);
-
-            gridHelper = new THREE.GridHelper(150, 40, 0x06b6d4, 0x1e293b);
-            gridHelper.position.y = -25;
-            scene.add(gridHelper);
-
-            function anim() {
-                requestAnimationFrame(anim);
-                if (particles) { particles.rotation.y += 0.0006; }
-                if (gridHelper) { gridHelper.position.z = (Date.now() * 0.002) % 3.75; }
-                renderer.render(scene, camera);
-            }
-            anim();
-        }
-
-        window.addEventListener('resize', () => {
-            if (camera && renderer) {
-                camera.aspect = window.innerWidth / window.innerHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(window.innerWidth, window.innerHeight);
-            }
-        });
-
-        // 3D Carousel
-        let currentIndex = 0;
-        const cards = document.querySelectorAll('.carousel-card');
-        const dots = document.querySelectorAll('.dot-indicator');
-        function updateCarousel() {
-            const total = cards.length;
-            cards.forEach((card, idx) => {
-                const offset = (idx - currentIndex + total) % total;
-                if (offset === 0) {
-                    card.style.transform = 'translateX(0) translateZ(100px) scale(1) rotateY(0deg)';
-                    card.style.opacity = '1';
-                    card.style.zIndex = '30';
-                } else if (offset === 1) {
-                    card.style.transform = 'translateX(220px) translateZ(-50px) scale(0.85) rotateY(-25deg)';
-                    card.style.opacity = '0.6';
-                    card.style.zIndex = '10';
-                } else {
-                    card.style.transform = 'translateX(-220px) translateZ(-50px) scale(0.85) rotateY(25deg)';
-                    card.style.opacity = '0.6';
-                    card.style.zIndex = '10';
-                }
-            });
-            dots.forEach((dot, idx) => {
-                dot.className = idx === currentIndex 
-                    ? 'dot-indicator w-8 h-2 rounded-full bg-cyan-400 transition-all duration-300'
-                    : 'dot-indicator w-2.5 h-2 rounded-full bg-slate-700 transition-all duration-300';
-            });
-        }
-        document.getElementById('next-btn')?.addEventListener('click', () => { currentIndex = (currentIndex + 1) % cards.length; updateCarousel(); });
-        document.getElementById('prev-btn')?.addEventListener('click', () => { currentIndex = (currentIndex - 1 + cards.length) % cards.length; updateCarousel(); });
-        cards.forEach((card, idx) => card.addEventListener('click', () => { currentIndex = idx; updateCarousel(); }));
-
-        // Auth Header Status
-        function updateAuthHeader() {
-            const authSec = document.getElementById('header-auth-section');
-            if (!authSec) return;
-            const isAuth = window.StorageService ? window.StorageService.isAuthenticated() : false;
-            const user = window.StorageService ? window.StorageService.getUser() : null;
-            const isAdmin = window.StorageService ? window.StorageService.isAdmin() : false;
-
-            if (isAuth && user) {
-                authSec.innerHTML = `
-                    <div class="flex items-center gap-3">
-                        ${isAdmin ? '<a href="pages/admin/dashboard.html" class="px-3 py-1.5 rounded-full text-xs font-bold bg-rose-500/20 text-rose-400 border border-rose-500/40 hover:bg-rose-500 hover:text-white transition-all"><i class="fa-solid fa-shield mr-1"></i> Admin</a>' : ''}
-                        <a href="pages/profile.html" class="flex items-center gap-2 text-xs font-semibold text-slate-200 hover:text-cyan-400">
-                            <img src="${user.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100'}" class="w-8 h-8 rounded-full border border-cyan-500/40 object-cover">
-                            <span class="hidden sm:inline">${user.full_name || user.email}</span>
-                        </a>
-                        <button onclick="handleLogout()" class="px-3 py-1.5 rounded-full glass-panel text-xs text-slate-400 hover:text-rose-400 hover:border-rose-500/50">
-                            <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                        </button>
-                    </div>
-                `;
-            }
-        }
-
-        window.handleLogout = function() {
-            if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
-                if (window.AuthService) window.AuthService.logout('index.html');
-                else { localStorage.clear(); window.location.reload(); }
-            }
-        };
-
-        // Load Movies
-        async function loadMoviesList() {
-            const container = document.getElementById('movies-container');
-            if (!container) return;
-
-            let movies = [];
-            try {
-                const res = await fetch('http://127.0.0.1:8000/api/v1/movies');
-                if (res.ok) {
-                    const data = await res.json();
-                    movies = Array.isArray(data) ? data : (data.items || []);
-                }
-            } catch (e) {
-                console.log('Dùng dữ liệu phim tĩnh.');
-            }
-
-            if (movies.length === 0) {
-                movies = [
-                    { id: 1, title: 'Mai (18+)', duration_minutes: 131, poster_url: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=600', status: 'NOW_SHOWING' },
-                    { id: 2, title: 'Lật Mặt 7: Một Điều Ước', duration_minutes: 138, poster_url: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=600', status: 'NOW_SHOWING' },
-                    { id: 3, title: 'Dune: Hành Tinh Cát 2', duration_minutes: 166, poster_url: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=600', status: 'NOW_SHOWING' },
-                    { id: 4, title: 'Quật Mộ Trùng Ma (Exhuma)', duration_minutes: 134, poster_url: 'https://images.unsplash.com/photo-1563089145-599997674d42?q=80&w=600', status: 'NOW_SHOWING' }
-                ];
-            }
-
-            container.innerHTML = movies.map(m => `
-                <div class="glass-card rounded-2xl overflow-hidden border border-slate-800 hover:-translate-y-2 transition-all duration-300">
-                    <div class="relative h-[320px] overflow-hidden">
-                        <img src="${m.poster_url || 'https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=600'}" class="w-full h-full object-cover">
-                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
-                        <span class="absolute top-3 left-3 bg-cyan-500 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded shadow">3D IMAX</span>
-                    </div>
-                    <div class="p-4 bg-slate-950/90">
-                        <h4 class="text-base font-bold text-white truncate">${m.title}</h4>
-                        <div class="text-xs text-slate-400 mt-1 mb-3"><i class="fa-regular fa-clock mr-1 text-cyan-400"></i> ${m.duration_minutes || 120} phút</div>
-                        <div class="flex gap-2">
-                            <a href="pages/movie-detail.html?id=${m.id}" class="flex-1 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold text-center border border-slate-700">Chi tiết</a>
-                            <a href="pages/booking.html?movieId=${m.id}" class="flex-1 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-black text-center shadow-lg shadow-cyan-500/20">Đặt vé</a>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        window.onload = function() {
-            init3DBackground();
-            updateCarousel();
-            updateAuthHeader();
-            loadMoviesList();
-        };
+        })();
     </script>
 </body>
 </html>

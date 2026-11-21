@@ -1,0 +1,74 @@
+/**
+ * ==========================================================================
+ * SHOWTIMES PAGE STYLES (css/pages/showtimes.css)
+ * Đồng bộ hệ thống LUMEN 3D CINEMA - Không gian điện ảnh nghệ thuật
+ * ==========================================================================
+ */
+
+/* Scrollbar ẩn nhưng vẫn cuộn được mượt mà */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Hiệu ứng Active Glow cho Tab Ngày */
+@keyframes pulse-neon {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(255, 94, 30, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(255, 94, 30, 0.7);
+  }
+}
+
+.date-tab-active {
+  animation: pulse-neon 2.5s infinite ease-in-out;
+}
+
+/* Thẻ Suất Chiếu Hover Effect */
+.showtime-chip {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.showtime-chip:hover:not(.disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(255, 94, 30, 0.45);
+}
+
+/* Suất chiếu đã trôi qua */
+.showtime-chip-past {
+  filter: grayscale(80%);
+  opacity: 0.4;
+  cursor: not-allowed !important;
+}
+
+/* Glassmorphism Styles đồng bộ Trang chủ */
+.glass-panel {
+  background: rgba(11, 15, 25, 0.75);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-hud {
+  background: rgba(11, 15, 25, 0.7);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+}
+
+.glass-pill {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.glass-pill:hover, .glass-pill.active {
+  background: rgba(255, 94, 30, 0.2);
+  border-color: #ff5e1e;
+  box-shadow: 0 0 20px rgba(255, 94, 30, 0.35);
+}

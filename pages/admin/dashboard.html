@@ -3,27 +3,40 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Thống kê - Cinema Admin Portal</title>
+  <title>Dashboard Thống kê - LUMEN CINEMA Enterprise HQ</title>
+  <!-- Favicon / Tab Icon -->
+  <link rel="icon" type="image/png" href="../../assets/images/logo/favicon.png">
+  <link rel="icon" type="image/x-icon" href="../../assets/images/logo/favicon.ico">
+  <link rel="apple-touch-icon" href="../../assets/images/logo/apple-touch-icon.png">
   
+  <!-- FontAwesome 6 Icons for Modern 3D Aesthetics -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
   <!-- CSS Framework & Styles -->
   <link rel="stylesheet" href="../../css/variables.css">
   <link rel="stylesheet" href="../../css/reset.css">
   <link rel="stylesheet" href="../../css/global.css">
   <link rel="stylesheet" href="../../css/layout.css">
   <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/responsive.css">
+  <link rel="stylesheet" href="../../css/pages/admin.css">
 
-  <!-- FRONTEND ROUTE GUARD: Kiểm tra token & role 'admin', chặn non-admin ngay lập tức -->
+  <!-- FRONTEND ROUTE GUARD: Kiểm tra token & role 'admin' -->
   <script src="../../js/utils/auth-guard.js"></script>
 </head>
 <body>
   <div class="admin-layout">
-    <!-- SIDEBAR ĐIỀU HƯỚNG CỐ ĐỊNH -->
+    <!-- SIDEBAR ĐIỀU HƯỚNG CỐ ĐỊNH (3D HOLOGRAPHIC DOCK) -->
     <aside class="admin-sidebar">
       <div class="sidebar-brand">
-        <div class="brand-logo-icon">🎬</div>
+        <div class="brand-logo-icon">
+          <div class="brand-logo-inner">
+            <img src="../../assets/images/logo/logo.png" alt="LUMEN CINEMA" class="w-7 h-7 object-contain">
+          </div>
+        </div>
         <div class="brand-text">
-          <span class="brand-title">CINEMA</span>
-          <span class="brand-subtitle">Admin Portal</span>
+          <span class="brand-title">LUMEN<span class="title-3d">CINEMA</span></span>
+          <span class="brand-subtitle">Studio & HQ</span>
         </div>
       </div>
 
@@ -31,45 +44,45 @@
         <span class="nav-section-label">Quản trị cốt lõi</span>
         
         <a href="dashboard.html" class="nav-item active">
-          <span class="nav-icon">📊</span>
-          <span>Dashboard</span>
+          <span class="nav-icon"><i class="fa-solid fa-chart-pie"></i></span>
+          <span>Dashboard Thống kê</span>
         </a>
 
         <a href="movies.html" class="nav-item">
-          <span class="nav-icon">🎬</span>
+          <span class="nav-icon"><i class="fa-solid fa-film"></i></span>
           <span>Quản lý Phim</span>
         </a>
 
         <a href="cinemas.html" class="nav-item">
-          <span class="nav-icon">🏛️</span>
+          <span class="nav-icon"><i class="fa-solid fa-couch"></i></span>
           <span>Rạp / Phòng chiếu</span>
         </a>
 
         <a href="showtimes.html" class="nav-item">
-          <span class="nav-icon">🕒</span>
+          <span class="nav-icon"><i class="fa-solid fa-clock"></i></span>
           <span>Lịch / Suất chiếu</span>
         </a>
 
         <a href="bookings.html" class="nav-item">
-          <span class="nav-icon">🎟️</span>
+          <span class="nav-icon"><i class="fa-solid fa-ticket"></i></span>
           <span>Quản lý Đơn vé</span>
         </a>
 
         <span class="nav-section-label">Hệ thống</span>
 
         <a href="users.html" class="nav-item">
-          <span class="nav-icon">👥</span>
+          <span class="nav-icon"><i class="fa-solid fa-users-gear"></i></span>
           <span>Người dùng & Phân quyền</span>
         </a>
       </nav>
 
       <div class="sidebar-footer">
         <a href="../../index.html" class="btn-sidebar-action">
-          <span>🌐</span>
+          <i class="fa-solid fa-globe text-primary"></i>
           <span>Về trang chủ đặt vé</span>
         </a>
         <button class="btn-sidebar-action btn-sidebar-logout">
-          <span>🚪</span>
+          <i class="fa-solid fa-arrow-right-from-bracket text-accent"></i>
           <span>Đăng xuất Quản trị</span>
         </button>
       </div>
@@ -77,23 +90,42 @@
 
     <!-- MAIN WRAPPER -->
     <div class="admin-main">
-      <!-- TOP HEADER -->
+      <!-- TOP HEADER RIBBON -->
       <header class="admin-header">
         <div class="header-left">
-          <button class="mobile-menu-toggle" aria-label="Toggle menu">☰</button>
+          <button class="mobile-menu-toggle" aria-label="Toggle menu">
+            <i class="fa-solid fa-bars"></i>
+          </button>
           <div class="page-breadcrumb">
+            <i class="fa-solid fa-house text-xs text-muted"></i>
             <span>Admin</span>
             <span>/</span>
-            <span class="current">Dashboard Thống kê</span>
+            <span class="current"><i class="fa-solid fa-chart-line text-xs"></i> Dashboard Tổng quan</span>
           </div>
         </div>
 
         <div class="header-right">
+          <!-- Live System Status Badge -->
+          <div class="system-status-badge">
+            <span class="status-indicator-dot online"></span>
+            <span>HỆ THỐNG ONLINE</span>
+            <div class="live-equalizer">
+              <div class="eq-bar"></div>
+              <div class="eq-bar"></div>
+              <div class="eq-bar"></div>
+              <div class="eq-bar"></div>
+            </div>
+          </div>
+
+          <!-- Profile Widget with 3D Glowing Ring -->
           <div class="header-profile-widget">
-            <img src="" alt="Admin" class="admin-avatar">
+            <div class="admin-avatar-wrapper">
+              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Admin" class="admin-avatar">
+              <span class="status-indicator-dot online"></span>
+            </div>
             <div class="admin-meta">
               <span class="admin-name admin-display-name">Quản trị viên</span>
-              <span class="admin-role-badge">Admin</span>
+              <span class="admin-role-badge">Super Admin</span>
             </div>
           </div>
         </div>
@@ -101,201 +133,204 @@
 
       <!-- PAGE CONTENT -->
       <main class="admin-content">
+        <!-- TITLE BAR & TIME FILTER PILLS -->
         <div class="page-title-bar">
           <div class="page-title-group">
-            <h1>Báo cáo & Tổng quan Hệ thống</h1>
-            <p class="page-subtitle">Theo dõi các chỉ số kinh doanh, tỷ lệ lấp đầy phòng chiếu và trạng thái vận hành rạp phim</p>
+            <h1>
+              <i class="fa-solid fa-chart-column text-gradient"></i>
+              Báo cáo & Tổng quan Vận hành Hệ thống
+            </h1>
+            <p class="page-subtitle">Theo dõi các chỉ số doanh thu thời gian thực, tỷ lệ lấp đầy phòng chiếu 3D IMAX và trạng thái bán vé</p>
           </div>
-          <div class="header-actions d-flex gap-sm">
-            <button class="btn btn-secondary" onclick="window.location.reload()">
-              <span>🔄</span> Làm mới
+          <div class="header-actions d-flex gap-sm align-center" style="flex-wrap: wrap;">
+            <!-- Segmented Time Filter Pills -->
+            <div class="time-filter-pills">
+              <button class="pill-btn active" data-days="7" onclick="switchDashboardPeriod(7, this)">
+                <i class="fa-solid fa-calendar-week"></i> 7 ngày
+              </button>
+              <button class="pill-btn" data-days="14" onclick="switchDashboardPeriod(14, this)">
+                <i class="fa-solid fa-calendar-days"></i> 14 ngày
+              </button>
+              <button class="pill-btn" data-days="30" onclick="switchDashboardPeriod(30, this)">
+                <i class="fa-solid fa-calendar"></i> 30 ngày
+              </button>
+            </div>
+
+            <button class="btn btn-secondary" onclick="loadDashboardData()" title="Đồng bộ dữ liệu thời gian thực từ máy chủ">
+              <i class="fa-solid fa-arrows-rotate"></i> Làm mới
             </button>
             <a href="movies.html" class="btn btn-primary">
-              <span>➕</span> Thêm phim mới
+              <i class="fa-solid fa-plus"></i> Thêm phim mới
             </a>
           </div>
         </div>
 
-        <!-- KPI CARDS (SRS 1.4) -->
+        <!-- 3D KPI CARDS (SRS 1.4) -->
         <div class="stats-grid">
-          <div class="stat-card">
+          <!-- Card 1: Tổng Doanh thu -->
+          <div class="stat-card card-revenue">
             <div class="stat-info">
               <span class="stat-label">Tổng Doanh thu</span>
-              <span class="stat-value" id="kpi-revenue">48,500,000 đ</span>
-              <span class="stat-trend positive">↑ +14.8% so với tuần trước</span>
+              <span class="stat-value text-glow-cyan" id="kpi-revenue">-- đ</span>
+              <span class="stat-trend positive" id="kpi-revenue-trend">
+                <i class="fa-solid fa-arrow-trend-up"></i> Hôm nay: <strong>-- đ</strong>
+              </span>
             </div>
-            <div class="stat-icon-wrapper icon-green">💰</div>
+            <div class="stat-icon-wrapper icon-green">
+              <i class="fa-solid fa-sack-dollar text-emerald"></i>
+            </div>
           </div>
 
-          <div class="stat-card">
+          <!-- Card 2: Tổng vé đã bán -->
+          <div class="stat-card card-tickets">
             <div class="stat-info">
               <span class="stat-label">Tổng vé đã bán</span>
-              <span class="stat-value" id="kpi-tickets">524 vé</span>
-              <span class="stat-trend positive">↑ +8.2% đơn đặt vé</span>
+              <span class="stat-value text-glow-cyan" id="kpi-tickets">-- vé</span>
+              <span class="stat-trend positive" id="kpi-tickets-trend">
+                <i class="fa-solid fa-ticket"></i> Hôm nay: <strong>-- vé</strong>
+              </span>
             </div>
-            <div class="stat-icon-wrapper icon-blue">🎟️</div>
+            <div class="stat-icon-wrapper icon-blue">
+              <i class="fa-solid fa-ticket text-cyan"></i>
+            </div>
           </div>
 
-          <div class="stat-card">
+          <!-- Card 3: Tỷ lệ Lấp Đầy Trung Bình -->
+          <div class="stat-card card-users">
+            <div class="stat-info">
+              <span class="stat-label">Tỷ lệ Lấp Đầy TB</span>
+              <span class="stat-value text-glow-emerald" id="kpi-occupancy">--%</span>
+              <span class="stat-trend positive" id="kpi-occupancy-trend">
+                <i class="fa-solid fa-users-viewfinder"></i> Toàn bộ phòng chiếu 3D/IMAX
+              </span>
+            </div>
+            <div class="stat-icon-wrapper icon-amber">
+              <i class="fa-solid fa-users-viewfinder text-gold"></i>
+            </div>
+          </div>
+
+          <!-- Card 4: Phim đang chiếu & Top phòng vé -->
+          <div class="stat-card card-movies">
             <div class="stat-info">
               <span class="stat-label">Phim đang chiếu</span>
-              <span class="stat-value" id="kpi-movies">12 phim</span>
-              <span class="stat-trend">🎬 4 phim sắp công chiếu</span>
+              <span class="stat-value text-glow-rose" id="kpi-movies">-- phim</span>
+              <span class="stat-trend" id="kpi-top-movie">
+                <i class="fa-solid fa-trophy text-gold"></i> Dẫn đầu: <strong>--</strong>
+              </span>
             </div>
-            <div class="stat-icon-wrapper icon-red">🎥</div>
-          </div>
-
-          <div class="stat-card">
-            <div class="stat-info">
-              <span class="stat-label">Khách hàng thành viên</span>
-              <span class="stat-value" id="kpi-users">158 tài khoản</span>
-              <span class="stat-trend positive">↑ +12 người dùng mới</span>
+            <div class="stat-icon-wrapper icon-red">
+              <i class="fa-solid fa-clapperboard text-rose"></i>
             </div>
-            <div class="stat-icon-wrapper icon-amber">👥</div>
           </div>
         </div>
 
-        <!-- ANALYTICS PREVIEW & OCCUPANCY RATE -->
+        <!-- ROW 1: DOANH THU THEO NGÀY (3D CHART) & TỶ LỆ LẤP ĐẦY SUẤT CHIẾU -->
         <div style="display: grid; grid-template-columns: 2fr 1fr; gap: var(--spacing-lg); margin-bottom: var(--spacing-xl);">
-          <!-- Doanh thu tuần -->
-          <div class="table-card" style="padding: var(--spacing-lg);">
-            <div class="d-flex justify-between align-center" style="margin-bottom: var(--spacing-lg);">
-              <h3 style="font-size: var(--font-lg);">Doanh thu 7 ngày gần nhất</h3>
-              <span class="badge badge-info">Tuần này</span>
+          <!-- 3D Cylindrical Towers Chart: Doanh thu theo ngày -->
+          <div class="table-card" style="padding: 1.8rem;">
+            <div class="d-flex justify-between align-center" style="margin-bottom: var(--spacing-lg); flex-wrap: wrap; gap: 8px;">
+              <div>
+                <h3 style="font-size: var(--font-lg); display: flex; align-items: center; gap: 8px;">
+                  <i class="fa-solid fa-chart-simple text-primary"></i>
+                  Biểu đồ Doanh thu & Vé bán theo ngày
+                </h3>
+                <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">
+                  Phân tích doanh thu và số lượng vé bán ra trong khoảng thời gian đã chọn
+                </p>
+              </div>
+              <span class="badge badge-info" id="chart-period-badge">
+                <i class="fa-solid fa-calendar-check"></i> 7 ngày gần nhất
+              </span>
             </div>
-            <div style="display: flex; align-items: flex-end; justify-content: space-between; height: 180px; padding: 10px 0; border-bottom: 1px solid var(--border-color);">
-              <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 1;">
-                <div style="width: 32px; height: 90px; background: linear-gradient(180deg, #e50914, #990000); border-radius: 4px;"></div>
-                <span style="font-size: 12px; color: var(--text-muted);">T2</span>
-              </div>
-              <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 1;">
-                <div style="width: 32px; height: 120px; background: linear-gradient(180deg, #e50914, #990000); border-radius: 4px;"></div>
-                <span style="font-size: 12px; color: var(--text-muted);">T3</span>
-              </div>
-              <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 1;">
-                <div style="width: 32px; height: 75px; background: linear-gradient(180deg, #e50914, #990000); border-radius: 4px;"></div>
-                <span style="font-size: 12px; color: var(--text-muted);">T4</span>
-              </div>
-              <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 1;">
-                <div style="width: 32px; height: 135px; background: linear-gradient(180deg, #e50914, #990000); border-radius: 4px;"></div>
-                <span style="font-size: 12px; color: var(--text-muted);">T5</span>
-              </div>
-              <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 1;">
-                <div style="width: 32px; height: 160px; background: linear-gradient(180deg, #e50914, #990000); border-radius: 4px;"></div>
-                <span style="font-size: 12px; color: var(--text-muted);">T6</span>
-              </div>
-              <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 1;">
-                <div style="width: 32px; height: 180px; background: #e50914; border-radius: 4px; box-shadow: 0 0 12px rgba(229,9,20,0.5);"></div>
-                <span style="font-size: 12px; color: var(--color-primary); font-weight: 700;">T7</span>
-              </div>
-              <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 1;">
-                <div style="width: 32px; height: 170px; background: #e50914; border-radius: 4px; box-shadow: 0 0 12px rgba(229,9,20,0.5);"></div>
-                <span style="font-size: 12px; color: var(--color-primary); font-weight: 700;">CN</span>
-              </div>
+
+            <!-- Dynamic 3D Towers Container -->
+            <div id="revenue-chart-towers" class="towers-chart-wrapper">
+              <!-- Rendered via JS -->
             </div>
-            <p style="font-size: 12px; color: var(--text-muted); margin-top: 10px;">Cao điểm cuối tuần chiếm 62% tổng doanh thu rạp.</p>
+
+            <!-- Chart Footer Summary -->
+            <div class="d-flex justify-between align-center" style="margin-top: 14px; flex-wrap: wrap; gap: 8px;">
+              <p style="font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px;" id="chart-footer-summary">
+                <i class="fa-solid fa-fire text-accent"></i> Cao điểm cuối tuần chiếm tỷ trọng doanh thu cao nhất.
+              </p>
+              <span style="font-size: 12px; color: var(--color-primary); font-weight: 600;" id="chart-footer-metric">
+                <i class="fa-solid fa-shield-halved"></i> Dữ liệu thời gian thực
+              </span>
+            </div>
           </div>
 
-          <!-- Tỷ lệ lấp đầy phòng chiếu (SRS Occupancy Rate) -->
-          <div class="table-card" style="padding: var(--spacing-lg);">
-            <h3 style="font-size: var(--font-lg); margin-bottom: var(--spacing-md);">Tỷ lệ lấp đầy suất chiếu</h3>
-            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: var(--spacing-md);">
-              Occupancy Rate = (Ghế đã đặt / Tổng số ghế) × 100%
+          <!-- Tỷ lệ Lấp Đầy Suất Chiếu (Showtime Occupancy Rate) -->
+          <div class="table-card" style="padding: 1.8rem;">
+            <div class="d-flex justify-between align-center" style="margin-bottom: 0.35rem;">
+              <h3 style="font-size: var(--font-lg); display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-users-viewfinder text-secondary"></i>
+                Tỷ lệ Lấp Đầy Suất Chiếu
+              </h3>
+            </div>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: var(--spacing-lg);">
+              Occupancy = (Ghế đã đặt / Tổng số ghế phòng) × 100%
             </p>
 
-            <div style="margin-bottom: var(--spacing-md);">
-              <div class="d-flex justify-between" style="font-size: 13px; font-weight: 600;">
-                <span>Phim "Mai" (Phòng IMAX 01)</span>
-                <span class="text-success">92%</span>
-              </div>
-              <div class="progress-bar-bg">
-                <div class="progress-bar-fill" style="width: 92%;"></div>
-              </div>
-            </div>
-
-            <div style="margin-bottom: var(--spacing-md);">
-              <div class="d-flex justify-between" style="font-size: 13px; font-weight: 600;">
-                <span>Lật Mặt 7 (Phòng 02)</span>
-                <span class="text-success">84%</span>
-              </div>
-              <div class="progress-bar-bg">
-                <div class="progress-bar-fill" style="width: 84%;"></div>
-              </div>
-            </div>
-
-            <div style="margin-bottom: var(--spacing-md);">
-              <div class="d-flex justify-between" style="font-size: 13px; font-weight: 600;">
-                <span>Dune: Phần Hai (Phòng VIP)</span>
-                <span class="text-warning">68%</span>
-              </div>
-              <div class="progress-bar-bg">
-                <div class="progress-bar-fill" style="width: 68%;"></div>
-              </div>
-            </div>
-
-            <div>
-              <div class="d-flex justify-between" style="font-size: 13px; font-weight: 600;">
-                <span>Kung Fu Panda 4 (Phòng 03)</span>
-                <span class="text-info">55%</span>
-              </div>
-              <div class="progress-bar-bg">
-                <div class="progress-bar-fill" style="width: 55%;"></div>
-              </div>
+            <!-- Dynamic Occupancy List -->
+            <div id="occupancy-list-container" class="occupancy-list-wrapper">
+              <!-- Rendered via JS -->
             </div>
           </div>
         </div>
 
-        <!-- RECENT BOOKINGS TABLE -->
+        <!-- ROW 2: DOANH THU & SỐ VÉ THEO PHIM (BOX OFFICE RANKING) -->
+        <div class="table-card" style="margin-bottom: var(--spacing-xl); padding: 1.8rem;">
+          <div class="d-flex justify-between align-center" style="margin-bottom: var(--spacing-md); flex-wrap: wrap; gap: 12px;">
+            <div>
+              <h3 style="font-size: var(--font-lg); display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-ranking-star text-gold"></i>
+                Doanh thu & Số vé theo Phim (Box Office Ranking)
+              </h3>
+              <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">
+                Bảng xếp hạng doanh thu phòng vé, tổng số vé đã bán và tỷ trọng đóng góp của từng bộ phim trong hệ thống
+              </p>
+            </div>
+            <a href="movies.html" class="btn btn-secondary btn-sm">
+              <i class="fa-solid fa-film"></i> Xem toàn bộ phim
+            </a>
+          </div>
+
+          <!-- Dynamic Box Office Movie Cards Grid -->
+          <div id="revenue-by-movie-container" class="movie-boxoffice-grid">
+            <!-- Rendered via JS -->
+          </div>
+        </div>
+
+        <!-- ROW 3: RECENT BOOKINGS TABLE (ĐƠN ĐẶT VÉ TRỰC TUYẾN MỚI NHẤT) -->
         <div class="table-card">
           <div class="table-header-bar">
             <div>
-              <h3>Đơn đặt vé mới nhất</h3>
-              <p style="font-size: 12px; color: var(--text-muted);">Các giao dịch đặt vé vừa phát sinh trong ngày</p>
+              <h3>
+                <i class="fa-solid fa-receipt text-primary"></i>
+                Đơn đặt vé trực tuyến mới nhất
+              </h3>
+              <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Các giao dịch đặt vé vừa phát sinh trong thời gian thực</p>
             </div>
-            <a href="bookings.html" class="btn btn-secondary btn-sm">Xem tất cả đơn vé →</a>
+            <a href="bookings.html" class="btn btn-secondary btn-sm">
+              Xem tất cả đơn vé <i class="fa-solid fa-arrow-right"></i>
+            </a>
           </div>
 
           <div class="table-responsive">
             <table class="admin-table">
               <thead>
                 <tr>
-                  <th>Mã đơn</th>
+                  <th>Mã đơn vé</th>
                   <th>Khách hàng</th>
-                  <th>Phim</th>
+                  <th>Tên phim chiếu</th>
                   <th>Suất chiếu</th>
-                  <th>Ghế đặt</th>
-                  <th>Tổng tiền</th>
-                  <th>Trạng thái</th>
+                  <th>Vị trí ghế</th>
+                  <th>Tổng thanh toán</th>
+                  <th>Trạng thái giao dịch</th>
                 </tr>
               </thead>
               <tbody id="recent-bookings-tbody">
-                <tr>
-                  <td><strong>#BK-9842</strong></td>
-                  <td>Nguyễn Văn Hùng</td>
-                  <td>Mai (18+)</td>
-                  <td>19:30 • 09/11/2026</td>
-                  <td><span class="badge badge-info">F7, F8</span></td>
-                  <td><strong>210,000 đ</strong></td>
-                  <td><span class="badge badge-success">Đã thanh toán</span></td>
-                </tr>
-                <tr>
-                  <td><strong>#BK-9841</strong></td>
-                  <td>Trần Thị Lan</td>
-                  <td>Lật Mặt 7: Một Điều Ước</td>
-                  <td>20:00 • 09/11/2026</td>
-                  <td><span class="badge badge-info">D4, D5, D6</span></td>
-                  <td><strong>270,000 đ</strong></td>
-                  <td><span class="badge badge-success">Đã thanh toán</span></td>
-                </tr>
-                <tr>
-                  <td><strong>#BK-9840</strong></td>
-                  <td>Lê Văn Khải</td>
-                  <td>Dune: Hành Tinh Cát 2</td>
-                  <td>21:15 • 09/11/2026</td>
-                  <td><span class="badge badge-info">G11</span></td>
-                  <td><strong>120,000 đ</strong></td>
-                  <td><span class="badge badge-warning">Chờ thanh toán</span></td>
-                </tr>
+                <!-- Rendered via JS -->
               </tbody>
             </table>
           </div>
