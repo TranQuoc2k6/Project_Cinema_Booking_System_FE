@@ -282,10 +282,10 @@ function renderStage() {
                 </div>
 
                 <!-- Bottom Title Preview -->
-                <div class="absolute bottom-4 left-4 right-4 z-20 pointer-events-none">
-                    <span class="text-[10px] font-bold uppercase tracking-wider text-[#d4ff00]">${m.status_label}</span>
-                    <h3 class="text-3d-card-title text-base sm:text-lg font-black leading-tight mt-1 truncate">${m.title}</h3>
-                    <p class="text-[11px] text-slate-300 font-mono-num mt-1 flex items-center gap-1 font-semibold">
+                <div class="absolute bottom-2.5 left-2.5 right-2.5 sm:bottom-4 sm:left-4 sm:right-4 z-20 pointer-events-none">
+                    <span class="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-[#d4ff00]">${m.status_label}</span>
+                    <h3 class="text-3d-card-title text-xs sm:text-base font-black leading-tight mt-0.5 line-clamp-2">${m.title}</h3>
+                    <p class="text-[10px] sm:text-[11px] text-slate-300 font-mono-num mt-0.5 flex items-center gap-1 font-semibold">
                         <i class="fa-regular fa-clock text-[#ff5e1e]"></i> ${m.duration_minutes} phút
                     </p>
                 </div>
@@ -327,21 +327,33 @@ function updateSpatialTransforms() {
     const stage = document.getElementById('spatial-carousel');
     if (!stage) return;
     const cards = stage.querySelectorAll('.movie-card-3d');
-    const isMobile = window.innerWidth < 768;
-    const spacingX = isMobile ? 125 : 205;
+    const width = window.innerWidth;
+    const isTinyMobile = width < 360;
+    const isSmallMobile = width < 480;
+    const isMobile = width < 768;
+    const isTablet = width < 1024;
+
+    // Tính toán khoảng cách tọa độ X tinh tế theo kích thước viewport
+    const spacingX = isTinyMobile ? 54 : (isSmallMobile ? 75 : (isMobile ? 95 : (isTablet ? 115 : 205)));
+    const baseShift = isTinyMobile ? 28 : (isSmallMobile ? 38 : (isMobile ? 48 : (isTablet ? 45 : 65)));
+
+    // Giới hạn số lượng thẻ hiển thị theo màn hình để triệt tiêu 100% hiện tượng tràn ngang (overflow)
+    const maxVisibleOffset = isTinyMobile ? 1 : (isSmallMobile ? 1 : (isMobile ? 1 : (isTablet ? 2 : 3)));
 
     cards.forEach((card, idx) => {
         const offset = idx - currentIndex;
         const absOffset = Math.abs(offset);
 
-        // Ẩn các phim nằm ngoài tầm nhìn (absOffset > 4) để giải phóng GPU
-        if (absOffset > 4) {
+        // Ẩn hoàn toàn (display: none) các phim nằm ngoài tầm nhìn để loại bỏ triệt để bounding box gây tràn trang
+        if (absOffset > maxVisibleOffset) {
+            card.style.display = 'none';
             card.style.visibility = 'hidden';
             card.style.pointerEvents = 'none';
             card.classList.remove('is-active-card');
             return;
         }
 
+        card.style.display = 'block';
         card.style.visibility = 'visible';
         card.style.pointerEvents = 'auto';
         const dimmer = card.querySelector('.card-depth-dimmer');
@@ -349,18 +361,19 @@ function updateSpatialTransforms() {
         if (offset === 0) {
             // PHIM Ở TÂM ĐIỂM (ACTIVE FOCUSED MOVIE)
             card.classList.add('is-active-card');
-            card.style.transform = 'translate3d(0px, 0px, 140px) rotateY(0deg) scale3d(1.08, 1.08, 1)';
+            const centerScale = isTinyMobile ? 1.02 : (isSmallMobile ? 1.04 : 1.08);
+            card.style.transform = `translate3d(0px, 0px, 140px) rotateY(0deg) scale3d(${centerScale}, ${centerScale}, 1)`;
             card.style.opacity = '1';
             card.style.zIndex = '30';
             if (dimmer) dimmer.style.opacity = '0';
         } else if (offset > 0) {
             // CÁC PHIM BÊN PHẢI (ROTATE PHẢI VÀ ĐẨY LÙI KHÔNG GIAN)
             card.classList.remove('is-active-card');
-            const tx = offset * spacingX + 65;
-            const tz = -150 - absOffset * 35;
-            const ry = -36;
-            const scale = Math.max(0.72, 1 - absOffset * 0.09);
-            const opacity = Math.max(0.2, 0.85 - absOffset * 0.2);
+            const tx = offset * spacingX + baseShift;
+            const tz = -140 - absOffset * 35;
+            const ry = isTinyMobile ? -24 : (isSmallMobile ? -28 : -36);
+            const scale = Math.max(0.70, 0.95 - absOffset * 0.12);
+            const opacity = Math.max(0.25, 0.85 - absOffset * 0.25);
 
             card.style.transform = `translate3d(${tx}px, 0px, ${tz}px) rotateY(${ry}deg) scale3d(${scale}, ${scale}, 1)`;
             card.style.opacity = opacity.toString();
@@ -369,11 +382,11 @@ function updateSpatialTransforms() {
         } else {
             // CÁC PHIM BÊN TRÁI (ROTATE TRÁI VÀ ĐẨY LÙI KHÔNG GIAN)
             card.classList.remove('is-active-card');
-            const tx = offset * spacingX - 65;
-            const tz = -150 - absOffset * 35;
-            const ry = 36;
-            const scale = Math.max(0.72, 1 - absOffset * 0.09);
-            const opacity = Math.max(0.2, 0.85 - absOffset * 0.2);
+            const tx = offset * spacingX - baseShift;
+            const tz = -140 - absOffset * 35;
+            const ry = isTinyMobile ? 24 : (isSmallMobile ? 28 : 36);
+            const scale = Math.max(0.70, 0.95 - absOffset * 0.12);
+            const opacity = Math.max(0.25, 0.85 - absOffset * 0.25);
 
             card.style.transform = `translate3d(${tx}px, 0px, ${tz}px) rotateY(${ry}deg) scale3d(${scale}, ${scale}, 1)`;
             card.style.opacity = opacity.toString();
@@ -591,6 +604,45 @@ function initMouseInteractionEngine() {
             setTimeout(() => {
                 hasDragged = false;
             }, 50);
+        });
+
+        // Hỗ trợ cảm ứng vuốt màn hình trên điện thoại (Touch Swipe Support)
+        let touchStartY = 0;
+        stage.addEventListener('touchstart', (e) => {
+            if (!e.touches || e.touches.length === 0) return;
+            isDragging = true;
+            hasDragged = false;
+            startX = e.touches[0].clientX;
+            currentX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+        }, { passive: true });
+
+        window.addEventListener('touchmove', (e) => {
+            if (!isDragging || !e.touches || e.touches.length === 0) return;
+            currentX = e.touches[0].clientX;
+            const diffX = Math.abs(currentX - startX);
+            const diffY = Math.abs(e.touches[0].clientY - touchStartY);
+            if (diffX > 10 && diffX > diffY) {
+                hasDragged = true;
+            }
+        }, { passive: true });
+
+        window.addEventListener('touchend', () => {
+            if (!isDragging) return;
+            isDragging = false;
+            const diffX = currentX - startX;
+            if (Math.abs(diffX) > 35) {
+                if (diffX < 0 && currentIndex < filteredMovies.length - 1) {
+                    playUiTone(440, 'triangle', 0.06, 0.04);
+                    selectMovie(currentIndex + 1);
+                } else if (diffX > 0 && currentIndex > 0) {
+                    playUiTone(440, 'triangle', 0.06, 0.04);
+                    selectMovie(currentIndex - 1);
+                }
+            }
+            setTimeout(() => {
+                hasDragged = false;
+            }, 60);
         });
 
         // Bắt sự kiện Click thông minh trên Stage (cho cả trường hợp click trúng card lẫn click vùng lân cận)

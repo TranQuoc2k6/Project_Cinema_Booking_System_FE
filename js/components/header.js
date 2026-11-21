@@ -133,17 +133,26 @@
     } else {
       // Khách chưa đăng nhập
       authSection.innerHTML = `
-        <div class="flex items-center gap-2.5">
+        <div class="flex items-center gap-1.5 sm:gap-2.5">
+          <!-- Nút Đăng Nhập (Mobile: icon button tròn viền gradient neon, sm+: pill có chữ) -->
           <a href="${prefixes.pages}login.html" 
-             class="px-4 py-2 rounded-full glass-panel text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/80 border border-slate-700/60 transition-all">
-            Đăng Nhập
+             class="relative group p-[1px] rounded-full overflow-hidden focus:outline-none shrink-0" 
+             title="Đăng Nhập">
+            <span class="absolute inset-0 bg-gradient-to-r from-[#d4ff00] to-[#ff5e1e] opacity-80 group-hover:opacity-100 transition-opacity"></span>
+            <div class="relative w-7 h-7 sm:w-auto sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-[#030508] flex items-center justify-center gap-1.5 text-xs font-semibold text-white group-hover:bg-[#0b0f19] transition-colors">
+              <i class="fa-solid fa-arrow-right-to-bracket text-[#ff5e1e] text-xs"></i>
+              <span class="hidden sm:inline whitespace-nowrap">Đăng Nhập</span>
+            </div>
           </a>
+
+          <!-- Nút Đăng Ký (Mobile: icon button tròn viền gradient neon, sm+: pill có chữ) -->
           <a href="${prefixes.pages}register.html" 
-             class="relative group p-[1px] rounded-full overflow-hidden focus:outline-none">
+             class="relative group p-[1px] rounded-full overflow-hidden focus:outline-none shrink-0" 
+             title="Đăng Ký">
             <span class="absolute inset-0 bg-gradient-to-r from-[#ff5e1e] to-[#d4ff00] group-hover:opacity-100 transition-opacity"></span>
-            <div class="relative px-4 py-2 rounded-full bg-[#0b0d12] flex items-center gap-2 text-xs font-semibold text-white group-hover:bg-[#131722] transition-colors">
-              <i class="fa-solid fa-user-plus text-[#d4ff00]"></i>
-              <span class="hidden sm:inline">Đăng Ký</span>
+            <div class="relative w-7 h-7 sm:w-auto sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-[#030508] flex items-center justify-center gap-1.5 text-xs font-semibold text-white group-hover:bg-[#0b0f19] transition-colors">
+              <i class="fa-solid fa-user-plus text-[#d4ff00] text-xs"></i>
+              <span class="hidden sm:inline whitespace-nowrap">Đăng Ký</span>
             </div>
           </a>
         </div>
