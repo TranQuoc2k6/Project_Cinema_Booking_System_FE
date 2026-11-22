@@ -39,6 +39,7 @@
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/pages/movies.css">
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -116,10 +117,10 @@
                 </div>
 
                 <!-- Tabs Filter Status -->
-                <div class="flex items-center gap-2 bg-[#0b0d12]/90 p-1.5 rounded-2xl border border-white/10">
-                    <button data-status="ALL" onclick="filterMovies('ALL', this)" class="filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-[#ff5e1e] to-[#ea580c] text-white shadow-[0_0_15px_rgba(255,94,30,0.4)]">Tất Cả</button>
-                    <button data-status="now_showing" onclick="filterMovies('now_showing', this)" class="filter-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-colors">Đang Chiếu</button>
-                    <button data-status="coming_soon" onclick="filterMovies('coming_soon', this)" class="filter-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-colors">Sắp Chiếu</button>
+                <div class="filter-tabs-container flex items-center gap-2 bg-[#0b0d12]/90 p-1.5 rounded-2xl border border-white/10 overflow-x-auto no-scrollbar max-w-full">
+                    <button data-status="ALL" onclick="filterMovies('ALL', this)" class="filter-btn shrink-0 px-4 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-[#ff5e1e] to-[#ea580c] text-white shadow-[0_0_15px_rgba(255,94,30,0.4)]">Tất Cả</button>
+                    <button data-status="now_showing" onclick="filterMovies('now_showing', this)" class="filter-btn shrink-0 px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-colors">Đang Chiếu</button>
+                    <button data-status="coming_soon" onclick="filterMovies('coming_soon', this)" class="filter-btn shrink-0 px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-colors">Sắp Chiếu</button>
                 </div>
             </div>
 
@@ -139,15 +140,17 @@
             </div>
         </div>
 
-        <!-- Movie List Container -->
-        <div id="movies-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <!-- Movie List Container (2 cột trên mobile, 3 cột tablet, 4 cột desktop) -->
+        <div id="movies-grid" class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
             <!-- Render động bằng JS -->
         </div>
 
+        <!-- Pagination Container -->
+        <div id="movies-pagination" class="mt-10 flex flex-col sm:flex-row items-center justify-between gap-4"></div>
+
     </main>
 
-    <!-- FOOTER (Chuẩn Mẫu Điện Ảnh Galaxy Studio & Lumen Cinema) -->
-        <!-- FOOTER (Quản lý tập trung từ js/components/footer.js) -->
+    <!-- FOOTER (Quản lý tập trung từ js/components/footer.js) -->
     <footer id="main-footer" class="relative z-10 bg-[#0b0d12] border-t border-white/10 text-slate-400 pt-12 pb-8 mt-auto"></footer>
 
     <!-- Scripts -->
@@ -158,6 +161,7 @@
     <script src="../js/services/auth.service.js"></script>
     <script src="../js/services/movie.service.js"></script>
     <script src="../js/components/header.js"></script>
+    <script src="../js/components/footer.js"></script>
     <script src="../js/pages/movies.js"></script>
 </body>
 </html>
