@@ -174,23 +174,28 @@ const MovieService = {
         page++;
       } while (page <= totalPages);
 
-      if (allMovies.length > 0) {
-        return {
-          success: true,
-          data: allMovies
-        };
-      }
+      // Backend trả về mảng phim đầy đủ
       return {
         success: true,
-        data: this._mockMovies
+        data: allMovies
       };
     } catch (error) {
-      console.info('[MovieService.getMovies] Sử dụng danh sách phim mẫu fallback.');
+      console.error('[MovieService.getMovies] Lỗi khi gọi API phim:', error);
+
+      // Cờ cho phép bật fallback có chủ đích (ví dụ test/demo khi Backend chưa bật)
+      if (window.ENABLE_MOCK_FALLBACK === true) {
+        console.warn('[MovieService.getMovies] Đang sử dụng danh sách phim mẫu fallback theo ENABLE_MOCK_FALLBACK.');
+        return {
+          success: true,
+          data: this._mockMovies,
+          isFallback: true
+        };
+      }
 
       return {
-        success: true,
-        data: this._mockMovies,
-        message: error.response?.data?.detail || error.message
+        success: false,
+        data: [],
+        message: error.response?.data?.detail || error.message || 'Không thể kết nối đến máy chủ API'
       };
     }
   },
