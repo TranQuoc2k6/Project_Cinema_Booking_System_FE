@@ -1,10 +1,11 @@
-/**
+﻿/**
  * ==========================================================================
  * HEADER COMPONENT (js/components/header.js)
  * Tự động cập nhật Header theo trạng thái đăng nhập và vai trò người dùng:
  * - Khách (Chưa đăng nhập): Hiển thị nút "Đăng Nhập" & "Đăng Ký"
  * - Khách hàng (User): Hiển thị Avatar, Tên, Badge Thành viên, Menu Hồ sơ & Vé của tôi, Đăng xuất
  * - Quản trị viên (Admin): Hiển thị thêm Huy hiệu / Nút truy cập nhanh "Trang Quản Trị Admin"
+ * - Thanh navbar responsive trên Mobile chuẩn 100% giống index.html
  * ==========================================================================
  */
 
@@ -12,9 +13,9 @@
   'use strict';
 
   function getPathPrefixes() {
-    const pathname = window.location.pathname.replace(/\\/g, '/');
-    const isPagesDir = pathname.includes('/pages/');
+    const pathname = window.location.pathname.replace(/\\/g, '/').toLowerCase();
     const isAdminDir = pathname.includes('/pages/admin/') || pathname.includes('/admin/');
+    const isPagesDir = pathname.includes('/pages/');
 
     if (isAdminDir) {
       return {
@@ -42,6 +43,7 @@
     if (path.includes('showtimes.html')) return 'showtimes';
     if (path.includes('booking.html')) return 'booking';
     if (path.includes('my-tickets.html')) return 'my-tickets';
+    if (path.includes('payment.html')) return 'payment';
     if (path.includes('profile.html')) return 'profile';
     return 'index';
   }
@@ -61,13 +63,13 @@
       const roleLabel = isAdmin ? 'Quản Trị Viên' : 'Thành Viên LUMEN';
 
       authSection.innerHTML = `
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2 sm:gap-3">
           <!-- Huy hiệu / Phím tắt Admin (nếu tài khoản là Admin) -->
           ${isAdmin ? `
             <a href="${prefixes.admin}dashboard.html" 
-               class="px-3 py-1.5 rounded-full text-xs font-bold bg-rose-500/20 text-rose-400 border border-rose-500/40 hover:bg-rose-500/30 transition-all flex items-center gap-1.5 shadow-sm shadow-rose-500/20">
+               class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs font-bold bg-rose-500/20 text-rose-400 border border-rose-500/40 hover:bg-rose-500/30 transition-all flex items-center gap-1.5 shadow-sm shadow-rose-500/20">
               <i class="fa-solid fa-shield text-xs"></i>
-              <span class="hidden sm:inline">Admin Portal</span>
+              <span class="hidden sm:inline">Admin</span>
             </a>
           ` : ''}
 
@@ -75,7 +77,7 @@
           <div class="relative group" id="user-profile-dropdown">
             <button id="user-profile-menu-btn" 
                     type="button"
-                    class="flex items-center gap-2.5 p-1 sm:p-1.5 pr-2.5 sm:pr-3 rounded-full glass-panel bg-slate-900/90 border border-slate-700/80 hover:border-[#ff5e1e]/60 transition-all cursor-pointer">
+                    class="flex items-center gap-2 p-1 sm:p-1.5 pr-2 sm:pr-3 rounded-full glass-panel bg-slate-900/90 border border-slate-700/80 hover:border-[#ff5e1e]/60 transition-all cursor-pointer">
               <img src="${avatar}" 
                    alt="${displayName}" 
                    class="w-7 h-7 sm:w-8 sm:h-8 rounded-full object-cover border border-[#ff5e1e]/60 shadow-sm"
@@ -118,6 +120,12 @@
                 <span>Vé Của Tôi</span>
               </a>
 
+              <a href="${prefixes.pages}ticket-check.html" 
+                 class="flex items-center gap-2.5 px-4 py-2.5 text-xs text-slate-300 hover:text-white hover:bg-slate-800/50 font-medium transition-colors">
+                <i class="fa-solid fa-qrcode w-4 text-center text-[#d4ff00]"></i>
+                <span>Soát Vé QR</span>
+              </a>
+
               <div class="my-1 border-t border-slate-800/80"></div>
 
               <button type="button" 
@@ -131,10 +139,10 @@
         </div>
       `;
     } else {
-      // Khách chưa đăng nhập
+      // Khách chưa đăng nhập (Mobile: icon button viền gradient neon, sm+: pill có chữ)
       authSection.innerHTML = `
         <div class="flex items-center gap-1.5 sm:gap-2.5">
-          <!-- Nút Đăng Nhập (Mobile: icon button tròn viền gradient neon, sm+: pill có chữ) -->
+          <!-- Nút Đăng Nhập -->
           <a href="${prefixes.pages}login.html" 
              class="relative group p-[1px] rounded-full overflow-hidden focus:outline-none shrink-0" 
              title="Đăng Nhập">
@@ -145,7 +153,7 @@
             </div>
           </a>
 
-          <!-- Nút Đăng Ký (Mobile: icon button tròn viền gradient neon, sm+: pill có chữ) -->
+          <!-- Nút Đăng Ký -->
           <a href="${prefixes.pages}register.html" 
              class="relative group p-[1px] rounded-full overflow-hidden focus:outline-none shrink-0" 
              title="Đăng Ký">
@@ -160,26 +168,104 @@
     }
   }
 
-  // Highlight menu link đang active
+  // Tự động bảo đảm Mobile Navigation Toggle và Mobile Dropdown hoạt động trên mọi trang CHUẨN 100% GIỐNG INDEX
+  function setupMobileNavigation() {
+    const headerEl = document.querySelector('header');
+    if (!headerEl) return;
+
+    const prefixes = getPathPrefixes();
+    const pageKey = getCurrentPageKey();
+
+    // 1. Kiểm tra hoặc chèn nút Hamburger toggle
+    let toggleBtn = document.getElementById('mobile-nav-toggle');
+    const authSection = document.getElementById('header-auth-section');
+
+    if (!toggleBtn && authSection) {
+      toggleBtn = document.createElement('button');
+      toggleBtn.id = 'mobile-nav-toggle';
+      toggleBtn.type = 'button';
+      toggleBtn.setAttribute('aria-label', 'Mở menu');
+      toggleBtn.className = 'lg:hidden flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-xl glass-pill text-slate-300 hover:text-white border border-white/10 hover:border-[#ff5e1e]/50 transition-colors shrink-0 cursor-pointer';
+      toggleBtn.innerHTML = '<i class="fa-solid fa-bars text-xs sm:text-sm"></i>';
+      authSection.parentNode.appendChild(toggleBtn);
+    }
+
+    // 2. Kiểm tra hoặc chèn Mobile Menu Dropdown (Chuẩn 100% 3 mục như index.html)
+    let mobileMenu = document.getElementById('mobile-nav-menu');
+    if (!mobileMenu) {
+      mobileMenu = document.createElement('div');
+      mobileMenu.id = 'mobile-nav-menu';
+      headerEl.appendChild(mobileMenu);
+    }
+
+    mobileMenu.className = 'hidden lg:hidden px-4 pb-4 pt-1 border-t border-white/10 flex flex-col gap-1.5';
+
+    const isIndex = pageKey === 'index';
+    const isMovies = pageKey === 'movies';
+    const isShowtimes = pageKey === 'showtimes';
+
+    const activeCls = 'px-3 py-2 rounded-xl text-xs font-bold text-[#ff5e1e] bg-[#ff5e1e]/10 border border-[#ff5e1e]/20 flex items-center gap-2';
+    const inactiveCls = 'px-3 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 flex items-center gap-2 transition-colors';
+
+    mobileMenu.innerHTML = `
+      <a href="${prefixes.root}index.html" class="${isIndex ? activeCls : inactiveCls}">
+        <i class="fa-solid fa-house w-4 text-center"></i> Trang chủ
+      </a>
+      <a href="${prefixes.pages}movies.html" class="${isMovies ? activeCls : inactiveCls}">
+        <i class="fa-solid fa-film w-4 text-center text-cyan-400"></i> Phim Chiếu Rạp
+      </a>
+      <a href="${prefixes.pages}showtimes.html" class="${isShowtimes ? activeCls : inactiveCls}">
+        <i class="fa-solid fa-calendar-days w-4 text-center text-[#d4ff00]"></i> Lịch Chiếu Phim
+      </a>
+    `;
+
+    // 3. Gắn sự kiện đóng mở menu mobile
+    if (toggleBtn && !toggleBtn._hasMobileListener) {
+      toggleBtn._hasMobileListener = true;
+      toggleBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        const isHidden = mobileMenu.classList.contains('hidden');
+        if (isHidden) {
+          mobileMenu.classList.remove('hidden');
+          mobileMenu.classList.add('flex');
+          toggleBtn.innerHTML = '<i class="fa-solid fa-xmark text-xs sm:text-sm text-[#ff5e1e]"></i>';
+        } else {
+          mobileMenu.classList.add('hidden');
+          mobileMenu.classList.remove('flex');
+          toggleBtn.innerHTML = '<i class="fa-solid fa-bars text-xs sm:text-sm"></i>';
+        }
+      });
+
+      document.addEventListener('click', function (e) {
+        if (!mobileMenu.contains(e.target) && !toggleBtn.contains(e.target) && !mobileMenu.classList.contains('hidden')) {
+          mobileMenu.classList.add('hidden');
+          mobileMenu.classList.remove('flex');
+          toggleBtn.innerHTML = '<i class="fa-solid fa-bars text-xs sm:text-sm"></i>';
+        }
+      });
+    }
+  }
+
   function highlightActiveNav() {
     const pageKey = getCurrentPageKey();
-    const navLinks = document.querySelectorAll('header nav a');
-    if (!navLinks || navLinks.length === 0) return;
-
-    navLinks.forEach(link => {
+    
+    // Highlight trên desktop nav
+    const desktopLinks = document.querySelectorAll('header nav a');
+    desktopLinks.forEach(link => {
       const href = (link.getAttribute('href') || '').toLowerCase();
       let match = false;
-      if (pageKey === 'index' && (href.endsWith('index.html') || href === '/' || href === './')) match = true;
+      if (pageKey === 'index' && (href.endsWith('index.html') || href === './' || href === '../index.html' || href === 'index.html')) match = true;
       else if (pageKey === 'movies' && href.includes('movies.html')) match = true;
       else if (pageKey === 'showtimes' && href.includes('showtimes.html')) match = true;
       else if (pageKey === 'booking' && href.includes('booking.html')) match = true;
       else if (pageKey === 'my-tickets' && href.includes('my-tickets.html')) match = true;
+      else if (pageKey === 'profile' && href.includes('profile.html')) match = true;
 
       if (match) {
         link.classList.remove('text-slate-300', 'font-medium');
-        link.classList.add('text-[#ff5e1e]', 'font-bold');
+        link.classList.add('text-[#ff5e1e]', 'font-semibold');
       } else {
-        link.classList.remove('text-[#ff5e1e]', 'font-bold');
+        link.classList.remove('text-[#ff5e1e]', 'font-semibold', 'font-bold');
         link.classList.add('text-slate-300', 'font-medium');
       }
     });
@@ -187,7 +273,6 @@
 
   // Tối ưu hóa chuyển đổi mượt mà giữa các trang (Smooth Navigation & Instant Prefetching)
   function setupSmoothNavigation() {
-    // 1. Kích hoạt Cross-Document View Transitions (Chrome 126+, Safari 18+)
     if (!document.getElementById('lumen-view-transition-meta')) {
       const meta = document.createElement('meta');
       meta.id = 'lumen-view-transition-meta';
@@ -196,7 +281,6 @@
       document.head.appendChild(meta);
     }
 
-    // 2. Tự động gắn favicon logo thương hiệu LC nếu trang chưa có
     const prefixes = getPathPrefixes();
     if (!document.querySelector('link[rel="icon"]')) {
       const fav = document.createElement('link');
@@ -206,7 +290,6 @@
       document.head.appendChild(fav);
     }
 
-    // 2. CSS Giữ cố định Navbar khi chuyển trang & hiệu ứng mượt
     if (!document.getElementById('lumen-nav-transition-styles')) {
       const style = document.createElement('style');
       style.id = 'lumen-nav-transition-styles';
@@ -239,8 +322,7 @@
       document.head.appendChild(style);
     }
 
-    // 3. Tải trước tài nguyên tức thì khi di chuột vào liên kết (Instant Prefetch on Hover)
-    const links = document.querySelectorAll('header nav a, header a.group');
+    const links = document.querySelectorAll('header nav a, header a.group, #mobile-nav-menu a');
     const prefetchedUrls = new Set();
 
     function prefetchTarget(href) {
@@ -284,10 +366,15 @@
   // Xuất API toàn cục
   window.renderAppHeader = function () {
     renderHeaderAuth();
+    setupMobileNavigation();
     highlightActiveNav();
     setupSmoothNavigation();
   };
   window.updateHeaderAuth = window.renderAppHeader;
 
-  document.addEventListener('DOMContentLoaded', window.renderAppHeader);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', window.renderAppHeader);
+  } else {
+    window.renderAppHeader();
+  }
 })();

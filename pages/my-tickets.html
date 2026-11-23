@@ -62,42 +62,79 @@
 </head>
 <body class="min-h-screen flex flex-col">
 
-    <!-- Header Navigation -->
-    <header class="sticky top-[10px] mx-[10px] rounded-2xl z-50 glass-panel border border-white/10 transition-all duration-300">
-        <div class="w-full px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-            <a href="../index.html" class="flex items-center gap-3 group">
-                <img src="../assets/images/logo/logo.png" alt="LUMEN CINEMA" class="w-10 h-10 object-contain drop-shadow-[0_0_12px_rgba(255,180,0,0.45)] group-hover:scale-105 transition-transform duration-300">
-                <div class="flex flex-col">
-                    <span class="text-2xl font-black tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-[#ff5e1e] via-[#d4ff00] to-white">
-                        LUMEN<span class="text-white font-light">CINEMA</span>
-                    </span>
-                    <span class="text-[9px] uppercase tracking-widest text-[#d4ff00] -mt-1 font-semibold">Studio & Theater HQ</span>
+            <!-- Header / Navigation Bar (Chuẩn 100% giống index.html) -->
+        <header id="main-header" class="sticky top-2 sm:top-[10px] mx-1 sm:mx-[10px] rounded-2xl z-50 glass-panel border border-white/10 transition-all duration-300">
+            <div class="w-full px-2 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
+                
+                <!-- Logo 3D Glow (Đầy đủ logo & chữ trên mọi màn hình Mobile S, M, L, Tablet, Desktop) -->
+                <a href="../index.html" class="flex items-center gap-1.5 min-[360px]:gap-2 sm:gap-2.5 lg:gap-3 group shrink-0">
+                    <img src="../assets/images/logo/logo.png" alt="LUMEN CINEMA" class="w-6 h-6 min-[360px]:w-7 min-[360px]:h-7 sm:w-8 sm:h-8 lg:w-10 lg:h-10 object-contain shrink-0 drop-shadow-[0_0_12px_rgba(255,180,0,0.45)] group-hover:scale-105 transition-transform duration-300">
+                    <div class="flex flex-col shrink-0">
+                        <span class="text-[12px] min-[360px]:text-[13px] min-[400px]:text-sm sm:text-lg lg:text-2xl font-black tracking-wide sm:tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-[#ff5e1e] via-[#d4ff00] to-white leading-none sm:leading-tight whitespace-nowrap pr-1">
+                            LUMEN<span class="text-white font-light">CINEMA</span>
+                        </span>
+                        <span class="text-[6.5px] min-[360px]:text-[7.5px] sm:text-[9px] uppercase tracking-widest text-[#d4ff00] font-semibold block leading-tight mt-0.5 whitespace-nowrap">Studio & Theater HQ</span>
+                    </div>
+                </a>
+
+                <!-- Navigation Links (Chỉ hiển thị trên Desktop >= 1024px để iPad 768px không bị chèn chữ) -->
+                <nav class="hidden lg:flex flex-1 justify-center items-center gap-4 xl:gap-8 px-4">
+                    <a href="../index.html" class="text-xs lg:text-sm font-medium text-slate-300 hover:text-[#ff5e1e] transition-colors flex items-center gap-1 lg:gap-1.5 whitespace-nowrap">
+                        <i class="fa-solid fa-house text-xs"></i> Trang chủ
+                    </a>
+                    <a href="movies.html" class="text-xs lg:text-sm font-medium text-slate-300 hover:text-[#ff5e1e] transition-colors flex items-center gap-1 lg:gap-1.5 whitespace-nowrap">
+                        <i class="fa-solid fa-film text-xs"></i> Phim Chiếu
+                    </a>
+                    <a href="showtimes.html" class="text-xs lg:text-sm font-medium text-slate-300 hover:text-[#ff5e1e] transition-colors flex items-center gap-1 lg:gap-1.5 whitespace-nowrap">
+                        <i class="fa-solid fa-calendar-days text-xs"></i> Lịch Chiếu
+                    </a>
+                </nav>
+
+                <!-- Action Buttons / User Profile + Mobile Nav Toggle -->
+                <div class="flex items-center gap-1.5 sm:gap-3 shrink-0">
+                    <div class="flex items-center gap-1.5 sm:gap-2.5" id="header-auth-section">
+                        <!-- Nút Đăng Nhập (Mobile: icon button tròn viền gradient neon, sm+: pill mở rộng có chữ) -->
+                        <a href="login.html" class="relative group p-[1px] rounded-full overflow-hidden focus:outline-none shrink-0" title="Đăng Nhập">
+                            <span class="absolute inset-0 bg-gradient-to-r from-[#d4ff00] to-[#ff5e1e] opacity-80 group-hover:opacity-100 transition-opacity"></span>
+                            <div class="relative w-7 h-7 sm:w-auto sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-[#030508] flex items-center justify-center gap-1.5 text-xs font-semibold text-white group-hover:bg-[#0b0f19] transition-colors">
+                                <i class="fa-solid fa-arrow-right-to-bracket text-[#ff5e1e] text-xs"></i>
+                                <span class="hidden sm:inline whitespace-nowrap">Đăng Nhập</span>
+                            </div>
+                        </a>
+                        <!-- Nút Đăng Ký (Mobile: icon button tròn viền gradient neon, sm+: pill mở rộng có chữ) -->
+                        <a href="register.html" class="relative group p-[1px] rounded-full overflow-hidden focus:outline-none shrink-0" title="Đăng Ký">
+                            <span class="absolute inset-0 bg-gradient-to-r from-[#ff5e1e] to-[#d4ff00] group-hover:opacity-100 transition-opacity"></span>
+                            <div class="relative w-7 h-7 sm:w-auto sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-[#030508] flex items-center justify-center gap-1.5 text-xs font-semibold text-white group-hover:bg-[#0b0f19] transition-colors">
+                                <i class="fa-solid fa-user-plus text-[#d4ff00] text-xs"></i>
+                                <span class="hidden sm:inline whitespace-nowrap">Đăng Ký</span>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Nút menu mobile & tablet tinh tế (< 1024px) -->
+                    <button id="mobile-nav-toggle" type="button" aria-label="Mở menu" class="lg:hidden flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-xl glass-pill text-slate-300 hover:text-white border border-white/10 hover:border-[#ff5e1e]/50 transition-colors shrink-0">
+                        <i class="fa-solid fa-bars text-xs sm:text-sm"></i>
+                    </button>
                 </div>
-            </a>
-            <nav class="hidden md:flex flex-1 justify-center items-center gap-6 lg:gap-8">
-                <a href="../index.html" class="text-sm font-medium text-slate-300 hover:text-[#ff5e1e] flex items-center gap-1.5 transition-colors">
-                    <i class="fa-solid fa-house text-xs"></i> Trang chủ
+
+            </div>
+
+            <!-- Mobile & Tablet Dropdown Navigation (< 1024px) -->
+            <div id="mobile-nav-menu" class="hidden lg:hidden px-4 pb-4 pt-1 border-t border-white/10 flex-col gap-1.5">
+                <a href="../index.html" class="px-3 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 flex items-center gap-2 transition-colors">
+                    <i class="fa-solid fa-house w-4 text-center"></i> Trang chủ
                 </a>
-                <a href="movies.html" class="text-sm font-medium text-slate-300 hover:text-[#ff5e1e] flex items-center gap-1.5 transition-colors">
-                    <i class="fa-solid fa-film text-xs"></i> Phim Chiếu
+                <a href="movies.html" class="px-3 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 flex items-center gap-2 transition-colors">
+                    <i class="fa-solid fa-film w-4 text-center text-cyan-400"></i> Phim Chiếu Rạp
                 </a>
-                <a href="showtimes.html" class="text-sm font-medium text-slate-300 hover:text-[#ff5e1e] flex items-center gap-1.5 transition-colors">
-                    <i class="fa-solid fa-calendar-days text-xs"></i> Lịch Chiếu
-                </a>
-            </nav>
-            <div class="flex items-center gap-3" id="header-auth-section">
-                <a href="login.html" class="px-4 py-2 rounded-full glass-panel text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition-colors">
-                    Đăng Nhập
-                </a>
-                <a href="register.html" class="px-4 py-2 rounded-full bg-gradient-to-r from-[#ff5e1e] to-[#ea580c] text-xs font-bold text-white shadow-md hover:brightness-110 transition-all">
-                    Đăng Ký
+                <a href="showtimes.html" class="px-3 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 flex items-center gap-2 transition-colors">
+                    <i class="fa-solid fa-calendar-days w-4 text-center text-[#d4ff00]"></i> Lịch Chiếu Phim
                 </a>
             </div>
-        </div>
-    </header>
+        </header>
 
     <!-- Main Content -->
-    <main class="flex-1 max-w-5xl mx-auto px-4 py-10 w-full">
+    <main class="flex-1 max-w-5xl mx-auto px-3 sm:px-4 py-6 sm:py-10 w-full">
         <!-- Toast Notification Alert -->
         <div id="toast-banner" class="hidden mb-6 p-4 rounded-2xl flex items-center justify-between border shadow-xl transition-all duration-300">
             <div class="flex items-center gap-3">
@@ -110,7 +147,7 @@
         </div>
 
         <!-- Title & Filter Tabs -->
-        <div class="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800/80 mb-8 shadow-2xl">
+        <div class="glass-panel p-4 sm:p-8 rounded-2xl sm:rounded-3xl border border-slate-800/80 mb-6 sm:mb-8 shadow-2xl">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <h1 class="text-2xl sm:text-3xl font-black text-white uppercase tracking-tight flex items-center gap-3">
@@ -216,17 +253,29 @@
                     <b class="text-[#d4ff00] block text-sm font-black" id="modal-seats-list"></b>
                     <span class="text-[10px] text-slate-400 block" id="modal-seats-count"></span>
                 </div>
+                <div id="modal-combos-container" class="hidden">
+                    <span class="text-slate-400 block text-[11px] mb-0.5"><i class="fa-solid fa-bowl-food text-amber-400 mr-1"></i> Combo bắp nước</span>
+                    <b class="text-amber-300 block text-xs font-bold" id="modal-combos-list"></b>
+                </div>
             </div>
 
-            <!-- QR Code Section -->
+            <!-- QR Code Section (Task T3C72CC: Bonus Mã QR vé điện tử) -->
             <div class="text-center py-3 px-4 rounded-2xl bg-white/5 border border-white/5 mb-5">
-                <p class="text-[11px] text-slate-300 font-bold mb-2 uppercase tracking-wider">
-                    <i class="fa-solid fa-qrcode text-[#d4ff00] mr-1"></i> Mã QR Soát Vé Tại Cổng
-                </p>
-                <div class="bg-white p-3 rounded-2xl inline-block shadow-inner mx-auto">
+                <div class="flex items-center justify-between mb-2">
+                    <p class="text-[11px] text-slate-300 font-bold uppercase tracking-wider">
+                        <i class="fa-solid fa-qrcode text-[#d4ff00] mr-1"></i> Mã QR Soát Vé Tại Cổng
+                    </p>
+                    <span id="modal-checkin-badge" class="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">CHƯA SOÁT VÉ</span>
+                </div>
+                <div class="bg-white p-3 rounded-2xl inline-block shadow-inner mx-auto relative group">
                     <img id="modal-qr-img" src="" alt="QR Code" class="w-36 h-36 mx-auto">
                 </div>
-                <p class="text-[10px] text-slate-400 mt-2">Xuất trình mã QR này hoặc mã vé cho nhân viên tại rạp để vào phòng chiếu.</p>
+                <p class="text-[10px] text-slate-400 mt-2">Quét mã QR bằng camera điện thoại hoặc xuất trình cho nhân viên soát vé tại rạp để vào phòng chiếu.</p>
+                <div class="mt-2.5 flex items-center justify-center gap-2">
+                    <a id="modal-qr-check-link" href="#" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-[#ff5e1e] text-[#d4ff00] hover:text-white text-[11px] font-bold transition-all shadow-sm">
+                        <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> Xem trang tra cứu & soát vé khi quét QR
+                    </a>
+                </div>
             </div>
 
             <!-- Price & Policy Box -->
@@ -316,6 +365,7 @@
     <script src="../js/services/auth.service.js"></script>
     <script src="../js/services/booking.service.js"></script>
     <script src="../js/components/header.js"></script>
+    <script src="../js/components/footer.js"></script>
 
     <script>
         let currentTab = 'all';
@@ -396,6 +446,17 @@
                 const formattedDate = startTime.toLocaleDateString('vi-VN', { weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric' });
                 const seatList = ticket.seats.map(s => s.seat_number).join(', ') || 'Chưa xếp ghế';
 
+                // Combo bắp nước (Task T3C72E6)
+                let comboHtml = '';
+                if (ticket.combos && ticket.combos.length > 0) {
+                    const comboStr = ticket.combos.map(c => `${c.quantity}x ${c.name}`).join(', ');
+                    comboHtml = `
+                        <p class="text-xs text-amber-300/90 mt-0.5">
+                            <i class="fa-solid fa-bowl-food text-amber-400 mr-1"></i> Combo: <b>${comboStr}</b>
+                        </p>
+                    `;
+                }
+
                 // Trạng thái vé & màu sắc badge
                 let statusBadge = '';
                 if (ticket.status === 'DA_THANH_TOAN' || ticket.payment_status === 'PAID') {
@@ -450,6 +511,7 @@
                                 <p class="text-xs text-slate-400 mt-0.5">
                                     <i class="fa-solid fa-couch text-[#d4ff00] mr-1"></i> Ghế: <b class="text-[#d4ff00]">${seatList}</b>
                                 </p>
+                                ${comboHtml}
                             </div>
                         </div>
 
@@ -525,6 +587,18 @@
             document.getElementById('modal-seats-count').innerText = `${ticket.seats.length} ghế`;
             document.getElementById('modal-total-price').innerText = `${Number(ticket.total_price).toLocaleString('vi-VN')} đ`;
 
+            // Combo bắp nước (Task T3C72E6)
+            const modalCombosContainer = document.getElementById('modal-combos-container');
+            const modalCombosList = document.getElementById('modal-combos-list');
+            if (modalCombosContainer && modalCombosList) {
+                if (ticket.combos && ticket.combos.length > 0) {
+                    modalCombosList.innerText = ticket.combos.map(c => `${c.quantity}x ${c.name} (${Number(c.total_price || (c.price * c.quantity)).toLocaleString('vi-VN')} đ)`).join(', ');
+                    modalCombosContainer.classList.remove('hidden');
+                } else {
+                    modalCombosContainer.classList.add('hidden');
+                }
+            }
+
             // Badge trạng thái
             const badgeContainer = document.getElementById('modal-status-badge');
             if (ticket.status === 'DA_THANH_TOAN') {
@@ -537,8 +611,34 @@
                 badgeContainer.innerHTML = '<span class="px-2.5 py-1 rounded text-[10px] font-black uppercase bg-slate-800 text-slate-400 border border-slate-700">HẾT HẠN</span>';
             }
 
-            // QR Code
-            document.getElementById('modal-qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(ticket.booking_code)}`;
+            // QR Code (Task T3C72CC: Chứa link trực tiếp đến trang tra cứu / xác nhận vé)
+            const checkUrl = window.BookingService && window.BookingService.generateTicketCheckUrl
+                ? window.BookingService.generateTicketCheckUrl(ticket.booking_code)
+                : `${window.location.origin}/pages/ticket-check.html?code=${encodeURIComponent(ticket.booking_code)}`;
+
+            const qrImgUrl = window.BookingService && window.BookingService.generateQrCodeImageUrl
+                ? window.BookingService.generateQrCodeImageUrl(ticket.booking_code)
+                : `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(checkUrl)}`;
+
+            document.getElementById('modal-qr-img').src = qrImgUrl;
+            const checkLinkElem = document.getElementById('modal-qr-check-link');
+            if (checkLinkElem) checkLinkElem.href = checkUrl;
+
+            // Check-in status badge
+            const checkinBadgeElem = document.getElementById('modal-checkin-badge');
+            if (checkinBadgeElem) {
+                if (ticket.is_checked_in) {
+                    const checkinTime = ticket.checked_in_at ? new Date(ticket.checked_in_at).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) : '';
+                    checkinBadgeElem.className = 'px-2 py-0.5 rounded text-[10px] font-black uppercase bg-cyan-500/20 text-cyan-400 border border-cyan-500/40';
+                    checkinBadgeElem.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> ĐÃ SOÁT VÉ ${checkinTime ? '(' + checkinTime + ')' : ''}`;
+                } else if (ticket.status === 'DA_THANH_TOAN') {
+                    checkinBadgeElem.className = 'px-2 py-0.5 rounded text-[10px] font-black uppercase bg-emerald-500/20 text-emerald-400 border border-emerald-500/40';
+                    checkinBadgeElem.innerHTML = '<i class="fa-solid fa-ticket mr-1"></i> SẴN SÀNG VÀO RẠP';
+                } else {
+                    checkinBadgeElem.className = 'px-2 py-0.5 rounded text-[10px] font-black uppercase bg-slate-800 text-slate-400 border border-slate-700';
+                    checkinBadgeElem.innerHTML = 'CHƯA ĐỦ ĐIỀU KIỆN';
+                }
+            }
 
             // Cancellation state inside modal
             const cancelStatusContainer = document.getElementById('modal-cancel-status-container');

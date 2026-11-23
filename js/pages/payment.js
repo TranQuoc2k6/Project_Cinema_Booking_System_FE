@@ -54,6 +54,19 @@ document.addEventListener('DOMContentLoaded', () => {
       totalEl.innerText = Number(bookingData.totalPrice).toLocaleString('vi-VN') + ' đ';
     }
 
+    // Hiển thị chi tiết combo bắp nước nếu có (Task T3C72E6)
+    const combosRowEl = document.getElementById('pay-combos-row');
+    const combosTextEl = document.getElementById('pay-combos');
+    if (combosRowEl && combosTextEl) {
+      if (bookingData.comboDetails && bookingData.comboDetails.length > 0) {
+        const comboSummary = bookingData.comboDetails.map(c => `${c.quantity}x ${c.name}`).join(', ');
+        combosTextEl.innerText = comboSummary;
+        combosRowEl.classList.remove('hidden');
+      } else {
+        combosRowEl.classList.add('hidden');
+      }
+    }
+
     // Điền sẵn thông tin khách hàng nếu đã đăng nhập
     if (window.StorageService && window.StorageService.isAuthenticated()) {
       const user = window.StorageService.getUser();

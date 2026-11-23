@@ -204,6 +204,36 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadMoviesFromBackend();
 });
 
+/**
+ * Chuyển đổi linh hoạt link YouTube (watch, youtu.be, embed, shorts) thành link nhúng iframe
+ * Đồng bộ với thuật toán nhận diện trailer bên trang chi tiết phim
+ */
+function getYouTubeEmbedUrl(url, autoplay = true) {
+    if (!url || typeof url !== 'string') return null;
+    const trimmed = url.trim();
+    if (!trimmed) return null;
+
+    const regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
+    const match = trimmed.match(regExp);
+
+    if (match && match[1]) {
+        return `https://www.youtube.com/embed/${match[1]}?autoplay=${autoplay ? 1 : 0}&rel=0&modestbranding=1`;
+    }
+
+    if (trimmed.includes('youtube.com/embed/')) {
+        if (autoplay && !trimmed.includes('autoplay=')) {
+            return trimmed.includes('?') ? `${trimmed}&autoplay=1` : `${trimmed}?autoplay=1`;
+        }
+        return trimmed;
+    }
+
+    if (/^https?:\/\//i.test(trimmed)) {
+        return trimmed;
+    }
+
+    return null;
+}
+
 // Nạp danh sách phim từ Backend API (kết hợp làm giàu thông tin đồ họa)
 async function loadMoviesFromBackend() {
     try {
@@ -212,7 +242,12 @@ async function loadMoviesFromBackend() {
             if (res && res.success && Array.isArray(res.data) && res.data.length > 0) {
                 // Map dữ liệu từ Backend vào format hiển thị 3D
                 masterMoviesList = res.data.map((m, idx) => {
-                    const fallbackMatch = fallbackMoviesList.find(f => f.id === m.id || f.title.toLowerCase().includes(m.title.toLowerCase()));
+                    const fallbackMatch = fallbackMoviesList.find(f => f.id === m.id || (m.title && f.title.toLowerCase().includes(m.title.toLowerCase())));
+                    const rawTrailer = m.trailer_url || m.trailer;
+                    const parsedTrailer = getYouTubeEmbedUrl(rawTrailer, true);
+                    const fallbackTrailer = fallbackMatch ? fallbackMatch.trailer_url : 'https://www.youtube.com/embed/Way9Dexny3w?autoplay=1';
+                    const trailerUrl = parsedTrailer || (rawTrailer && rawTrailer.startsWith('http') ? rawTrailer : fallbackTrailer);
+
                     return {
                         id: m.id,
                         title: m.title,
@@ -226,7 +261,7 @@ async function loadMoviesFromBackend() {
                         description: m.description || (fallbackMatch ? fallbackMatch.description : 'Trải nghiệm đỉnh cao công nghệ điện ảnh tại LUMEN Cinema.'),
                         poster_url: m.poster_url || (fallbackMatch ? fallbackMatch.poster_url : ''),
                         backdrop_url: (fallbackMatch ? fallbackMatch.backdrop_url : m.poster_url),
-                        trailer_url: (m.trailer_url && m.trailer_url.includes('embed')) ? m.trailer_url : (fallbackMatch ? fallbackMatch.trailer_url : 'https://www.youtube.com/embed/Way9Dexny3w?autoplay=1'),
+                        trailer_url: trailerUrl,
                         accent_color: fallbackMatch ? fallbackMatch.accent_color : '#ff5e1e',
                         release_date: m.release_date || '2026'
                     };
@@ -307,10 +342,10 @@ function renderStage() {
 
         stage.appendChild(card);
 
-        // Dot Indicator
+        // Dot Indicator (Responsive kích thước hạt chỉ số theo Mobile)
         if (dotsBar) {
             const dot = document.createElement('button');
-            dot.className = `w-2 h-2 rounded-full transition-all duration-300 ${idx === currentIndex ? 'w-6 bg-[#ff5e1e]' : 'bg-slate-700 hover:bg-slate-500'}`;
+            dot.className = `w-1.5 h-1.5 min-[360px]:w-2 min-[360px]:h-2 rounded-full transition-all duration-300 shrink-0 ${idx === currentIndex ? 'w-4 min-[360px]:w-6 bg-[#ff5e1e]' : 'bg-slate-700 hover:bg-slate-500'}`;
             dot.title = m.title;
             dot.addEventListener('click', () => selectMovie(idx));
             dotsBar.appendChild(dot);
@@ -411,9 +446,9 @@ function selectMovie(index) {
         const dots = dotsBar.querySelectorAll('button');
         dots.forEach((dot, dIdx) => {
             if (dIdx === currentIndex) {
-                dot.className = 'w-6 h-2 rounded-full bg-[#ff5e1e] shadow-[0_0_12px_rgba(255,94,30,0.8)] transition-all duration-300';
+                dot.className = 'w-4 min-[360px]:w-6 h-1.5 min-[360px]:h-2 rounded-full bg-[#ff5e1e] shadow-[0_0_12px_rgba(255,94,30,0.8)] transition-all duration-300 shrink-0';
             } else {
-                dot.className = 'w-2 h-2 rounded-full bg-slate-700 hover:bg-slate-500 transition-all duration-300';
+                dot.className = 'w-1.5 h-1.5 min-[360px]:w-2 min-[360px]:h-2 rounded-full bg-slate-700 hover:bg-slate-500 transition-all duration-300 shrink-0';
             }
         });
     }
@@ -744,9 +779,15 @@ function initTrailerModal() {
     if (btnTrailer && modal && iframe) {
         btnTrailer.addEventListener('click', () => {
             const movie = filteredMovies[currentIndex];
-            if (!movie || !movie.trailer_url) return;
+            if (!movie) return;
 
-            iframe.src = movie.trailer_url;
+            const targetUrl = getYouTubeEmbedUrl(movie.trailer_url || movie.trailer, true) || movie.trailer_url;
+            if (!targetUrl) {
+                alert('Trailer cho tác phẩm này hiện đang được cập nhật.');
+                return;
+            }
+
+            iframe.src = targetUrl;
             modal.classList.remove('opacity-0', 'pointer-events-none');
             modal.classList.add('opacity-100', 'pointer-events-auto');
             playUiTone(620, 'sine', 0.08, 0.05);
@@ -761,6 +802,11 @@ function initTrailerModal() {
         if (btnClose) btnClose.addEventListener('click', closeModal);
         modal.addEventListener('click', (e) => {
             if (e.target === modal) closeModal();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal.classList.contains('opacity-100')) {
+                closeModal();
+            }
         });
     }
 }

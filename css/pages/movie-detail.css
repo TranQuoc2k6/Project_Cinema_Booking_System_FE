@@ -162,3 +162,96 @@
     background-position: -200% 0;
   }
 }
+
+/* ==========================================================================
+   8. Movie Reviews & Ratings Components (Task T3C7300)
+   ========================================================================== */
+.star-rating-select {
+  display: inline-flex;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+.star-interactive-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.75rem;
+  line-height: 1;
+  color: #475569;
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s ease, filter 0.2s ease;
+  padding: 0.25rem;
+}
+
+.star-interactive-btn:hover {
+  transform: scale(1.25);
+}
+
+.star-interactive-btn.active {
+  color: #f59e0b;
+  filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.65));
+}
+
+.star-interactive-btn.hovered {
+  color: #fbbf24;
+  filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.8));
+}
+
+.rating-bar-track {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 9999px;
+  overflow: hidden;
+  position: relative;
+}
+
+.rating-bar-fill {
+  height: 100%;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #ff5e1e 0%, #f59e0b 50%, #d4ff00 100%);
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+}
+
+.review-card-item {
+  background: rgba(19, 23, 34, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 1.25rem;
+  padding: 1.25rem sm:padding: 1.5rem;
+  transition: all 0.25s ease;
+}
+
+.review-card-item:hover {
+  border-color: rgba(255, 255, 255, 0.16);
+  background: rgba(25, 30, 45, 0.75);
+}
+
+.badge-verified-viewer {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: rgba(16, 185, 129, 0.12);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.badge-owner-review {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: rgba(255, 94, 30, 0.15);
+  color: #ff5e1e;
+  border: 1px solid rgba(255, 94, 30, 0.35);
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+}
+

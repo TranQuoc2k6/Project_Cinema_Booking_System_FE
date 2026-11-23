@@ -1,0 +1,103 @@
+/* ==========================================================================
+   LUMEN CINEMA - MOVIES PAGE STYLES (css/pages/movies.css)
+   Trang Khám Phá Phim Chiếu Rạp: Shimmer Skeleton, Empty & Error UI,
+   Responsive Mobile 2 Cột & Phân Trang
+   ========================================================================== */
+
+/* 1. SKELETON LOADING SHIMMER ANIMATION */
+@keyframes shimmerAnim {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(25, 30, 45, 0.6) 0%,
+    rgba(40, 50, 75, 0.9) 50%,
+    rgba(25, 30, 45, 0.6) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmerAnim 1.6s infinite ease-in-out;
+}
+
+/* 2. RESPONSIVE UTILITIES */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* 3. MOVIE CARD STYLES */
+.movie-card {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.3s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .movie-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(255, 94, 30, 0.5);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 94, 30, 0.2);
+  }
+}
+
+/* 4. ACTIVE FILTER BUTTON GLOW */
+.filter-btn-active {
+  background: linear-gradient(to right, #ff5e1e, #ea580c) !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 16px rgba(255, 94, 30, 0.45) !important;
+  border-color: transparent !important;
+}
+
+/* 5. PAGINATION BUTTONS */
+.pagination-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 38px;
+  height: 38px;
+  padding: 0 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+
+.pagination-btn-active {
+  background: linear-gradient(to right, #ff5e1e, #ea580c);
+  color: #ffffff;
+  box-shadow: 0 0 14px rgba(255, 94, 30, 0.45);
+}
+
+.pagination-btn:disabled,
+.pagination-btn.disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* 6. MOBILE TOUCH TARGETS & ADAPTATION (<= 640px) */
+@media (max-width: 640px) {
+  .movie-card .card-content {
+    padding: 0.75rem !important;
+  }
+  
+  .filter-tabs-container {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .pagination-btn {
+    min-width: 34px;
+    height: 34px;
+    padding: 0 8px;
+    font-size: 12px;
+  }
+}
