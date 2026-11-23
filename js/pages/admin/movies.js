@@ -85,6 +85,7 @@ async function loadMoviesFromApi() {
             genre_ids: genreIds,
             status: (m.status || 'now_showing').toLowerCase(),
             poster_url: m.poster_url || 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=400&auto=format&fit=crop&q=80',
+            trailer_url: m.trailer_url || '',
             description: m.description || ''
           };
         });
@@ -120,6 +121,7 @@ async function fallbackPublicMovies() {
           genre_ids: [],
           status: (m.status || 'now_showing').toLowerCase(),
           poster_url: m.poster_url || 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=400&auto=format&fit=crop&q=80',
+          trailer_url: m.trailer_url || '',
           description: m.description || ''
         }));
         return;
@@ -140,6 +142,7 @@ async function fallbackPublicMovies() {
       genre_ids: [],
       status: m.status || 'now_showing',
       poster_url: m.poster_url || '',
+      trailer_url: m.trailer_url || '',
       description: m.description || ''
     }));
   }
@@ -192,7 +195,14 @@ function renderMoviesTable(list) {
           </div>
         </td>
         <td>
-          <div style="font-weight: 700; color: #fff; font-size: 15px;">${movie.title}</div>
+          <div style="font-weight: 700; color: #fff; font-size: 15px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+            <span>${movie.title}</span>
+            ${movie.trailer_url ? `
+              <a href="${movie.trailer_url}" target="_blank" class="badge badge-danger text-xs" style="text-decoration: none; display: inline-flex; align-items: center; gap: 4px; padding: 2px 7px; font-size: 11px;" title="Mở xem Trailer YouTube">
+                <i class="fa-brands fa-youtube"></i> Trailer
+              </a>
+            ` : ''}
+          </div>
           <div style="font-size: 12px; color: var(--text-muted);">${(movie.description || '').substring(0, 50)}${(movie.description || '').length > 50 ? '...' : ''}</div>
         </td>
         <td><span class="badge badge-info">${genresStr}</span></td>
@@ -354,6 +364,49 @@ window.updatePosterPreview = function (url) {
   }
 };
 
+// Chuyển đổi YouTube link sang YouTube embed URL
+function getYouTubeEmbedUrl(url) {
+  if (!url || typeof url !== 'string') return null;
+  const trimmed = url.trim();
+  if (!trimmed) return null;
+  const regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
+  const match = trimmed.match(regExp);
+  if (match && match[1]) {
+    return `https://www.youtube.com/embed/${match[1]}?rel=0&modestbranding=1`;
+  }
+  if (trimmed.includes('youtube.com/embed/')) {
+    return trimmed;
+  }
+  return null;
+}
+
+// Live Video Trailer Preview
+window.updateTrailerPreview = function (url) {
+  const container = document.getElementById('trailer-preview-container');
+  const iframe = document.getElementById('trailer-preview-iframe');
+  const badge = document.getElementById('trailer-preview-badge');
+  if (!container || !iframe) return;
+
+  if (!url || !url.trim()) {
+    iframe.src = '';
+    container.style.display = 'none';
+    return;
+  }
+
+  const embedUrl = getYouTubeEmbedUrl(url);
+  if (embedUrl) {
+    iframe.src = embedUrl;
+    container.style.display = 'block';
+    if (badge) {
+      badge.className = 'badge badge-success text-xs';
+      badge.innerHTML = '<i class="fa-solid fa-check"></i> Link YouTube hợp lệ';
+    }
+  } else {
+    iframe.src = '';
+    container.style.display = 'none';
+  }
+};
+
 // Modal Thêm / Sửa phim
 window.openMovieModal = function (editMovieObj = null) {
   const modal = document.getElementById('movie-modal');
@@ -373,13 +426,17 @@ window.openMovieModal = function (editMovieObj = null) {
     document.getElementById('movie-genres-input').value = Array.isArray(editMovieObj.genres) ? editMovieObj.genres.join(', ') : editMovieObj.genres;
     document.getElementById('movie-status').value = editMovieObj.status;
     document.getElementById('movie-poster-url').value = editMovieObj.poster_url;
+    document.getElementById('movie-trailer-url').value = editMovieObj.trailer_url || '';
     document.getElementById('movie-description').value = editMovieObj.description || '';
     updatePosterPreview(editMovieObj.poster_url);
+    updateTrailerPreview(editMovieObj.trailer_url || '');
   } else {
     titleEl.textContent = 'Thêm phim mới vào hệ thống';
     editId.value = '';
     document.getElementById('movie-release-date').value = new Date().toISOString().split('T')[0];
+    document.getElementById('movie-trailer-url').value = '';
     updatePosterPreview('');
+    updateTrailerPreview('');
   }
 
   modal.classList.add('show');
@@ -389,6 +446,7 @@ window.closeMovieModal = function () {
   const modal = document.getElementById('movie-modal');
   if (modal) modal.classList.remove('show');
   clearSelectedPosterFile();
+  updateTrailerPreview('');
 };
 
 // Xử lý lưu form phim (Tự động Upload Poster nếu có file mới -> Gọi API POST/PUT Database)
@@ -401,6 +459,7 @@ window.handleMovieSubmit = async function (e) {
   const genresStr = document.getElementById('movie-genres-input').value;
   const status = document.getElementById('movie-status').value;
   let poster_url = document.getElementById('movie-poster-url').value.trim();
+  const trailer_url = document.getElementById('movie-trailer-url').value.trim();
   const description = document.getElementById('movie-description').value.trim();
 
   // Validation ràng buộc
@@ -463,6 +522,7 @@ window.handleMovieSubmit = async function (e) {
       release_date,
       status,
       poster_url,
+      trailer_url: trailer_url || null,
       description,
       genre_ids: genreIds
     };

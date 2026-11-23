@@ -279,6 +279,31 @@
             </div>
           </div>
 
+          <!-- LINK VIDEO TRAILER YOUTUBE & LIVE TRAILER PREVIEW -->
+          <div class="form-group">
+            <label class="form-label" for="movie-trailer-url">
+              <i class="fa-brands fa-youtube text-danger"></i>
+              Link Video Trailer YouTube
+              <span class="text-xs text-muted" style="font-weight: normal; margin-left: 8px;">(Hỗ trợ link: watch?v=..., youtu.be/..., hoặc embed/...)</span>
+            </label>
+            <input type="url" id="movie-trailer-url" class="form-control" placeholder="VD: https://www.youtube.com/watch?v=Way9Dexny3w hoặc https://youtu.be/..." oninput="updateTrailerPreview(this.value)">
+
+            <!-- Khung xem trước Trailer Video (Live Trailer Preview) -->
+            <div id="trailer-preview-container" style="display: none; margin-top: 10px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: var(--border-radius-md); padding: 12px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span class="text-xs text-muted" style="display: flex; align-items: center; gap: 6px;">
+                  <i class="fa-solid fa-circle-play text-danger"></i> Xem trước Trailer video
+                </span>
+                <span id="trailer-preview-badge" class="badge badge-success text-xs">
+                  <i class="fa-solid fa-check"></i> Link YouTube hợp lệ
+                </span>
+              </div>
+              <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 6px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
+                <iframe id="trailer-preview-iframe" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; border-radius: 6px;" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+              </div>
+            </div>
+          </div>
+
           <div class="form-group">
             <label class="form-label" for="movie-description">Tóm tắt nội dung kịch bản phim</label>
             <textarea id="movie-description" class="form-control" rows="3" placeholder="Giới thiệu cốt truyện ngắn gọn, thông điệp tác phẩm..."></textarea>
