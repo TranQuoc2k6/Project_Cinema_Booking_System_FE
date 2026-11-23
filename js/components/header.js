@@ -120,6 +120,12 @@
                 <span>Vé Của Tôi</span>
               </a>
 
+              <a href="${prefixes.pages}ticket-check.html" 
+                 class="flex items-center gap-2.5 px-4 py-2.5 text-xs text-slate-300 hover:text-white hover:bg-slate-800/50 font-medium transition-colors">
+                <i class="fa-solid fa-qrcode w-4 text-center text-[#d4ff00]"></i>
+                <span>Soát Vé QR</span>
+              </a>
+
               <div class="my-1 border-t border-slate-800/80"></div>
 
               <button type="button" 
