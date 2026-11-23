@@ -2,6 +2,7 @@
  * ==========================================================================
  * LOGIN PAGE CONTROLLER (js/pages/login.js)
  * Xử lý xác thực đăng nhập, validate FE, hiện lỗi server, lưu token và redirect
+ * Hỗ trợ hiệu ứng 3D Flip Card chuyển đổi mượt mà giữa Đăng nhập & Đăng ký
  * ==========================================================================
  */
 
@@ -15,43 +16,116 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-  // 2. Kiểm tra thông báo từ URL query hoặc session (như thông báo hết hạn token 401)
+  // 2. Kiểm tra thông báo từ URL query hoặc session (như token hết hạn 401)
   checkURLAndSessionNotices();
 
   // 3. Lắng nghe sự kiện input để xóa lỗi tức thì
-  setupRealtimeValidation();
+  setupLoginRealtimeValidation();
+
+  // 4. Khởi tạo 3D Flip Card và đồng bộ chiều cao
+  initAuthFlipCard();
 });
+
+/**
+ * Điều khiển hiệu ứng 3D Flip Card
+ * @param {boolean|null} showRegister - true: lật sang Đăng ký, false: lật về Đăng nhập
+ */
+window.flipAuthCard = function (showRegister) {
+  const flipper = document.getElementById('auth-flipper');
+  if (!flipper) return;
+
+  if (typeof showRegister === 'boolean') {
+    if (showRegister) {
+      flipper.classList.add('is-flipped');
+    } else {
+      flipper.classList.remove('is-flipped');
+    }
+  } else {
+    flipper.classList.toggle('is-flipped');
+  }
+
+  // Cập nhật URL hash nhẹ nhàng không reload trang
+  const isFlipped = flipper.classList.contains('is-flipped');
+  const targetHash = isFlipped ? '#register' : '#login';
+  if (window.history && window.history.replaceState) {
+    window.history.replaceState(null, '', targetHash);
+  }
+
+  // Đồng bộ chiều cao khung lật để không bị giật trang
+  syncFlipperHeight();
+};
+
+/**
+ * Tính toán và đồng bộ chiều cao auth-flipper khớp với mặt đang hiển thị
+ */
+function syncFlipperHeight() {
+  const flipper = document.getElementById('auth-flipper');
+  if (!flipper) return;
+
+  const front = document.querySelector('.auth-face-front');
+  const back = document.querySelector('.auth-face-back');
+  if (!front || !back) return;
+
+  const isFlipped = flipper.classList.contains('is-flipped');
+  const targetFace = isFlipped ? back : front;
+  const targetHeight = targetFace.offsetHeight || targetFace.scrollHeight;
+
+  if (targetHeight > 0) {
+    flipper.style.minHeight = targetHeight + 'px';
+  }
+}
+
+/**
+ * Khởi tạo trạng thái ban đầu của Flip Card dựa trên URL hash
+ */
+function initAuthFlipCard() {
+  const flipper = document.getElementById('auth-flipper');
+  if (!flipper) return;
+
+  // Nếu URL có #register hoặc ?mode=register thì lật sang đăng ký
+  const hash = window.location.hash.toLowerCase();
+  const params = new URLSearchParams(window.location.search);
+  const isRegisterMode = hash === '#register' || params.get('mode') === 'register';
+
+  if (isRegisterMode) {
+    flipper.classList.add('is-flipped');
+  }
+
+  // Cập nhật chiều cao ban đầu và khi resize
+  setTimeout(syncFlipperHeight, 50);
+  setTimeout(syncFlipperHeight, 300);
+  window.addEventListener('resize', syncFlipperHeight);
+}
 
 function checkURLAndSessionNotices() {
   const urlParams = new URLSearchParams(window.location.search);
-  const alertBox = document.getElementById('auth-alert');
 
   if (urlParams.get('expired') === '1') {
-    showAlert('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.', 'error');
+    showLoginAlert('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.', 'error');
   } else if (urlParams.get('registered') === '1') {
-    showAlert('Đăng ký tài khoản thành công! Vui lòng đăng nhập.', 'success');
+    showLoginAlert('Đăng ký tài khoản thành công! Vui lòng đăng nhập.', 'success');
   } else {
     const errorMsg = sessionStorage.getItem('auth_error');
     if (errorMsg) {
-      showAlert(errorMsg, 'error');
+      showLoginAlert(errorMsg, 'error');
       sessionStorage.removeItem('auth_error');
     }
   }
 }
 
-function setupRealtimeValidation() {
+function setupLoginRealtimeValidation() {
   const emailInput = document.getElementById('login-email');
   const passwordInput = document.getElementById('login-password');
 
-  if (emailInput) {
+  if (emailInput && window.Validation) {
     emailInput.addEventListener('input', () => window.Validation.clearError(emailInput));
   }
-  if (passwordInput) {
+  if (passwordInput && window.Validation) {
     passwordInput.addEventListener('input', () => window.Validation.clearError(passwordInput));
   }
 }
 
-// Ẩn/Hiện mật khẩu
+// Ẩn/Hiện mật khẩu chung
 window.togglePasswordVisibility = function (inputId, btn) {
   const input = document.getElementById(inputId);
   if (!input) return;
@@ -66,16 +140,20 @@ window.togglePasswordVisibility = function (inputId, btn) {
 
 // Điền nhanh tài khoản Admin mẫu
 window.quickFillAdmin = function () {
-  document.getElementById('login-email').value = 'admin@cinema.com';
-  document.getElementById('login-password').value = 'admin123';
-  window.Validation.clearAllErrors('login-form');
+  const email = document.getElementById('login-email');
+  const pass = document.getElementById('login-password');
+  if (email) email.value = 'admin@cinema.com';
+  if (pass) pass.value = 'admin123';
+  if (window.Validation) window.Validation.clearAllErrors('login-form');
 };
 
 // Điền nhanh tài khoản Khách hàng mẫu
 window.quickFillCustomer = function () {
-  document.getElementById('login-email').value = 'customer@cinema.com';
-  document.getElementById('login-password').value = 'user123';
-  window.Validation.clearAllErrors('login-form');
+  const email = document.getElementById('login-email');
+  const pass = document.getElementById('login-password');
+  if (email) email.value = 'customer@cinema.com';
+  if (pass) pass.value = 'user123';
+  if (window.Validation) window.Validation.clearAllErrors('login-form');
 };
 
 // Xử lý nộp form đăng nhập
@@ -87,49 +165,50 @@ window.handleLoginSubmit = async function (e) {
   const rememberCheckbox = document.getElementById('login-remember');
   const btn = document.getElementById('btn-login-submit');
 
-  const email = emailInput.value.trim();
-  const password = passwordInput.value;
+  const email = emailInput ? emailInput.value.trim() : '';
+  const password = passwordInput ? passwordInput.value : '';
   const rememberMe = rememberCheckbox ? rememberCheckbox.checked : true;
 
   // Clear previous errors
-  window.Validation.clearAllErrors('login-form');
-  hideAlert();
+  if (window.Validation) window.Validation.clearAllErrors('login-form');
+  hideLoginAlert();
 
   // Validate FE
   let hasError = false;
 
-  if (window.Validation.isEmpty(email)) {
-    window.Validation.showError(emailInput, 'Vui lòng nhập email');
-    hasError = true;
-  } else if (!window.Validation.isValidEmail(email)) {
-    window.Validation.showError(emailInput, 'Email không đúng định dạng (vd: user@example.com)');
-    hasError = true;
-  }
+  if (window.Validation) {
+    if (window.Validation.isEmpty(email)) {
+      window.Validation.showError(emailInput, 'Vui lòng nhập email');
+      hasError = true;
+    } else if (!window.Validation.isValidEmail(email)) {
+      window.Validation.showError(emailInput, 'Email không đúng định dạng (vd: user@example.com)');
+      hasError = true;
+    }
 
-  if (window.Validation.isEmpty(password)) {
-    window.Validation.showError(passwordInput, 'Vui lòng nhập mật khẩu');
-    hasError = true;
-  } else if (password.length < 6) {
-    window.Validation.showError(passwordInput, 'Mật khẩu phải có ít nhất 6 ký tự');
-    hasError = true;
+    if (window.Validation.isEmpty(password)) {
+      window.Validation.showError(passwordInput, 'Vui lòng nhập mật khẩu');
+      hasError = true;
+    } else if (password.length < 6) {
+      window.Validation.showError(passwordInput, 'Mật khẩu phải có ít nhất 6 ký tự');
+      hasError = true;
+    }
   }
 
   if (hasError) return;
 
   // Bắt đầu gọi API đăng nhập
   btn.disabled = true;
-  btn.innerHTML = '<span>⏳</span> Đang đăng nhập...';
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang đăng nhập...';
 
   try {
     const result = await window.AuthService.login(email, password, rememberMe);
 
     if (result.success) {
-      showAlert('Đăng nhập thành công! Đang chuyển hướng...', 'success');
+      showLoginAlert('Đăng nhập thành công! Đang chuyển hướng...', 'success');
       setTimeout(() => {
         redirectAfterLogin(result.data.user);
       }, 700);
     } else {
-      // Hiển thị lỗi từ server
       let errorMessage = 'Đăng nhập không thành công.';
       if (result.status === 401) {
         errorMessage = 'Email hoặc mật khẩu không chính xác!';
@@ -138,19 +217,18 @@ window.handleLoginSubmit = async function (e) {
       } else if (result.message) {
         errorMessage = result.message;
       }
-      showAlert(errorMessage, 'error');
+      showLoginAlert(errorMessage, 'error');
       btn.disabled = false;
-      btn.innerHTML = '<span>🔐</span> Đăng nhập';
+      btn.innerHTML = '🔐 ĐĂNG NHẬP';
     }
   } catch (err) {
-    showAlert('Đã có lỗi xảy ra. Vui lòng thử lại sau!', 'error');
+    showLoginAlert('Đã có lỗi xảy ra. Vui lòng thử lại sau!', 'error');
     btn.disabled = false;
-    btn.innerHTML = '<span>🔐</span> Đăng nhập';
+    btn.innerHTML = '🔐 ĐĂNG NHẬP';
   }
 };
 
 function redirectAfterLogin(user) {
-  // Kiểm tra xem có URL redirect trước đó không (ví dụ từ booking.html, payment.html)
   const redirectUrl =
     (window.StorageService && window.StorageService.getAndClearRedirectUrl()) ||
     sessionStorage.getItem('cinema_redirect_url') ||
@@ -174,18 +252,23 @@ function redirectAfterLogin(user) {
   }
 }
 
-function showAlert(msg, type = 'error') {
-  const alertBox = document.getElementById('auth-alert');
+// Thông báo alert cho Login Form
+window.showLoginAlert = function (msg, type = 'error') {
+  const alertBox = document.getElementById('auth-alert-login') || document.getElementById('auth-alert');
   if (alertBox) {
     alertBox.textContent = msg;
-    alertBox.className = 'auth-alert-box ' + (type === 'success' ? 'success' : '');
+    alertBox.className = 'auth-alert-box ' + (type === 'success' ? 'success' : 'error');
     alertBox.style.display = 'block';
   }
-}
+};
 
-function hideAlert() {
-  const alertBox = document.getElementById('auth-alert');
+window.hideLoginAlert = function () {
+  const alertBox = document.getElementById('auth-alert-login') || document.getElementById('auth-alert');
   if (alertBox) {
     alertBox.style.display = 'none';
   }
-}
+};
+
+// Aliases cho tương thích ngược
+window.showAlert = window.showLoginAlert;
+window.hideAlert = window.hideLoginAlert;

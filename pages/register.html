@@ -4,10 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Đăng Ký Tài Khoản - LUMEN CINEMA</title>
-    <!-- Favicon / Tab Icon -->
-    <link rel="icon" type="image/png" href="../assets/images/logo/favicon.png">
-    <link rel="icon" type="image/x-icon" href="../assets/images/logo/favicon.ico">
-    <link rel="apple-touch-icon" href="../assets/images/logo/apple-touch-icon.png">
+  
+  <!-- Favicon / Tab Icon -->
+  <link rel="icon" type="image/png" href="../assets/images/logo/favicon.png">
+  <link rel="icon" type="image/x-icon" href="../assets/images/logo/favicon.ico">
+  <link rel="apple-touch-icon" href="../assets/images/logo/apple-touch-icon.png">
+  
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -24,100 +26,208 @@
   </script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    body { font-family: 'Inter', sans-serif; background-color: #0b0d12; color: #f8fafc; }
-    .glass-panel { background: rgba(19, 23, 34, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
-    .glass-card { background: rgba(30, 41, 59, 0.5); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
-    .form-control.is-invalid { border-color: #ef4444 !important; background-color: rgba(239, 68, 68, 0.05); }
-    .auth-alert-box { display: none; padding: 0.75rem 1rem; border-radius: 0.75rem; font-size: 13px; margin-bottom: 1rem; }
-    .auth-alert-box.error { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; }
-    .auth-alert-box.success { background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: #6ee7b7; }
-  </style>
+  <link rel="stylesheet" href="../css/pages/auth.css">
 </head>
-<body class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
-  
-  <div class="absolute -top-32 -left-32 w-96 h-96 bg-[#ff5e1e]/15 rounded-full blur-3xl pointer-events-none"></div>
-  <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-[#d4ff00]/10 rounded-full blur-3xl pointer-events-none"></div>
+<body class="auth-page">
 
-  <div class="glass-panel w-full max-w-lg p-6 sm:p-10 rounded-2xl sm:rounded-3xl border border-slate-700/80 shadow-2xl relative z-10">
-    <div class="text-center mb-6">
-      <a href="../index.html" class="inline-flex items-center gap-3 mb-3 group">
-        <img src="../assets/images/logo/logo.png" alt="LUMEN CINEMA" class="w-10 h-10 sm:w-12 sm:h-12 object-contain drop-shadow-[0_0_15px_rgba(255,180,0,0.5)] group-hover:scale-105 transition-transform duration-300">
-        <div class="flex flex-col text-left">
-          <span class="text-xl sm:text-2xl font-black tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-[#ff5e1e] via-[#d4ff00] to-white">
-            LUMEN<span class="text-white font-light">CINEMA</span>
-          </span>
-          <span class="text-[9px] uppercase tracking-widest text-[#d4ff00] -mt-1 font-semibold">Studio & Theater HQ</span>
+  <!-- Ambient Floating Background Circles -->
+  <div class="auth-bg-ambient">
+    <div class="bg-circle bg1"></div>
+    <div class="bg-circle bg2"></div>
+    <div class="bg-circle bg3"></div>
+  </div>
+
+  <!-- 3D Flip Card Container (Mặc định lật sang mặt Đăng Ký) -->
+  <div class="auth-wrapper">
+    <div class="auth-flipper is-flipped" id="auth-flipper">
+      
+      <!-- ===================================================================
+           FRONT FACE: ĐĂNG NHẬP (LOGIN)
+           =================================================================== -->
+      <div class="auth-face auth-face-front">
+        <!-- Top Emblem / Badge Icon with Subtle Glow -->
+        <div class="auth-badge-wrapper">
+          <div class="auth-badge-icon">
+            <i class="fa-solid fa-lock"></i>
+          </div>
         </div>
-      </a>
-      <h1 class="text-xl font-black text-white uppercase tracking-wider mt-1">TẠO TÀI KHOẢN MỚI</h1>
-      <p class="text-xs text-slate-400 mt-0.5">Trở thành thành viên LUMEN CINEMA để nhận ưu đãi đặc quyền</p>
-    </div>
 
-    <!-- Alert Box -->
-    <div class="auth-alert-box error" id="auth-alert"></div>
+        <!-- Brand Header -->
+        <div class="auth-header">
+          <a href="../index.html" class="inline-flex items-center gap-3 mb-2 group">
+            <img src="../assets/images/logo/logo.png" alt="LUMEN CINEMA" class="w-10 h-10 sm:w-11 sm:h-11 object-contain drop-shadow-[0_0_15px_rgba(255,180,0,0.5)] group-hover:scale-105 transition-transform duration-300">
+            <div class="flex flex-col text-left">
+              <span class="text-xl sm:text-2xl font-black tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-[#ff5e1e] via-[#d4ff00] to-white">
+                LUMEN<span class="text-white font-light">CINEMA</span>
+              </span>
+              <span class="text-[9px] uppercase tracking-widest text-[#d4ff00] -mt-1 font-semibold">Studio & Theater HQ</span>
+            </div>
+          </a>
+          <h1 class="auth-title">ĐĂNG NHẬP HỆ THỐNG</h1>
+          <p class="auth-subtitle">Hệ thống rạp điện ảnh LUMEN CINEMA</p>
+        </div>
 
-    <form id="register-form" novalidate onsubmit="handleRegisterSubmit(event)" class="space-y-3.5">
-      <div>
-        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1" for="reg-fullname">Họ và tên <span class="text-rose-500">*</span></label>
-        <div class="relative">
-          <input type="text" id="reg-fullname" class="form-control w-full bg-slate-900/90 border border-slate-700 text-slate-200 text-xs rounded-xl py-3 pl-10 pr-4 focus:outline-none focus:border-[#ff5e1e]" placeholder="Nguyễn Văn A">
-          <i class="fa-solid fa-user absolute left-3.5 top-3.5 text-xs text-slate-500"></i>
+        <!-- Alert Box -->
+        <div class="auth-alert-box error" id="auth-alert-login"></div>
+
+        <!-- Login Form -->
+        <form id="login-form" novalidate onsubmit="handleLoginSubmit(event)">
+          <div class="auth-field">
+            <label class="auth-label" for="login-email">Email đăng nhập</label>
+            <div class="auth-input-group">
+              <input type="email" id="login-email" class="auth-input form-control" placeholder="user@example.com" autocomplete="email">
+              <i class="fa-solid fa-envelope auth-input-icon"></i>
+            </div>
+          </div>
+
+          <div class="auth-field">
+            <label class="auth-label" for="login-password">Mật khẩu</label>
+            <div class="auth-input-group">
+              <input type="password" id="login-password" class="auth-input form-control" placeholder="••••••••" autocomplete="current-password">
+              <i class="fa-solid fa-lock auth-input-icon"></i>
+              <button type="button" class="auth-eye-btn" onclick="togglePasswordVisibility('login-password', this)">👁️</button>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between text-xs pt-1">
+            <label class="flex items-center gap-2 text-slate-400 cursor-pointer select-none">
+              <input type="checkbox" id="login-remember" checked class="rounded text-[#ff5e1e] focus:ring-0">
+              <span>Ghi nhớ đăng nhập</span>
+            </label>
+            <a href="#" onclick="alert('Vui lòng liên hệ Admin để khôi phục mật khẩu!')" class="text-[#ff5e1e] hover:underline">Quên mật khẩu?</a>
+          </div>
+
+          <button type="submit" id="btn-login-submit" class="btn-auth-submit">
+            🔐 ĐĂNG NHẬP
+          </button>
+        </form>
+
+        <!-- Quick Fill Dev Accounts -->
+        <div class="quick-fill-box">
+          <span class="font-bold text-slate-300 block mb-2">⚡ Điền tài khoản mẫu có sẵn:</span>
+          <div class="grid grid-cols-2 gap-2">
+            <button type="button" onclick="quickFillAdmin()" class="quick-fill-btn">
+              👑 Admin
+            </button>
+            <button type="button" onclick="quickFillCustomer()" class="quick-fill-btn">
+              👤 Khách hàng
+            </button>
+          </div>
+        </div>
+
+        <!-- Flip Switch Row -->
+        <div class="auth-switch-row">
+          <span>Chưa có tài khoản?</span>
+          <button type="button" class="btn-flip-toggle" onclick="flipAuthCard(true)" title="Chuyển sang Đăng ký">
+            <i class="fa-solid fa-plus"></i>
+          </button>
+          <a href="register.html" onclick="if(window.flipAuthCard){event.preventDefault();flipAuthCard(true);}" class="text-[#ff5e1e] font-bold hover:underline">Đăng ký ngay</a>
+        </div>
+
+        <div class="text-center mt-3">
+          <a href="../index.html" class="text-xs text-slate-500 hover:text-slate-300 transition-colors">← Quay về Trang chủ</a>
         </div>
       </div>
 
-      <div>
-        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1" for="reg-email">Email <span class="text-rose-500">*</span></label>
-        <div class="relative">
-          <input type="email" id="reg-email" class="form-control w-full bg-slate-900/90 border border-slate-700 text-slate-200 text-xs rounded-xl py-3 pl-10 pr-4 focus:outline-none focus:border-[#ff5e1e]" placeholder="user@example.com">
-          <i class="fa-solid fa-envelope absolute left-3.5 top-3.5 text-xs text-slate-500"></i>
+      <!-- ===================================================================
+           BACK FACE: ĐĂNG KÝ (SIGN UP / REGISTER)
+           =================================================================== -->
+      <div class="auth-face auth-face-back">
+        <!-- Top Emblem / Badge Icon with Subtle Glow -->
+        <div class="auth-badge-wrapper">
+          <div class="auth-badge-icon">
+            <i class="fa-solid fa-user-plus"></i>
+          </div>
+        </div>
+
+        <!-- Brand Header -->
+        <div class="auth-header">
+          <a href="../index.html" class="inline-flex items-center gap-3 mb-2 group">
+            <img src="../assets/images/logo/logo.png" alt="LUMEN CINEMA" class="w-10 h-10 sm:w-11 sm:h-11 object-contain drop-shadow-[0_0_15px_rgba(255,180,0,0.5)] group-hover:scale-105 transition-transform duration-300">
+            <div class="flex flex-col text-left">
+              <span class="text-xl sm:text-2xl font-black tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-[#ff5e1e] via-[#d4ff00] to-white">
+                LUMEN<span class="text-white font-light">CINEMA</span>
+              </span>
+              <span class="text-[9px] uppercase tracking-widest text-[#d4ff00] -mt-1 font-semibold">Studio & Theater HQ</span>
+            </div>
+          </a>
+          <h1 class="auth-title">TẠO TÀI KHOẢN MỚI</h1>
+          <p class="auth-subtitle">Trở thành thành viên LUMEN CINEMA để nhận ưu đãi đặc quyền</p>
+        </div>
+
+        <!-- Alert Box -->
+        <div class="auth-alert-box error" id="auth-alert-reg"></div>
+
+        <!-- Register Form -->
+        <form id="register-form" novalidate onsubmit="handleRegisterSubmit(event)">
+          <div class="auth-field">
+            <label class="auth-label" for="reg-fullname">Họ và tên <span class="text-rose-500">*</span></label>
+            <div class="auth-input-group">
+              <input type="text" id="reg-fullname" class="auth-input form-control" placeholder="Nguyễn Văn A">
+              <i class="fa-solid fa-user auth-input-icon"></i>
+            </div>
+          </div>
+
+          <div class="auth-field">
+            <label class="auth-label" for="reg-email">Email <span class="text-rose-500">*</span></label>
+            <div class="auth-input-group">
+              <input type="email" id="reg-email" class="auth-input form-control" placeholder="user@example.com">
+              <i class="fa-solid fa-envelope auth-input-icon"></i>
+            </div>
+          </div>
+
+          <div class="auth-field">
+            <label class="auth-label" for="reg-phone">Số điện thoại (Không bắt buộc)</label>
+            <div class="auth-input-group">
+              <input type="tel" id="reg-phone" class="auth-input form-control" placeholder="0987654321">
+              <i class="fa-solid fa-phone auth-input-icon"></i>
+            </div>
+          </div>
+
+          <div class="auth-field">
+            <label class="auth-label" for="reg-password">Mật khẩu <span class="text-rose-500">*</span></label>
+            <div class="auth-input-group">
+              <input type="password" id="reg-password" class="auth-input form-control" placeholder="Tối thiểu 6 ký tự">
+              <i class="fa-solid fa-lock auth-input-icon"></i>
+              <button type="button" class="auth-eye-btn" onclick="togglePasswordVisibility('reg-password', this)">👁️</button>
+            </div>
+          </div>
+
+          <div class="auth-field">
+            <label class="auth-label" for="reg-confirm-password">Xác nhận mật khẩu <span class="text-rose-500">*</span></label>
+            <div class="auth-input-group">
+              <input type="password" id="reg-confirm-password" class="auth-input form-control" placeholder="Nhập lại mật khẩu trên">
+              <i class="fa-solid fa-shield-halved auth-input-icon"></i>
+              <button type="button" class="auth-eye-btn" onclick="togglePasswordVisibility('reg-confirm-password', this)">👁️</button>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-2 text-xs text-slate-400 pt-1">
+            <input type="checkbox" id="reg-terms" checked class="mt-0.5 rounded text-[#ff5e1e] focus:ring-0">
+            <label for="reg-terms" class="cursor-pointer select-none">
+              Tôi đồng ý với <a href="#" class="text-[#ff5e1e] hover:underline">Điều khoản dịch vụ</a> và <a href="#" class="text-[#ff5e1e] hover:underline">Chính sách bảo mật</a>
+            </label>
+          </div>
+
+          <button type="submit" id="btn-register-submit" class="btn-auth-submit">
+            ✨ TẠO TÀI KHOẢN
+          </button>
+        </form>
+
+        <!-- Flip Switch Row -->
+        <div class="auth-switch-row">
+          <span>Đã có tài khoản?</span>
+          <button type="button" class="btn-flip-toggle btn-flip-back" onclick="flipAuthCard(false)" title="Quay lại Đăng nhập">
+            <i class="fa-solid fa-arrow-left"></i>
+          </button>
+          <a href="login.html" onclick="if(window.flipAuthCard){event.preventDefault();flipAuthCard(false);}" class="text-[#ff5e1e] font-bold hover:underline">Đăng nhập ngay</a>
+        </div>
+
+        <div class="text-center mt-3">
+          <a href="../index.html" class="text-xs text-slate-500 hover:text-slate-300 transition-colors">← Quay về Trang chủ</a>
         </div>
       </div>
 
-      <div>
-        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1" for="reg-phone">Số điện thoại (Không bắt buộc)</label>
-        <div class="relative">
-          <input type="tel" id="reg-phone" class="form-control w-full bg-slate-900/90 border border-slate-700 text-slate-200 text-xs rounded-xl py-3 pl-10 pr-4 focus:outline-none focus:border-[#ff5e1e]" placeholder="0987654321">
-          <i class="fa-solid fa-phone absolute left-3.5 top-3.5 text-xs text-slate-500"></i>
-        </div>
-      </div>
-
-      <div>
-        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1" for="reg-password">Mật khẩu <span class="text-rose-500">*</span></label>
-        <div class="relative">
-          <input type="password" id="reg-password" class="form-control w-full bg-slate-900/90 border border-slate-700 text-slate-200 text-xs rounded-xl py-3 pl-10 pr-10 focus:outline-none focus:border-[#ff5e1e]" placeholder="Tối thiểu 6 ký tự">
-          <i class="fa-solid fa-lock absolute left-3.5 top-3.5 text-xs text-slate-500"></i>
-          <button type="button" class="absolute right-3 top-3 text-xs text-slate-500 hover:text-slate-300" onclick="togglePasswordVisibility('reg-password', this)">👁️</button>
-        </div>
-      </div>
-
-      <div>
-        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1" for="reg-confirm-password">Xác nhận mật khẩu <span class="text-rose-500">*</span></label>
-        <div class="relative">
-          <input type="password" id="reg-confirm-password" class="form-control w-full bg-slate-900/90 border border-slate-700 text-slate-200 text-xs rounded-xl py-3 pl-10 pr-10 focus:outline-none focus:border-[#ff5e1e]" placeholder="Nhập lại mật khẩu trên">
-          <i class="fa-solid fa-shield-halved absolute left-3.5 top-3.5 text-xs text-slate-500"></i>
-          <button type="button" class="absolute right-3 top-3 text-xs text-slate-500 hover:text-slate-300" onclick="togglePasswordVisibility('reg-confirm-password', this)">👁️</button>
-        </div>
-      </div>
-
-      <div class="flex items-start gap-2 text-xs text-slate-400 pt-1">
-        <input type="checkbox" id="reg-terms" checked class="mt-0.5 rounded text-[#ff5e1e] focus:ring-0">
-        <label for="reg-terms" class="cursor-pointer">
-          Tôi đồng ý với <a href="#" class="text-[#ff5e1e] hover:underline">Điều khoản dịch vụ</a> và <a href="#" class="text-[#ff5e1e] hover:underline">Chính sách bảo mật</a>
-        </label>
-      </div>
-
-      <button type="submit" id="btn-register-submit" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#ff5e1e] to-[#ea580c] text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-[#ff5e1e]/30 hover:brightness-110 transition-all mt-4">
-        ✨ TẠO TÀI KHOẢN
-      </button>
-    </form>
-
-    <div class="text-center mt-6 text-xs text-slate-400">
-      Đã có tài khoản? <a href="login.html" class="text-[#ff5e1e] font-bold hover:underline">Đăng nhập ngay</a>
-    </div>
-
-    <div class="text-center mt-3">
-      <a href="../index.html" class="text-xs text-slate-500 hover:text-slate-300">← Quay về Trang chủ</a>
     </div>
   </div>
 
@@ -127,6 +237,7 @@
   <script src="../js/config/api.js"></script>
   <script src="../js/utils/validation.js"></script>
   <script src="../js/services/auth.service.js"></script>
+  <script src="../js/pages/login.js"></script>
   <script src="../js/pages/register.js"></script>
 </body>
 </html>
