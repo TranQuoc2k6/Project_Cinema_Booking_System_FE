@@ -307,6 +307,14 @@
                             <!-- Render ghế ở đây -->
                         </div>
 
+                        <!-- Combos Section (Task T3C72E6: [Bonus] Combo bắp nước) -->
+                        <div id="detail-combos-section" class="hidden mb-5 pt-3 border-t border-white/5">
+                            <span class="text-[11px] uppercase tracking-wider text-amber-400 font-bold block mb-2">
+                                <i class="fa-solid fa-bowl-food mr-1"></i> Bắp nước & Combo đi kèm (Nhận tại quầy Concession)
+                            </span>
+                            <div id="detail-combos-container" class="flex flex-wrap gap-2.5"></div>
+                        </div>
+
                         <!-- Khách hàng & Tài chính -->
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-white/10 text-xs">
                             <div>
@@ -552,6 +560,24 @@
                 }).join('');
             } else {
                 seatsContainer.innerHTML = '<span class="text-xs text-slate-500 italic">Chưa xếp ghế</span>';
+            }
+
+            // 4.1 Combos bắp nước (Task T3C72E6)
+            const combosSection = document.getElementById('detail-combos-section');
+            const combosContainer = document.getElementById('detail-combos-container');
+            if (combosSection && combosContainer) {
+                if (ticket.combos && ticket.combos.length > 0) {
+                    combosContainer.innerHTML = ticket.combos.map(c => `
+                        <div class="px-3 py-2 rounded-xl border border-amber-500/30 bg-amber-500/10 text-amber-200 flex items-center gap-2 text-xs">
+                            <i class="fa-solid fa-bowl-food text-amber-400"></i>
+                            <b class="text-white">${c.quantity}x</b> ${c.name}
+                            <span class="text-[10px] text-amber-400 font-mono">(${Number(c.total_price || (c.price * c.quantity)).toLocaleString('vi-VN')} đ)</span>
+                        </div>
+                    `).join('');
+                    combosSection.classList.remove('hidden');
+                } else {
+                    combosSection.classList.add('hidden');
+                }
             }
 
             // 5. Customer & Total

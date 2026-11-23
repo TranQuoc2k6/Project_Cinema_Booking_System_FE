@@ -253,6 +253,10 @@
                     <b class="text-[#d4ff00] block text-sm font-black" id="modal-seats-list"></b>
                     <span class="text-[10px] text-slate-400 block" id="modal-seats-count"></span>
                 </div>
+                <div id="modal-combos-container" class="hidden">
+                    <span class="text-slate-400 block text-[11px] mb-0.5"><i class="fa-solid fa-bowl-food text-amber-400 mr-1"></i> Combo bắp nước</span>
+                    <b class="text-amber-300 block text-xs font-bold" id="modal-combos-list"></b>
+                </div>
             </div>
 
             <!-- QR Code Section (Task T3C72CC: Bonus Mã QR vé điện tử) -->
@@ -442,6 +446,17 @@
                 const formattedDate = startTime.toLocaleDateString('vi-VN', { weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric' });
                 const seatList = ticket.seats.map(s => s.seat_number).join(', ') || 'Chưa xếp ghế';
 
+                // Combo bắp nước (Task T3C72E6)
+                let comboHtml = '';
+                if (ticket.combos && ticket.combos.length > 0) {
+                    const comboStr = ticket.combos.map(c => `${c.quantity}x ${c.name}`).join(', ');
+                    comboHtml = `
+                        <p class="text-xs text-amber-300/90 mt-0.5">
+                            <i class="fa-solid fa-bowl-food text-amber-400 mr-1"></i> Combo: <b>${comboStr}</b>
+                        </p>
+                    `;
+                }
+
                 // Trạng thái vé & màu sắc badge
                 let statusBadge = '';
                 if (ticket.status === 'DA_THANH_TOAN' || ticket.payment_status === 'PAID') {
@@ -496,6 +511,7 @@
                                 <p class="text-xs text-slate-400 mt-0.5">
                                     <i class="fa-solid fa-couch text-[#d4ff00] mr-1"></i> Ghế: <b class="text-[#d4ff00]">${seatList}</b>
                                 </p>
+                                ${comboHtml}
                             </div>
                         </div>
 
@@ -570,6 +586,18 @@
             document.getElementById('modal-seats-list').innerText = seatList;
             document.getElementById('modal-seats-count').innerText = `${ticket.seats.length} ghế`;
             document.getElementById('modal-total-price').innerText = `${Number(ticket.total_price).toLocaleString('vi-VN')} đ`;
+
+            // Combo bắp nước (Task T3C72E6)
+            const modalCombosContainer = document.getElementById('modal-combos-container');
+            const modalCombosList = document.getElementById('modal-combos-list');
+            if (modalCombosContainer && modalCombosList) {
+                if (ticket.combos && ticket.combos.length > 0) {
+                    modalCombosList.innerText = ticket.combos.map(c => `${c.quantity}x ${c.name} (${Number(c.total_price || (c.price * c.quantity)).toLocaleString('vi-VN')} đ)`).join(', ');
+                    modalCombosContainer.classList.remove('hidden');
+                } else {
+                    modalCombosContainer.classList.add('hidden');
+                }
+            }
 
             // Badge trạng thái
             const badgeContainer = document.getElementById('modal-status-badge');
