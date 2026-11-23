@@ -253,6 +253,98 @@ const BookingService = {
         message: error.response?.data?.detail || error.message
       };
     }
+  },
+  // ========================================================================
+  // QR TICKET VERIFICATION & CHECK-IN (Task T3C72CC: Bonus Mã QR vé điện tử)
+  // ========================================================================
+
+  /**
+   * Sinh đường dẫn tra cứu / xác thực vé khi quét mã QR
+   * @param {string} bookingCode
+   * @returns {string}
+   */
+  generateTicketCheckUrl(bookingCode) {
+    if (!bookingCode) return '';
+    const origin = (typeof window !== 'undefined' && window.location && window.location.origin)
+      ? window.location.origin
+      : 'http://127.0.0.1:5500';
+    return `${origin}/pages/ticket-check.html?code=${encodeURIComponent(bookingCode)}`;
+  },
+
+  /**
+   * Sinh URL ảnh mã QR chứa đường dẫn tra cứu vé
+   * @param {string} bookingCode
+   * @param {number} size
+   * @returns {string}
+   */
+  generateQrCodeImageUrl(bookingCode, size = 260) {
+    const checkUrl = this.generateTicketCheckUrl(bookingCode);
+    return `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&margin=10&data=${encodeURIComponent(checkUrl)}`;
+  },
+
+  /**
+   * Tra cứu thông tin vé điện tử khi quét mã QR (Public / Staff)
+   * @param {string} bookingCode
+   * @returns {Promise<object>}
+   */
+  async verifyTicket(bookingCode) {
+    try {
+      const baseUrl = this._getBaseUrl();
+      const cleanCode = (bookingCode || '').trim();
+      if (!cleanCode) {
+        return { success: false, message: 'Vui lòng nhập hoặc quét mã vé' };
+      }
+
+      const url = `${baseUrl}/api/tickets/verify/${encodeURIComponent(cleanCode)}`;
+      if (window.apiClient) {
+        const res = await window.apiClient.get(url);
+        return { success: true, data: res.data };
+      }
+      const res = await fetch(url, { headers: this._getHeaders() });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Không tìm thấy vé xem phim');
+      return { success: true, data };
+    } catch (error) {
+      console.warn('[BookingService.verifyTicket]', error.message);
+      return {
+        success: false,
+        message: error.response?.data?.detail || error.message || 'Không thể tra cứu thông tin vé'
+      };
+    }
+  },
+
+  /**
+   * Xác nhận vào rạp / Soát vé khi quét QR (Check-in Ticket)
+   * @param {string} bookingCode
+   * @returns {Promise<object>}
+   */
+  async checkinTicket(bookingCode) {
+    try {
+      const baseUrl = this._getBaseUrl();
+      const cleanCode = (bookingCode || '').trim();
+      if (!cleanCode) {
+        return { success: false, message: 'Vui lòng cung cấp mã vé cần soát' };
+      }
+
+      const url = `${baseUrl}/api/tickets/verify/${encodeURIComponent(cleanCode)}/checkin`;
+      if (window.apiClient) {
+        const res = await window.apiClient.post(url);
+        return { success: true, data: res.data };
+      }
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: this._getHeaders()
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Không thể xác nhận vào rạp');
+      return { success: true, data };
+    } catch (error) {
+      console.warn('[BookingService.checkinTicket]', error.message);
+      return {
+        success: false,
+        message: error.response?.data?.detail || error.message || 'Lỗi khi soát vé vào rạp'
+      };
+    }
   }
 };
 
