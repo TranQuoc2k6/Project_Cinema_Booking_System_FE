@@ -307,10 +307,10 @@ function renderStage() {
 
         stage.appendChild(card);
 
-        // Dot Indicator
+        // Dot Indicator (Responsive kích thước hạt chỉ số theo Mobile)
         if (dotsBar) {
             const dot = document.createElement('button');
-            dot.className = `w-2 h-2 rounded-full transition-all duration-300 ${idx === currentIndex ? 'w-6 bg-[#ff5e1e]' : 'bg-slate-700 hover:bg-slate-500'}`;
+            dot.className = `w-1.5 h-1.5 min-[360px]:w-2 min-[360px]:h-2 rounded-full transition-all duration-300 shrink-0 ${idx === currentIndex ? 'w-4 min-[360px]:w-6 bg-[#ff5e1e]' : 'bg-slate-700 hover:bg-slate-500'}`;
             dot.title = m.title;
             dot.addEventListener('click', () => selectMovie(idx));
             dotsBar.appendChild(dot);
@@ -411,9 +411,9 @@ function selectMovie(index) {
         const dots = dotsBar.querySelectorAll('button');
         dots.forEach((dot, dIdx) => {
             if (dIdx === currentIndex) {
-                dot.className = 'w-6 h-2 rounded-full bg-[#ff5e1e] shadow-[0_0_12px_rgba(255,94,30,0.8)] transition-all duration-300';
+                dot.className = 'w-4 min-[360px]:w-6 h-1.5 min-[360px]:h-2 rounded-full bg-[#ff5e1e] shadow-[0_0_12px_rgba(255,94,30,0.8)] transition-all duration-300 shrink-0';
             } else {
-                dot.className = 'w-2 h-2 rounded-full bg-slate-700 hover:bg-slate-500 transition-all duration-300';
+                dot.className = 'w-1.5 h-1.5 min-[360px]:w-2 min-[360px]:h-2 rounded-full bg-slate-700 hover:bg-slate-500 transition-all duration-300 shrink-0';
             }
         });
     }
