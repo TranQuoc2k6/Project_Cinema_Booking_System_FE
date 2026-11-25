@@ -783,7 +783,16 @@ function initTrailerModal() {
 
             const targetUrl = getYouTubeEmbedUrl(movie.trailer_url || movie.trailer, true) || movie.trailer_url;
             if (!targetUrl) {
-                alert('Trailer cho tác phẩm này hiện đang được cập nhật.');
+                if (typeof window.showToast === 'function') {
+                    window.showToast('Trailer cho tác phẩm này hiện đang được cập nhật.', 'info');
+                } else if (typeof window.showAlertModal === 'function') {
+                    window.showAlertModal({
+                        type: 'info',
+                        title: 'Thông báo',
+                        message: 'Trailer cho tác phẩm này hiện đang được cập nhật.',
+                        confirmText: 'Đã hiểu'
+                    });
+                }
                 return;
             }
 
@@ -911,8 +920,25 @@ function updateAuthHeader() {
 
         const logoutBtn = document.getElementById('logout-btn');
         if (logoutBtn) {
-            logoutBtn.onclick = () => {
-                if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
+            logoutBtn.onclick = async () => {
+                if (typeof window.handleUserLogout === 'function') {
+                    window.handleUserLogout();
+                    return;
+                }
+                const confirmed = typeof window.showConfirmModal === 'function'
+                    ? await window.showConfirmModal({
+                        type: 'warning',
+                        title: 'Xác nhận đăng xuất',
+                        message: 'Bạn có chắc chắn muốn đăng xuất khỏi tài khoản không?',
+                        cancelText: 'Hủy',
+                        confirmText: 'Đăng xuất',
+                        variant: 'primary'
+                    })
+                    : false;
+                if (confirmed) {
+                    if (typeof window.showToast === 'function') {
+                        window.showToast('Đăng xuất thành công!', 'info', 1200);
+                    }
                     if (window.AuthService) {
                         window.AuthService.logout('index.html');
                     } else if (window.StorageService) {

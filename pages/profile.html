@@ -112,7 +112,7 @@
             </div>
 
             <!-- Mobile & Tablet Dropdown Navigation (< 1024px) -->
-            <div id="mobile-nav-menu" class="hidden lg:hidden px-4 pb-4 pt-1 border-t border-white/10 flex-col gap-1.5">
+            <div id="mobile-nav-menu" class="menu-closed lg:hidden px-4 border-t border-white/10 flex-col gap-1.5">
                 <a href="../index.html" class="px-3 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 flex items-center gap-2 transition-colors">
                     <i class="fa-solid fa-house w-4 text-center"></i> Trang chủ
                 </a>
@@ -255,6 +255,8 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="../js/utils/storage.js"></script>
+    <script src="../js/utils/toast.js"></script>
+    <script src="../js/components/modal.js"></script>
     <script src="../js/config/api.js"></script>
     <script src="../js/utils/validation.js"></script>
     <script src="../js/services/auth.service.js"></script>
@@ -332,6 +334,13 @@
 
             if (!fullName || fullName.length < 2) {
                 showAlert(alertEl, 'Họ và tên phải có ít nhất 2 ký tự!', 'error');
+                document.getElementById('edit-fullname')?.focus();
+                return;
+            }
+
+            if (phone && window.Validation && !window.Validation.isValidPhone(phone)) {
+                showAlert(alertEl, 'Số điện thoại không hợp lệ (10 chữ số, bắt đầu bằng 0 hoặc +84)!', 'error');
+                document.getElementById('edit-phone')?.focus();
                 return;
             }
 
@@ -344,17 +353,21 @@
                 avatar: avatar || null
             };
 
-            const result = await window.UserService.updateProfile(payload);
+            try {
+                const result = await window.UserService.updateProfile(payload);
 
-            btn.disabled = false;
-            btn.innerHTML = '💾 LƯU THAY ĐỔI HỒ SƠ';
-
-            if (result.success) {
-                showAlert(alertEl, 'Cập nhật thông tin hồ sơ thành công!', 'success');
-                // Cập nhật lại giao diện
-                loadProfile();
-            } else {
-                showAlert(alertEl, result.message || 'Cập nhật thất bại!', 'error');
+                if (result.success) {
+                    showAlert(alertEl, 'Cập nhật thông tin hồ sơ thành công!', 'success');
+                    // Cập nhật lại giao diện
+                    loadProfile();
+                } else {
+                    showAlert(alertEl, result.message || 'Cập nhật thất bại!', 'error');
+                }
+            } catch (err) {
+                showAlert(alertEl, 'Không thể kết nối máy chủ. Vui lòng thử lại!', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '💾 LƯU THAY ĐỔI HỒ SƠ';
             }
         }
 
@@ -403,16 +416,38 @@
         }
 
         function showAlert(el, msg, type = 'error') {
-            el.className = type === 'success'
-                ? 'p-3 rounded-xl text-xs mb-4 bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 block'
-                : 'p-3 rounded-xl text-xs mb-4 bg-rose-500/20 text-rose-400 border border-rose-500/40 block';
-            el.innerText = msg;
+            if (el) {
+                el.className = type === 'success'
+                    ? 'p-3 rounded-xl text-xs mb-4 bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 block'
+                    : 'p-3 rounded-xl text-xs mb-4 bg-rose-500/20 text-rose-400 border border-rose-500/40 block';
+                el.innerText = msg;
+            }
+            if (typeof window.showToast === 'function') {
+                window.showToast(msg, type === 'success' ? 'success' : 'error');
+            }
         }
 
-        function handleLogout() {
-            if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
-                window.AuthService.logout('login.html');
+        async function handleLogout() {
+            const confirmed = typeof window.showConfirmModal === 'function'
+                ? await window.showConfirmModal({
+                    type: 'warning',
+                    title: 'Xác nhận đăng xuất',
+                    message: 'Bạn có chắc chắn muốn đăng xuất khỏi tài khoản không?',
+                    cancelText: 'Hủy',
+                    confirmText: 'Đăng xuất',
+                    variant: 'primary',
+                    closeOnBackdrop: true
+                })
+                : false;
+
+            if (!confirmed) return;
+
+            if (typeof window.showToast === 'function') {
+                window.showToast('Đang đăng xuất khỏi hệ thống...', 'info', 1500);
             }
+            setTimeout(() => {
+                window.AuthService.logout('login.html');
+            }, 250);
         }
 
         window.onload = loadProfile;

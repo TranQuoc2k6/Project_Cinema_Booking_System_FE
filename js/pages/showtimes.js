@@ -756,13 +756,31 @@
   function handleSelectShowtime(showtimeId) {
     const showtime = state.currentShowtimes.find(s => s.id === showtimeId);
     if (!showtime) {
-      alert('Không tìm thấy thông tin suất chiếu!');
+      if (typeof window.showToast === 'function') {
+        window.showToast('Không tìm thấy thông tin suất chiếu đã chọn!', 'warning');
+      } else if (typeof window.showAlertModal === 'function') {
+        window.showAlertModal({
+          type: 'warning',
+          title: 'Cảnh báo!',
+          message: 'Không tìm thấy thông tin suất chiếu đã chọn!',
+          confirmText: 'Đã hiểu'
+        });
+      }
       return;
     }
 
     // Kiểm tra lại lần nữa phòng trường hợp quá giờ
     if (window.ShowtimeService.isPastShowtime(showtime.start_time)) {
-      alert('Suất chiếu này đã bắt đầu. Vui lòng chọn một suất chiếu khác!');
+      if (typeof window.showToast === 'function') {
+        window.showToast('Suất chiếu này đã bắt đầu. Vui lòng chọn một suất chiếu khác!', 'warning');
+      } else if (typeof window.showAlertModal === 'function') {
+        window.showAlertModal({
+          type: 'warning',
+          title: 'Suất chiếu đã bắt đầu',
+          message: 'Suất chiếu này đã bắt đầu. Vui lòng chọn một suất chiếu khác!',
+          confirmText: 'Đã hiểu'
+        });
+      }
       return;
     }
 

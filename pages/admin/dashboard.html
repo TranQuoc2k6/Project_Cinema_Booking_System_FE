@@ -230,7 +230,7 @@
         </div>
 
         <!-- ROW 1: DOANH THU THEO NGÀY (3D CHART) & TỶ LỆ LẤP ĐẦY SUẤT CHIẾU -->
-        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: var(--spacing-lg); margin-bottom: var(--spacing-xl);">
+        <div class="dashboard-charts-grid" style="display: grid; grid-template-columns: 2fr 1fr; gap: var(--spacing-lg); margin-bottom: var(--spacing-xl);">
           <!-- 3D Cylindrical Towers Chart: Doanh thu theo ngày -->
           <div class="table-card" style="padding: 1.8rem;">
             <div class="d-flex justify-between align-center" style="margin-bottom: var(--spacing-lg); flex-wrap: wrap; gap: 8px;">
@@ -345,6 +345,8 @@
   </div>
 
   <!-- Shared Scripts -->
+  <script src="../../js/utils/toast.js"></script>
+  <script src="../../js/components/modal.js"></script>
   <script src="../../js/utils/admin-layout.js"></script>
   <script src="../../js/pages/admin/dashboard.js"></script>
 </body>

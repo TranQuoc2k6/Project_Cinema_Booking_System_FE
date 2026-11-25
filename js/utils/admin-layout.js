@@ -124,29 +124,11 @@ function initModalDismissHandlers() {
 }
 
 /**
- * Toast Thông báo nhanh góc màn hình
+ * Toast Thông báo nhanh góc màn hình:
+ * Sử dụng hệ thống chuẩn toàn cục từ js/utils/toast.js (window.showToast).
  */
-window.showToast = function (message, type = 'success') {
-  let toastContainer = document.getElementById('admin-toast-container');
-  if (!toastContainer) {
-    toastContainer = document.createElement('div');
-    toastContainer.id = 'admin-toast-container';
-    toastContainer.style.cssText =
-      'position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none;';
-    document.body.appendChild(toastContainer);
-  }
-
-  const toast = document.createElement('div');
-  const bgColor = type === 'success' ? '#10b981' : type === 'danger' ? '#ef4444' : '#3b82f6';
-  toast.style.cssText = `background: #1e293b; border-left: 4px solid ${bgColor}; color: #fff; padding: 12px 18px; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; pointer-events: auto; animation: toastIn 0.3s ease;`;
-  toast.innerHTML = `<span>${type === 'success' ? '✓' : type === 'danger' ? '✕' : 'ℹ'}</span> <span>${message}</span>`;
-
-  toastContainer.appendChild(toast);
-
-  setTimeout(() => {
-    toast.style.opacity = '0';
-    toast.style.transform = 'translateY(-10px)';
-    toast.style.transition = 'all 0.3s ease';
-    setTimeout(() => toast.remove(), 300);
-  }, 3500);
-};
+if (typeof window.showToast !== 'function') {
+  window.showToast = function (message, type = 'info') {
+    console.log(`[Toast ${type}] ${message}`);
+  };
+}

@@ -150,10 +150,21 @@ document.addEventListener('DOMContentLoaded', async () => {
       updateGrandTotal();
     },
     onMaxExceeded: (maxLimit) => {
-      showToast(`Bạn chỉ được chọn tối đa ${maxLimit} ghế mỗi lần đặt vé!`, 'warning');
+      if (typeof window.showToast === 'function') {
+        window.showToast(`Bạn chỉ được chọn tối đa ${maxLimit} ghế mỗi lần đặt vé!`, 'warning');
+      }
     },
-    onExpired: () => {
-      showToast('Đã hết thời gian giữ ghế 10 phút. Hệ thống tự động hủy giữ chỗ để giải phóng ghế!', 'error');
+    onExpired: async () => {
+      if (typeof window.showAlertModal === 'function') {
+        await window.showAlertModal({
+          type: 'warning',
+          title: 'Hết thời gian giữ ghế',
+          message: 'Đã hết thời gian giữ ghế 10 phút. Hệ thống tự động hủy giữ chỗ để giải phóng ghế. Vui lòng chọn lại!',
+          confirmText: 'Đã hiểu'
+        });
+      } else if (typeof window.showToast === 'function') {
+        window.showToast('Đã hết thời gian giữ ghế 10 phút. Hệ thống tự động hủy giữ chỗ để giải phóng ghế!', 'error');
+      }
       // Tải lại sơ đồ ghế
       seatMap.load(showtimeId);
     }
@@ -209,7 +220,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const current = selectedCombos[comboId]?.quantity || 0;
     const newQty = Math.max(0, current + delta);
     if (newQty > 10) {
-      showToast('Tối đa 10 phần mỗi loại combo bắp nước!', 'warning');
+      if (typeof window.showToast === 'function') {
+        window.showToast('Tối đa 10 phần mỗi loại combo bắp nước!', 'warning');
+      }
       return;
     }
     if (newQty === 0) {
@@ -225,18 +238,25 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadCombos();
 
   // 6. Xử lý nút Tiếp Tục Thanh Toán
+  let isSubmittingBooking = false;
   window.proceedToPayment = async function() {
+    if (isSubmittingBooking) return;
+
     const selectedSeats = seatMap.getSelectedSeats();
     const seatTotal = seatMap.getTotalAmount();
 
     if (!selectedSeats || selectedSeats.length === 0) {
-      showToast('Vui lòng chọn ít nhất 1 ghế trước khi thanh toán!', 'warning');
+      if (typeof window.showToast === 'function') {
+        window.showToast('Vui lòng chọn ít nhất 1 ghế trước khi thanh toán!', 'warning');
+      }
       return;
     }
 
     // Kiểm tra đăng nhập bắt buộc
     if (!window.StorageService || !window.StorageService.isAuthenticated()) {
-      showToast('Vui lòng đăng nhập tài khoản để tiếp tục thanh toán!', 'info');
+      if (typeof window.showToast === 'function') {
+        window.showToast('Vui lòng đăng nhập tài khoản để tiếp tục thanh toán!', 'info');
+      }
       sessionStorage.setItem('cinema_redirect_url', window.location.href);
       sessionStorage.setItem('auth_error', 'Vui lòng đăng nhập để thanh toán đơn vé.');
       setTimeout(() => {
@@ -254,6 +274,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       quantity: c.quantity
     }));
 
+    isSubmittingBooking = true;
+    if (checkoutBtn) {
+      checkoutBtn.setAttribute('disabled', 'true');
+      checkoutBtn.classList.add('opacity-70', 'cursor-wait');
+      checkoutBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>ĐANG GIỮ GHẾ...</span>';
+    }
+
     // Thử gọi API giữ ghế (Task T3C6902 & T3C72E6: POST /api/bookings/hold)
     let holdResult = null;
     const seatIds = selectedSeats.map(s => {
@@ -261,81 +288,71 @@ document.addEventListener('DOMContentLoaded', async () => {
       return isNaN(num) ? 1 : num;
     });
 
-    if (window.BookingService && typeof window.BookingService.createBooking === 'function') {
-      try {
+    try {
+      if (window.BookingService && typeof window.BookingService.createBooking === 'function') {
         const payload = {
           showtime_id: parseInt(showtimeId, 10),
           seat_ids: seatIds,
           combos: combosPayload
         };
         holdResult = await window.BookingService.createBooking(payload);
-      } catch (err) {
-        console.warn('[Booking] Lỗi gọi API giữ ghế Backend, sử dụng chế độ Client Session:', err);
+        if (holdResult && !holdResult.success && holdResult.status >= 400) {
+          const errMsg = holdResult.message || 'Không thể giữ ghế đã chọn. Vui lòng chọn lại!';
+          if (typeof window.showAlertModal === 'function') {
+            await window.showAlertModal({
+              type: 'error',
+              title: 'Không thể giữ ghế',
+              message: errMsg,
+              confirmText: 'Chọn lại ghế'
+            });
+          } else if (typeof window.showToast === 'function') {
+            window.showToast(errMsg, 'error');
+          }
+          await seatMap.load(showtimeId);
+          return;
+        }
       }
+
+      // Lưu vào sessionStorage để payment.html hiển thị
+      const bookingInfo = {
+        showtimeId: showtimeId,
+        bookingId: holdResult?.data?.id || holdResult?.data?.booking_id || null,
+        movieTitle: movieName,
+        cinema: cinema,
+        showtime: `${time} (Hôm nay)`,
+        seats: selectedSeats.map(s => s.seat_number),
+        seatDetails: selectedSeats,
+        seatPrice: seatTotal,
+        combos: combosPayload,
+        comboDetails: comboItems.map(c => ({
+          id: c.combo.id,
+          name: c.combo.name,
+          price: c.combo.price,
+          quantity: c.quantity,
+          total_price: c.quantity * c.combo.price,
+          image_url: c.combo.image_url
+        })),
+        comboTotal: comboTotal,
+        totalPrice: grandTotal,
+        bookingCode: holdResult?.data?.booking_code || `BK-${Date.now()}`
+      };
+
+      sessionStorage.setItem('current_booking', JSON.stringify(bookingInfo));
+
+      if (typeof window.showToast === 'function') {
+        window.showToast('Đã giữ ghế thành công! Đang chuyển sang trang thanh toán...', 'success', 1200);
+      }
+
+      // Chuyển sang trang thanh toán
+      window.location.href = 'payment.html';
+    } catch (err) {
+      console.warn('[Booking] Lỗi gọi API giữ ghế:', err);
+      if (typeof window.showToast === 'function') {
+        window.showToast('Không thể kết nối máy chủ đặt vé. Vui lòng thử lại!', 'error');
+      }
+    } finally {
+      isSubmittingBooking = false;
+      updateGrandTotal();
     }
-
-    // Lưu vào sessionStorage để payment.html hiển thị
-    const bookingInfo = {
-      showtimeId: showtimeId,
-      movieTitle: movieName,
-      cinema: cinema,
-      showtime: `${time} (Hôm nay)`,
-      seats: selectedSeats.map(s => s.seat_number),
-      seatDetails: selectedSeats,
-      seatPrice: seatTotal,
-      combos: combosPayload,
-      comboDetails: comboItems.map(c => ({
-        id: c.combo.id,
-        name: c.combo.name,
-        price: c.combo.price,
-        quantity: c.quantity,
-        total_price: c.quantity * c.combo.price,
-        image_url: c.combo.image_url
-      })),
-      comboTotal: comboTotal,
-      totalPrice: grandTotal,
-      bookingCode: holdResult?.data?.booking_code || `BK-${Date.now()}`
-    };
-
-    sessionStorage.setItem('current_booking', JSON.stringify(bookingInfo));
-
-    // Chuyển sang trang thanh toán
-    window.location.href = 'payment.html';
   };
-
-  /**
-   * Toast notification đơn giản, hiện đại
-   */
-  function showToast(message, type = 'info') {
-    let toastContainer = document.getElementById('cinema-toast-container');
-    if (!toastContainer) {
-      toastContainer = document.createElement('div');
-      toastContainer.id = 'cinema-toast-container';
-      toastContainer.className = 'fixed bottom-6 right-6 z-50 flex flex-col gap-2 max-w-sm pointer-events-none';
-      document.body.appendChild(toastContainer);
-    }
-
-    const toast = document.createElement('div');
-    const borderCol = type === 'warning' ? 'border-amber-500 text-amber-200' : (type === 'error' ? 'border-rose-500 text-rose-200' : 'border-cyan-400 text-cyan-200');
-    const bgCol = 'bg-[#131722]/95 backdrop-blur-md shadow-2xl';
-
-    toast.className = `pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl border ${borderCol} ${bgCol} text-xs font-semibold transform transition-all duration-300 translate-y-4 opacity-0`;
-    toast.innerHTML = `
-      <i class="fa-solid ${type === 'warning' ? 'fa-triangle-exclamation text-amber-400' : (type === 'error' ? 'fa-circle-xmark text-rose-400' : 'fa-circle-info text-cyan-400')} text-base"></i>
-      <span class="flex-1">${message}</span>
-    `;
-
-    toastContainer.appendChild(toast);
-
-    // Animation in
-    requestAnimationFrame(() => {
-      toast.classList.remove('translate-y-4', 'opacity-0');
-    });
-
-    // Auto dismiss sau 3.5 giây
-    setTimeout(() => {
-      toast.classList.add('translate-y-2', 'opacity-0');
-      setTimeout(() => toast.remove(), 300);
-    }, 3500);
-  }
 });

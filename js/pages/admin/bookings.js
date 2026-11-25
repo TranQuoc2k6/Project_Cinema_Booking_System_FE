@@ -480,37 +480,58 @@ window.cancelBooking = async function (id, fromModal = false) {
   if (!b) return;
 
   const codeDisplay = b.code || b.booking_code || `BK-${b.id}`;
-  const seatsStr = Array.isArray(b.seats) ? b.seats.join(', ') : (b.seats || '');
+  const seatsStr = Array.isArray(b.seats) ? b.seats.join(', ') : (b.seats || 'Chưa xếp');
 
-  const confirmMsg = `CẢNH BÁO HỦY VÉ:\nBạn có chắc chắn muốn HỦY đơn vé #${codeDisplay} của khách hàng "${b.customer_name}"?\nGhế [${seatsStr}] sẽ được giải phóng lập tức để khách khác có thể đặt.`;
-  if (!confirm(confirmMsg)) return;
+  const confirmed = typeof window.showConfirmModal === 'function'
+    ? await window.showConfirmModal({
+        type: 'danger',
+        title: 'Xác nhận hủy đơn vé',
+        message: 'Bạn có chắc chắn muốn hủy đơn vé này không? Ghế sẽ được giải phóng lập tức để khách khác có thể đặt.',
+        details: [
+          { label: 'Mã đơn vé', value: `#${codeDisplay}` },
+          { label: 'Khách hàng', value: b.customer_name || 'Khách hàng' },
+          { label: 'Ghế giải phóng', value: seatsStr }
+        ],
+        cancelText: 'Hủy',
+        confirmText: 'Hủy đơn vé',
+        variant: 'danger',
+        dangerous: true,
+        loadingText: 'Đang hủy vé...',
+        onConfirm: async () => {
+          try {
+            if (window.BookingService && typeof window.BookingService.adminCancelBooking === 'function') {
+              const res = await window.BookingService.adminCancelBooking(id);
+              if (res && res.success) {
+                if (window.showToast) {
+                  window.showToast(res.data?.message || `Đã hủy đơn vé #${codeDisplay} và giải phóng ghế thành công!`, 'success');
+                }
+                if (fromModal) closeBookingModal();
+                await loadBookingsFromApi();
+                return;
+              }
+              if (window.showToast) {
+                window.showToast('Lỗi hủy vé: ' + (res?.message || 'Không thể hủy vé.'), 'error');
+              }
+              return;
+            }
+          } catch (err) {
+            console.error('[cancelBooking error]', err);
+            if (window.showToast) {
+              window.showToast('Lỗi kết nối máy chủ: ' + err.message, 'error');
+            }
+            return;
+          }
 
-  try {
-    if (window.BookingService && typeof window.BookingService.adminCancelBooking === 'function') {
-      const res = await window.BookingService.adminCancelBooking(id);
-      if (res && res.success) {
-        if (window.showToast) {
-          window.showToast(res.data?.message || `Đã hủy đơn vé #${codeDisplay} và giải phóng ghế thành công!`, 'danger');
-        } else {
-          alert(`Đã hủy đơn vé #${codeDisplay} và giải phóng ghế thành công!`);
+          // Fallback cập nhật giao diện cục bộ nếu BookingService chưa sẵn sàng
+          b.status = 'cancelled';
+          renderBookings(bookingsList.length > 0 ? bookingsList : fallbackBookings);
+          if (fromModal) closeBookingModal();
+          if (window.showToast) {
+            window.showToast(`Đã hủy đơn vé #${codeDisplay} và giải phóng ghế!`, 'success');
+          }
         }
-        if (fromModal) closeBookingModal();
-        await loadBookingsFromApi();
-        return;
-      } else {
-        alert('Lỗi hủy vé: ' + (res?.message || 'Không thể hủy vé.'));
-      }
-    }
-  } catch (err) {
-    console.error('[cancelBooking error]', err);
-    alert('Lỗi kết nối máy chủ: ' + err.message);
-  }
+      })
+    : false;
 
-  // Fallback cập nhật giao diện cục bộ nếu backend offline
-  b.status = 'cancelled';
-  renderBookings(bookingsList.length > 0 ? bookingsList : fallbackBookings);
-  if (fromModal) closeBookingModal();
-  if (window.showToast) {
-    window.showToast(`Đã hủy đơn vé #${codeDisplay} và giải phóng ghế!`, 'danger');
-  }
+  return confirmed;
 };

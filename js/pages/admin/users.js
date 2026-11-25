@@ -446,47 +446,58 @@ window.closeUserModal = function () {
 // Khóa hoặc Mở khóa tài khoản (SRS 1.3 & Task: Khóa / Mở tài khoản)
 window.toggleUserStatus = async function (userId, targetStatus, fromModal = false) {
   let u = (usersList || []).find(x => x.id === userId) || fallbackUsers.find(x => x.id === userId);
-  if (!u) return;
+  if (!u || typeof window.showConfirmModal !== 'function') return;
 
-  const actionText = targetStatus ? "MỞ KHÓA" : "KHÓA";
+  const modalTitle = targetStatus ? 'Xác nhận mở khóa tài khoản' : 'Xác nhận khóa tài khoản';
   const confirmMsg = targetStatus
-    ? `XÁC NHẬN MỞ KHÓA TÀI KHOẢN:\nBạn có chắc chắn muốn MỞ KHÓA tài khoản "${u.email}"?\nKhách hàng sẽ có thể đăng nhập và đặt vé xem phim bình thường.`
-    : `CẢNH BÁO KHÓA TÀI KHOẢN:\nBạn có chắc chắn muốn KHÓA tài khoản "${u.email}"?\nNgười dùng này sẽ bị chặn đăng nhập và không thể thực hiện giao dịch đặt vé.`;
+    ? `Bạn có chắc chắn muốn mở khóa tài khoản "${u.email}" không? Khách hàng sẽ có thể đăng nhập và đặt vé xem phim bình thường.`
+    : `Bạn có chắc chắn muốn khóa tài khoản "${u.email}" không? Người dùng này sẽ bị chặn đăng nhập và không thể thực hiện giao dịch đặt vé.`;
 
-  if (!confirm(confirmMsg)) return;
-
-  try {
-    if (window.UserService && typeof window.UserService.adminToggleUserStatus === 'function') {
-      const res = await window.UserService.adminToggleUserStatus(userId, targetStatus);
-      if (res && res.success) {
-        const successMsg = res.data?.message || `Đã ${targetStatus ? 'mở khóa' : 'khóa'} tài khoản ${u.email} thành công!`;
+  await window.showConfirmModal({
+    type: targetStatus ? 'info' : 'danger',
+    title: modalTitle,
+    message: confirmMsg,
+    cancelText: 'Hủy',
+    confirmText: targetStatus ? 'Mở khóa' : 'Khóa tài khoản',
+    variant: targetStatus ? 'success' : 'danger',
+    dangerous: !targetStatus,
+    loadingText: 'Đang cập nhật...',
+    onConfirm: async () => {
+      try {
+        if (window.UserService && typeof window.UserService.adminToggleUserStatus === 'function') {
+          const res = await window.UserService.adminToggleUserStatus(userId, targetStatus);
+          if (res && res.success) {
+            const successMsg = res.data?.message || `Đã ${targetStatus ? 'mở khóa' : 'khóa'} tài khoản ${u.email} thành công!`;
+            if (window.showToast) {
+              window.showToast(successMsg, 'success');
+            }
+            u.is_active = targetStatus;
+            if (fromModal) {
+              closeUserModal();
+            }
+            await loadUsersFromApi();
+            return;
+          }
+          if (window.showToast) {
+            window.showToast('Lỗi: ' + (res?.message || 'Không thể cập nhật trạng thái tài khoản.'), 'error');
+          }
+          return;
+        }
+      } catch (err) {
+        console.error('[toggleUserStatus error]', err);
         if (window.showToast) {
-          window.showToast(successMsg, targetStatus ? 'success' : 'danger');
-        } else {
-          alert(successMsg);
+          window.showToast('Lỗi kết nối máy chủ: ' + err.message, 'error');
         }
-
-        u.is_active = targetStatus;
-        if (fromModal) {
-          closeUserModal();
-        }
-        await loadUsersFromApi();
-        return;
-      } else {
-        alert('Lỗi: ' + (res?.message || 'Không thể cập nhật trạng thái tài khoản.'));
         return;
       }
-    }
-  } catch (err) {
-    console.error('[toggleUserStatus error]', err);
-    alert('Lỗi kết nối máy chủ: ' + err.message);
-  }
 
-  // Fallback cập nhật cục bộ nếu API offline
-  u.is_active = targetStatus;
-  renderUsers(usersList.length > 0 ? usersList : fallbackUsers);
-  if (fromModal) closeUserModal();
-  if (window.showToast) {
-    window.showToast(`Đã ${targetStatus ? 'mở khóa' : 'khóa'} tài khoản ${u.email}!`, targetStatus ? 'success' : 'danger');
-  }
+      // Fallback cập nhật cục bộ nếu UserService chưa sẵn sàng
+      u.is_active = targetStatus;
+      renderUsers(usersList.length > 0 ? usersList : fallbackUsers);
+      if (fromModal) closeUserModal();
+      if (window.showToast) {
+        window.showToast(`Đã ${targetStatus ? 'mở khóa' : 'khóa'} tài khoản ${u.email}!`, 'success');
+      }
+    }
+  });
 };

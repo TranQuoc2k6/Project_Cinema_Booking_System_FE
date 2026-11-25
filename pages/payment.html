@@ -106,7 +106,7 @@
             </div>
 
             <!-- Mobile & Tablet Dropdown Navigation (< 1024px) -->
-            <div id="mobile-nav-menu" class="hidden lg:hidden px-4 pb-4 pt-1 border-t border-white/10 flex-col gap-1.5">
+            <div id="mobile-nav-menu" class="menu-closed lg:hidden px-4 border-t border-white/10 flex-col gap-1.5">
                 <a href="../index.html" class="px-3 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 flex items-center gap-2 transition-colors">
                     <i class="fa-solid fa-house w-4 text-center"></i> Trang chủ
                 </a>
@@ -284,8 +284,8 @@
     <!-- ==================================================================== -->
     <!-- MODAL CỔNG THANH TOÁN MÔ PHỎNG (SANDBOX GATEWAY SIMULATOR)           -->
     <!-- ==================================================================== -->
-    <div id="sandbox-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 sandbox-modal-backdrop hidden">
-        <div class="glass-panel w-full max-w-xl rounded-3xl border border-white/20 p-6 sm:p-8 shadow-2xl relative overflow-hidden result-card-anim">
+    <div id="sandbox-modal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 sandbox-modal-backdrop hidden">
+        <div class="glass-panel w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-3xl border border-white/20 p-5 sm:p-8 shadow-2xl relative result-card-anim">
             
             <!-- VIEW 1: ĐANG TIẾN HÀNH THANH TOÁN (MÔ PHỎNG) -->
             <div id="sandbox-process-view" class="space-y-6">
@@ -431,6 +431,8 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="../js/utils/storage.js"></script>
     <script src="../js/utils/format.js"></script>
+    <script src="../js/utils/toast.js"></script>
+  <script src="../js/components/modal.js"></script>
     <script src="../js/config/api.js"></script>
     <script src="../js/services/auth.service.js"></script>
     <script src="../js/services/payment.service.js"></script>

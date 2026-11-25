@@ -103,9 +103,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const email = emailInput ? emailInput.value.trim() : '';
 
     if (!name || !email) {
-      alert('Vui lòng nhập Họ tên và Email để nhận vé điện tử!');
+      if (typeof window.showToast === 'function') {
+        window.showToast('Vui lòng nhập đầy đủ Họ tên và Email để nhận vé điện tử!', 'warning');
+      } else if (typeof window.showAlertModal === 'function') {
+        window.showAlertModal({
+          type: 'warning',
+          title: 'Thiếu thông tin',
+          message: 'Vui lòng nhập đầy đủ Họ tên và Email để nhận vé điện tử!',
+          confirmText: 'Đã hiểu'
+        });
+      }
       if (nameInput && !name) nameInput.focus();
       else if (emailInput) emailInput.focus();
+      return;
+    }
+
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(email)) {
+      if (typeof window.showToast === 'function') {
+        window.showToast('Email nhận vé không đúng định dạng. Vui lòng kiểm tra lại!', 'warning');
+      }
+      if (emailInput) emailInput.focus();
       return;
     }
 
@@ -174,9 +192,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (sandboxSeconds <= 0) {
         stopSandboxTimer();
-        alert('Phiên giao dịch thanh toán đã hết hạn! Ghế đã được tự động giải phóng.');
         window.handleCloseSandbox();
-        window.location.href = 'showtimes.html';
+        if (typeof window.showAlertModal === 'function') {
+          window.showAlertModal({
+            type: 'error',
+            title: 'Hết phiên thanh toán',
+            message: 'Phiên giao dịch thanh toán đã hết hạn! Ghế đã được tự động giải phóng.',
+            confirmText: 'Chọn lại suất chiếu'
+          }).then(() => {
+            window.location.href = 'showtimes.html';
+          });
+        } else {
+          if (typeof window.showToast === 'function') {
+            window.showToast('Phiên giao dịch thanh toán đã hết hạn! Ghế đã được tự động giải phóng.', 'error');
+          }
+          window.location.href = 'showtimes.html';
+        }
       }
     }, 1000);
   }
@@ -189,9 +220,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // 6. Xử lý MÔ PHỎNG THÀNH CÔNG (Simulate Success)
+  let isProcessingPayment = false;
   window.handleSimulateSuccess = async function() {
+    if (isProcessingPayment) return;
+    isProcessingPayment = true;
     stopSandboxTimer();
     const btnSuccess = document.getElementById('btn-simulate-success');
+    const originalBtnHtml = btnSuccess ? btnSuccess.innerHTML : '';
     if (btnSuccess) {
       btnSuccess.innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i> ĐANG XỬ LÝ...';
       btnSuccess.setAttribute('disabled', 'true');
@@ -205,48 +240,78 @@ document.addEventListener('DOMContentLoaded', () => {
       amount: bookingData.totalPrice
     };
 
-    let result = null;
-    if (window.PaymentService && typeof window.PaymentService.processSandboxPayment === 'function') {
-      result = await window.PaymentService.processSandboxPayment(payload);
-    }
-
-    // Cập nhật trạng thái vé sang DA_THANH_TOAN
-    bookingData.status = 'DA_THANH_TOAN';
-    bookingData.paymentStatus = 'SUCCESS';
-    bookingData.transactionId = result?.data?.transaction_id || `SANDBOX-${selectedMethod}-${Date.now()}`;
-    bookingData.customerName = document.getElementById('pay-name').value;
-    bookingData.customerEmail = document.getElementById('pay-email').value;
-
-    // Lưu vào danh sách vé của tôi (sessionStorage)
     try {
-      const ticketsKey = 'user_my_tickets';
-      let tickets = [];
-      const cached = localStorage.getItem(ticketsKey) || sessionStorage.getItem(ticketsKey);
-      if (cached) tickets = JSON.parse(cached);
-      tickets.unshift(bookingData);
-      localStorage.setItem(ticketsKey, JSON.stringify(tickets));
-    } catch (e) {}
+      let result = null;
+      if (window.PaymentService && typeof window.PaymentService.processSandboxPayment === 'function') {
+        result = await window.PaymentService.processSandboxPayment(payload);
+      }
 
-    // Hiển thị Màn hình Thành công
-    document.getElementById('sandbox-process-view').classList.add('hidden');
-    document.getElementById('sandbox-success-view').classList.remove('hidden');
+      if (result && result.success === false) {
+        if (btnSuccess) {
+          btnSuccess.removeAttribute('disabled');
+          btnSuccess.innerHTML = originalBtnHtml;
+        }
+        const failMsg = result.message || 'Giao dịch thanh toán chưa được xác nhận từ hệ thống!';
+        if (typeof window.showAlertModal === 'function') {
+          await window.showAlertModal({
+            type: 'error',
+            title: 'Thanh toán thất bại',
+            message: failMsg,
+            confirmText: 'Đóng'
+          });
+        } else if (typeof window.showToast === 'function') {
+          window.showToast(failMsg, 'error');
+        }
+        startSandboxTimer();
+        return;
+      }
 
-    const successCode = document.getElementById('success-ticket-code');
-    const successEmail = document.getElementById('success-user-email');
-    if (successCode) successCode.innerText = bookingData.bookingCode || 'BK-LUMEN-SUCCESS';
-    if (successEmail) successEmail.innerText = bookingData.customerEmail || 'email của bạn';
+      // Cập nhật trạng thái vé sang DA_THANH_TOAN
+      bookingData.status = 'DA_THANH_TOAN';
+      bookingData.paymentStatus = 'SUCCESS';
+      bookingData.transactionId = result?.data?.transaction_id || `SANDBOX-${selectedMethod}-${Date.now()}`;
+      bookingData.customerName = document.getElementById('pay-name').value;
+      bookingData.customerEmail = document.getElementById('pay-email').value;
 
-    const myTicketsLink = document.querySelector('a[href*="my-tickets.html"]');
-    if (myTicketsLink && bookingData.bookingCode) {
-      myTicketsLink.href = `my-tickets.html?booking_code=${encodeURIComponent(bookingData.bookingCode)}`;
+      // Lưu vào danh sách vé của tôi (localStorage)
+      try {
+        const ticketsKey = 'user_my_tickets';
+        let tickets = [];
+        const cached = localStorage.getItem(ticketsKey) || sessionStorage.getItem(ticketsKey);
+        if (cached) tickets = JSON.parse(cached);
+        tickets.unshift(bookingData);
+        localStorage.setItem(ticketsKey, JSON.stringify(tickets));
+      } catch (e) {}
+
+      // Hiển thị Màn hình Thành công
+      document.getElementById('sandbox-process-view').classList.add('hidden');
+      document.getElementById('sandbox-success-view').classList.remove('hidden');
+
+      const successCode = document.getElementById('success-ticket-code');
+      const successEmail = document.getElementById('success-user-email');
+      if (successCode) successCode.innerText = bookingData.bookingCode || 'BK-LUMEN-SUCCESS';
+      if (successEmail) successEmail.innerText = bookingData.customerEmail || 'email của bạn';
+
+      const myTicketsLink = document.querySelector('a[href*="my-tickets.html"]');
+      if (myTicketsLink && bookingData.bookingCode) {
+        myTicketsLink.href = `my-tickets.html?booking_code=${encodeURIComponent(bookingData.bookingCode)}`;
+      }
+
+      if (typeof window.showToast === 'function') {
+        window.showToast('Thanh toán thành công! Vé điện tử của bạn đã được xác nhận.', 'success');
+      }
+
+      // Xóa giỏ vé tạm
+      sessionStorage.removeItem('current_booking');
+    } finally {
+      isProcessingPayment = false;
     }
-
-    // Xóa giỏ vé tạm
-    sessionStorage.removeItem('current_booking');
   };
 
   // 7. Xử lý MÔ PHỎNG THẤT BẠI (Simulate Failure)
   window.handleSimulateFailure = async function() {
+    if (isProcessingPayment) return;
+    isProcessingPayment = true;
     const reasonSelect = document.getElementById('sandbox-failure-reason');
     const failureReason = reasonSelect ? reasonSelect.value : 'Tài khoản không đủ số dư để thanh toán';
 
@@ -259,16 +324,24 @@ document.addEventListener('DOMContentLoaded', () => {
       amount: bookingData.totalPrice
     };
 
-    if (window.PaymentService && typeof window.PaymentService.processSandboxPayment === 'function') {
-      await window.PaymentService.processSandboxPayment(payload);
+    try {
+      if (window.PaymentService && typeof window.PaymentService.processSandboxPayment === 'function') {
+        await window.PaymentService.processSandboxPayment(payload);
+      }
+
+      // Hiển thị Màn hình Thất bại
+      document.getElementById('sandbox-process-view').classList.add('hidden');
+      document.getElementById('sandbox-failure-view').classList.remove('hidden');
+
+      const failReasonEl = document.getElementById('failure-reason-text');
+      if (failReasonEl) failReasonEl.innerText = failureReason;
+
+      if (typeof window.showToast === 'function') {
+        window.showToast(`Thanh toán thất bại: ${failureReason}`, 'error');
+      }
+    } finally {
+      isProcessingPayment = false;
     }
-
-    // Hiển thị Màn hình Thất bại
-    document.getElementById('sandbox-process-view').classList.add('hidden');
-    document.getElementById('sandbox-failure-view').classList.remove('hidden');
-
-    const failReasonEl = document.getElementById('failure-reason-text');
-    if (failReasonEl) failReasonEl.innerText = failureReason;
   };
 
   // 8. Thử lại thanh toán sau khi thất bại

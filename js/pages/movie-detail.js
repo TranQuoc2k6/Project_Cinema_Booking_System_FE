@@ -1422,7 +1422,7 @@ const MovieDetailPage = {
 
     } catch (err) {
       console.error('[MovieDetailPage.handleReviewSubmit]', err);
-      this.showToast(err.message || 'Lỗi khi gửi đánh giá. Vui lòng thử lại.', 'warning');
+      this.showToast(err.message || 'Lỗi khi gửi đánh giá. Vui lòng thử lại.', 'error');
     } finally {
       this.state.reviews.isSubmitting = false;
       const btn = document.getElementById('submit-review-btn');
@@ -1456,40 +1456,12 @@ const MovieDetailPage = {
   },
 
   /**
-   * Toast notification góc màn hình (không dùng alert())
+   * Toast notification góc màn hình (ủy quyền cho hệ thống Toast toàn cục)
    */
   showToast(message, type = 'info') {
-    let container = document.getElementById('cinema-toast-container');
-    if (!container) {
-      container = document.createElement('div');
-      container.id = 'cinema-toast-container';
-      container.className = 'fixed bottom-6 right-6 z-50 flex flex-col gap-2 max-w-sm pointer-events-none';
-      document.body.appendChild(container);
+    if (typeof window.showToast === 'function') {
+      window.showToast(message, type);
     }
-
-    const toast = document.createElement('div');
-    const isSuccess = type === 'success';
-    const isWarning = type === 'warning';
-    const borderColor = isSuccess ? 'border-emerald-500/40' : isWarning ? 'border-amber-500/40' : 'border-[#ff5e1e]/40';
-    const bgColor = 'bg-[#131722]/95';
-    const icon = isSuccess ? 'fa-check text-emerald-400' : isWarning ? 'fa-triangle-exclamation text-amber-400' : 'fa-circle-info text-[#ff5e1e]';
-
-    toast.className = `pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl border ${borderColor} ${bgColor} text-xs font-semibold text-white shadow-xl backdrop-blur-md transform transition-all duration-300 translate-y-4 opacity-0`;
-    toast.innerHTML = `
-      <i class="fa-solid ${icon} text-sm shrink-0"></i>
-      <span class="flex-1">${message}</span>
-    `;
-
-    container.appendChild(toast);
-
-    requestAnimationFrame(() => {
-      toast.classList.remove('translate-y-4', 'opacity-0');
-    });
-
-    setTimeout(() => {
-      toast.classList.add('translate-y-2', 'opacity-0');
-      setTimeout(() => toast.remove(), 300);
-    }, 3200);
   }
 };
 
