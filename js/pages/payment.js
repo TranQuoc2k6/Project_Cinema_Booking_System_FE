@@ -103,7 +103,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const email = emailInput ? emailInput.value.trim() : '';
 
     if (!name || !email) {
-      alert('Vui lòng nhập Họ tên và Email để nhận vé điện tử!');
+      if (typeof window.showToast === 'function') {
+        window.showToast('Vui lòng nhập đầy đủ Họ tên và Email để nhận vé điện tử!', 'warning');
+      } else {
+        alert('Vui lòng nhập Họ tên và Email để nhận vé điện tử!');
+      }
       if (nameInput && !name) nameInput.focus();
       else if (emailInput) emailInput.focus();
       return;
@@ -174,7 +178,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (sandboxSeconds <= 0) {
         stopSandboxTimer();
-        alert('Phiên giao dịch thanh toán đã hết hạn! Ghế đã được tự động giải phóng.');
+        if (typeof window.showToast === 'function') {
+          window.showToast('Phiên giao dịch thanh toán đã hết hạn! Ghế đã được tự động giải phóng.', 'error');
+        } else {
+          alert('Phiên giao dịch thanh toán đã hết hạn! Ghế đã được tự động giải phóng.');
+        }
         window.handleCloseSandbox();
         window.location.href = 'showtimes.html';
       }

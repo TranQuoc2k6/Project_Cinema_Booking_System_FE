@@ -228,6 +228,9 @@ window.showRegisterAlert = function (msg, type = 'error') {
     alertBox.className = 'auth-alert-box ' + (type === 'success' ? 'success' : 'error');
     alertBox.style.display = 'block';
   }
+  if (typeof window.showToast === 'function') {
+    window.showToast(msg, type === 'success' ? 'success' : 'error');
+  }
 };
 
 window.hideRegisterAlert = function () {

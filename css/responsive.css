@@ -1,6 +1,24 @@
 /* ==========================================================================
-   CINEMA 3D ADMIN PORTAL - RESPONSIVE DESIGN SYSTEM
+   CINEMA 3D SYSTEM - RESPONSIVE DESIGN FOR CLIENT & ADMIN PORTAL
+   Tối ưu toàn diện trên Desktop (1920px, 1440px, 1366px), Laptop (1024px),
+   Tablet (768px), Mobile (430px, 390px, 375px)
    ========================================================================== */
+
+/* 0. Universal Overflow & Box Sizing Protection */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+img, video {
+  max-width: 100%;
+  height: auto;
+}
 
 /* 1. Large Screens (<= 1200px) */
 @media (max-width: 1200px) {
@@ -134,14 +152,15 @@
 
   /* Modals on mobile */
   .modal-dialog {
-    max-width: 95vw;
-    margin: 1rem;
+    max-width: 95vw !important;
+    margin: 1rem auto !important;
     border-radius: var(--border-radius-lg);
   }
 
   .modal-body {
     padding: 1rem;
     max-height: 70vh;
+    overflow-y: auto;
   }
 
   .modal-footer {
@@ -190,6 +209,18 @@
     align-items: flex-start;
     gap: 0.5rem;
   }
+
+  /* Data Tables Responsive Scroll Touch */
+  .table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 0.75rem;
+  }
+
+  .admin-table {
+    min-width: 620px;
+  }
 }
 
 /* 4. Small Mobile (<= 480px) */
@@ -209,10 +240,36 @@
     display: none;
   }
 
-  .toast {
-    min-width: calc(100vw - 2rem);
-    right: 1rem;
-    left: 1rem;
-    bottom: 1rem;
+  /* Toast Notification positioning on small screens */
+  #cinema-toast-container,
+  #admin-toast-container {
+    left: 12px !important;
+    right: 12px !important;
+    top: 14px !important;
+    width: auto !important;
+    max-width: calc(100vw - 24px) !important;
+    align-items: center !important;
+  }
+
+  /* Smooth scroll bars for tabs */
+  .filter-tabs-container,
+  #days-tabs-container {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* 5. Extra Small Mobile (<= 380px) - iPhone SE, Galaxy S compact */
+@media (max-width: 380px) {
+  h1 {
+    font-size: 1.25rem !important;
+  }
+  
+  .glass-panel {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
+
+  .seat-grid-container {
+    padding: 0.25rem 0 !important;
   }
 }
