@@ -74,37 +74,31 @@ class SeatMap {
   }
 
   /**
-   * Tạo layout giả lập chuẩn phòng chiếu hiện đại
+   * Tạo layout giả lập chuẩn phòng chiếu hiện đại (A-C: Thường, D-E: VIP, F: Đôi)
    */
   _getFallbackLayout(showtimeId) {
     const basePrice = 90000;
-    const rowList = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+    const rowList = ['A', 'B', 'C', 'D', 'E', 'F'];
     const rows = {};
 
     rowList.forEach(row => {
-      const isCouple = row === 'G';
-      const isVip = row === 'D' || row === 'E' || row === 'F';
+      const isCouple = row === 'F';
+      const isVip = row === 'D' || row === 'E';
       const type = isCouple ? 'couple' : (isVip ? 'vip' : 'standard');
-      const mult = isCouple ? 2.2 : (isVip ? 1.35 : 1.0);
+      const mult = isCouple ? 2.0 : (isVip ? 1.5 : 1.0);
       const price = Math.round(basePrice * mult);
-      const colCount = isCouple ? 5 : 10;
+      const colCount = 10;
 
       const seats = [];
       for (let c = 1; c <= colCount; c++) {
-        let status = 'available';
-        // Mock một số ghế đã đặt hoặc đang giữ
-        if (row === 'B' && (c === 4 || c === 5)) status = 'booked';
-        if (row === 'D' && (c === 5 || c === 6)) status = 'held';
-        if (row === 'E' && c === 8) status = 'booked';
-        if (row === 'G' && c === 2) status = 'held';
-
+        const seatNum = isCouple ? `F${String(c).padStart(2, '0')}` : `${row}${c}`;
         seats.push({
-          id: `${row}${c}`,
-          seat_number: `${row}${c}`,
+          id: seatNum,
+          seat_number: seatNum,
           seat_row: row,
           seat_column: c,
           seat_type: type,
-          status: status,
+          status: 'available',
           price: price
         });
       }
@@ -115,8 +109,8 @@ class SeatMap {
       showtime_id: showtimeId,
       room_id: 1,
       base_price: basePrice,
-      total_seats: 65,
-      available_seats: 59,
+      total_seats: 60,
+      available_seats: 60,
       rows: rows
     };
   }

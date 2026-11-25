@@ -77,9 +77,6 @@
                 <a href="my-tickets.html" class="text-xs sm:text-sm font-medium text-slate-300 hover:text-[#ff5e1e] transition-colors flex items-center gap-1.5">
                     <i class="fa-solid fa-ticket"></i> Vé Của Tôi
                 </a>
-                <a href="ticket-check.html" class="text-xs sm:text-sm font-bold text-[#d4ff00] flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 border border-[#d4ff00]/30 shadow-[0_0_15px_rgba(212,255,0,0.2)]">
-                    <i class="fa-solid fa-qrcode"></i> Soát Vé QR
-                </a>
             </nav>
 
             <!-- User / Login -->
@@ -557,11 +554,15 @@
                         typeBadge = '<span class="text-[9px] px-1 py-0.5 rounded bg-pink-500/20 text-pink-400">Sweetbox</span>';
                         borderCol = 'border-pink-500/40 bg-pink-500/10 text-pink-300';
                     }
+                    const tktCode = s.ticket_code || `TK-${data.booking_code}-${s.seat_number}`;
                     return `
-                        <div class="px-3 py-2 rounded-xl border ${borderCol} flex items-center gap-2">
-                            <i class="fa-solid fa-couch text-xs"></i>
-                            <b class="text-xs font-black">${s.seat_number}</b>
-                            ${typeBadge}
+                        <div class="px-3 py-2 rounded-xl border ${borderCol} flex flex-col gap-0.5">
+                            <div class="flex items-center gap-2">
+                                <i class="fa-solid fa-couch text-xs"></i>
+                                <b class="text-xs font-black">${s.seat_number}</b>
+                                ${typeBadge}
+                            </div>
+                            <span class="text-[9px] font-mono text-slate-400 font-semibold mt-0.5 select-all">${tktCode}</span>
                         </div>
                     `;
                 }).join('');

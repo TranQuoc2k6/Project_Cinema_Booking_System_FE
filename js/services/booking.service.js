@@ -272,10 +272,19 @@ const BookingService = {
    */
   generateTicketCheckUrl(bookingCode) {
     if (!bookingCode) return '';
-    const origin = (typeof window !== 'undefined' && window.location && window.location.origin)
-      ? window.location.origin
-      : 'http://127.0.0.1:5500';
-    return `${origin}/pages/ticket-check.html?code=${encodeURIComponent(bookingCode)}`;
+    let origin = 'http://127.0.0.1:5500';
+    let basePath = '';
+
+    if (typeof window !== 'undefined' && window.location) {
+      origin = window.location.origin || origin;
+      const pathname = (window.location.pathname || '').replace(/\\/g, '/');
+      const pagesIdx = pathname.indexOf('/pages/');
+      if (pagesIdx !== -1) {
+        basePath = pathname.substring(0, pagesIdx);
+      }
+    }
+
+    return `${origin}${basePath}/pages/ticket-check.html?code=${encodeURIComponent(bookingCode)}`;
   },
 
   /**
