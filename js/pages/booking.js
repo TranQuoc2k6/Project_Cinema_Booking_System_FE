@@ -237,6 +237,71 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   await loadCombos();
 
+  // Hàm kiểm tra tính hợp lệ chọn ghế theo Quy định 11 (không làm thay đổi UI sơ đồ ghế)
+  function validateBookingSeatSelection(selectedSeats, seatMapInstance) {
+    if (!selectedSeats || selectedSeats.length === 0) {
+      return { valid: false, message: 'Vui lòng chọn ít nhất 1 ghế trước khi thanh toán.' };
+    }
+    const rows = seatMapInstance?.seatData?.rows;
+    if (!rows) return { valid: true };
+
+    const selectedByRow = {};
+    selectedSeats.forEach(s => {
+      const row = s.seat_row || (s.seat_number ? s.seat_number.charAt(0) : 'A');
+      if (!selectedByRow[row]) selectedByRow[row] = [];
+      selectedByRow[row].push(s);
+    });
+
+    // 1. Khi đặt đúng 2 vé: Phải cùng một hàng và cạnh nhau, không có ghế trống xen giữa
+    if (selectedSeats.length === 2) {
+      const rowKeys = Object.keys(selectedByRow);
+      if (rowKeys.length > 1) {
+        return {
+          valid: false,
+          message: 'Quy định đặt vé: Khi đặt 2 vé, 2 vé phải được đặt cạnh nhau trên cùng một hàng (không được chọn ở hai hàng khác nhau).'
+        };
+      }
+      const rowName = rowKeys[0];
+      const rowSeats = (rows[rowName] || []).slice().sort((a, b) => (Number(a.seat_column) || 0) - (Number(b.seat_column) || 0));
+      const selSorted = selectedByRow[rowName].slice().sort((a, b) => (Number(a.seat_column) || 0) - (Number(b.seat_column) || 0));
+
+      const idx1 = rowSeats.findIndex(s => s.seat_number === selSorted[0].seat_number);
+      const idx2 = rowSeats.findIndex(s => s.seat_number === selSorted[1].seat_number);
+
+      if (idx1 >= 0 && idx2 >= 0 && idx2 !== idx1 + 1) {
+        return {
+          valid: false,
+          message: `Quy định đặt vé: 2 vé [${selSorted[0].seat_number}, ${selSorted[1].seat_number}] phải được đặt cạnh nhau và không được có ghế trống xen giữa.`
+        };
+      }
+    }
+
+    // 2. Trong cùng một hàng: Các ghế khách chọn phải liền kề nhau
+    for (const rowName of Object.keys(selectedByRow)) {
+      const selInRow = selectedByRow[rowName];
+      if (selInRow.length >= 2) {
+        const rowSeats = (rows[rowName] || []).slice().sort((a, b) => (Number(a.seat_column) || 0) - (Number(b.seat_column) || 0));
+        const selSorted = selInRow.slice().sort((a, b) => (Number(a.seat_column) || 0) - (Number(b.seat_column) || 0));
+        const indices = selSorted.map(sel => rowSeats.findIndex(s => s.seat_number === sel.seat_number));
+
+        for (let k = 0; k < indices.length - 1; k++) {
+          if (indices[k] >= 0 && indices[k + 1] >= 0 && indices[k + 1] !== indices[k] + 1) {
+            const gapSeats = [];
+            for (let j = indices[k] + 1; j < indices[k + 1]; j++) {
+              if (rowSeats[j]) gapSeats.push(rowSeats[j].seat_number);
+            }
+            return {
+              valid: false,
+              message: `Quy định đặt vé tại hàng ${rowName}: Các ghế được chọn phải liền kề nhau, không được có ghế trống xen giữa (${gapSeats.join(', ')}).`
+            };
+          }
+        }
+      }
+    }
+
+    return { valid: true };
+  }
+
   // 6. Xử lý nút Tiếp Tục Thanh Toán
   let isSubmittingBooking = false;
   window.proceedToPayment = async function() {
@@ -248,6 +313,44 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!selectedSeats || selectedSeats.length === 0) {
       if (typeof window.showToast === 'function') {
         window.showToast('Vui lòng chọn ít nhất 1 ghế trước khi thanh toán!', 'warning');
+      }
+      return;
+    }
+
+    // Rule 1: Kiểm tra phim có đang được phép bán vé hay không
+    if (showtimeData) {
+      const movieStatus = (showtimeData.movie_status || showtimeData.movie?.status || '').toUpperCase();
+      if (movieStatus === 'ENDED' || movieStatus === 'NGUNG_CHIEU') {
+        if (typeof window.showToast === 'function') {
+          window.showToast('Phim này đã ngừng chiếu, hiện không được phép bán vé!', 'error');
+        }
+        return;
+      }
+    }
+
+    // Rule 2: Kiểm tra suất chiếu còn hiệu lực và chưa bắt đầu
+    if (showtimeData && showtimeData.start_time) {
+      const stTime = new Date(showtimeData.start_time);
+      if (!isNaN(stTime.getTime()) && stTime.getTime() <= Date.now()) {
+        if (typeof window.showToast === 'function') {
+          window.showToast('Suất chiếu đã bắt đầu hoặc đã qua giờ chiếu, không thể đặt vé!', 'error');
+        }
+        return;
+      }
+    }
+
+    // Rule 11: Kiểm tra 2 vé cạnh nhau và không có ghế trống xen giữa
+    const validation = validateBookingSeatSelection(selectedSeats, seatMap);
+    if (!validation.valid) {
+      if (typeof window.showAlertModal === 'function') {
+        await window.showAlertModal({
+          type: 'warning',
+          title: 'Quy định chọn ghế (Quy định 11)',
+          message: validation.message,
+          confirmText: 'Đã hiểu'
+        });
+      } else if (typeof window.showToast === 'function') {
+        window.showToast(validation.message, 'warning');
       }
       return;
     }
