@@ -39,12 +39,19 @@ const BookingService = {
         body: JSON.stringify(payload)
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.detail || 'Lỗi khi tạo đơn đặt vé');
+      if (!res.ok) {
+        return {
+          success: false,
+          status: res.status,
+          message: data.detail || 'Lỗi khi tạo đơn đặt vé'
+        };
+      }
       return { success: true, data };
     } catch (error) {
       console.warn('[BookingService.createBooking]', error.message);
       return {
         success: false,
+        status: error.response?.status || 0,
         message: error.response?.data?.detail || error.message || 'Lỗi kết nối máy chủ'
       };
     }

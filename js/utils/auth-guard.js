@@ -128,15 +128,30 @@ window.AdminAuth = {
       return null;
     }
   },
-  logout: function () {
-    if (confirm('Bạn có chắc chắn muốn đăng xuất khỏi trang Quản trị viên?')) {
-      if (window.StorageService) {
-        window.StorageService.clearAuth();
-      } else {
-        localStorage.clear();
-        sessionStorage.clear();
-      }
-      window.location.replace('../login.html');
+  logout: async function () {
+    const confirmed = typeof window.showConfirmModal === 'function'
+      ? await window.showConfirmModal({
+          type: 'warning',
+          title: 'Xác nhận đăng xuất',
+          message: 'Bạn có chắc chắn muốn đăng xuất khỏi trang Quản trị viên không?',
+          cancelText: 'Hủy',
+          confirmText: 'Đăng xuất',
+          variant: 'primary',
+          closeOnBackdrop: true
+        })
+      : false;
+
+    if (!confirmed) return;
+
+    if (typeof window.showToast === 'function') {
+      window.showToast('Đã đăng xuất khỏi trang Quản trị viên.', 'info', 1200);
     }
+    if (window.StorageService) {
+      window.StorageService.clearAuth();
+    } else {
+      localStorage.clear();
+      sessionStorage.clear();
+    }
+    window.location.replace('../login.html');
   }
 };

@@ -317,8 +317,8 @@
     <!-- MODAL 2: XÁC NHẬN HỦY VÉ (CANCEL CONFIRMATION DIALOG)          -->
     <!-- ============================================================== -->
     <div id="cancel-confirm-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
-        <div class="glass-panel w-full max-w-md rounded-3xl p-6 sm:p-8 border border-rose-500/30 text-center relative shadow-2xl">
-            <div class="w-16 h-16 rounded-2xl bg-rose-500/20 border border-rose-500/40 text-rose-400 text-3xl mx-auto flex items-center justify-center mb-4">
+        <div class="w-full max-w-md rounded-2xl p-6 sm:p-8 border border-white/15 text-center relative shadow-2xl" style="background: #211B22; color: #FFFFFF;">
+            <div class="w-16 h-16 rounded-2xl text-3xl mx-auto flex items-center justify-center mb-4" style="background: rgba(220, 53, 69, 0.16); border: 1px solid rgba(220, 53, 69, 0.45); color: #DC3545;">
                 <i class="fa-solid fa-triangle-exclamation"></i>
             </div>
             <h3 class="text-xl font-black text-white uppercase tracking-wider mb-2">XÁC NHẬN HỦY VÉ</h3>
@@ -326,7 +326,7 @@
                 Bạn có chắc chắn muốn hủy đơn vé xem phim này?
             </p>
 
-            <div class="p-4 rounded-2xl bg-black/40 border border-white/5 text-xs text-left space-y-2 mb-5 font-mono">
+            <div class="p-4 rounded-xl border border-white/10 text-xs text-left space-y-2 mb-5 font-mono" style="background: #2D252D;">
                 <div class="flex justify-between">
                     <span class="text-slate-400">Mã vé:</span>
                     <b class="text-[#d4ff00]" id="confirm-ticket-code">#BK-XXXX</b>
@@ -341,16 +341,16 @@
                 </div>
             </div>
 
-            <div class="p-3 rounded-xl bg-rose-950/30 border border-rose-500/30 text-[11px] text-rose-300 text-left mb-6">
-                <i class="fa-solid fa-shield-halved mr-1"></i>
+            <div class="p-3 rounded-xl border border-rose-500/30 text-[11px] text-rose-200 text-left mb-6" style="background: #2D252D;">
+                <i class="fa-solid fa-shield-halved mr-1 text-rose-400"></i>
                 <b>Lưu ý:</b> Thao tác này sẽ hủy vé và giải phóng ghế lập tức để khách hàng khác có thể đặt. Không thể hoàn tác sau khi xác nhận.
             </div>
 
             <div class="flex gap-3">
-                <button onclick="closeCancelConfirmModal()" class="flex-1 py-3 rounded-xl glass-panel text-slate-300 hover:text-white font-bold text-xs">
+                <button id="btn-cancel-keep" onclick="closeCancelConfirmModal()" class="flex-1 min-h-[44px] py-3 px-4 rounded-xl text-white font-bold text-xs transition-all hover:brightness-110" style="background: #45404A;">
                     Không, giữ vé
                 </button>
-                <button id="btn-do-cancel" onclick="executeCancelTicket()" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-rose-600 to-red-600 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-rose-600/30 hover:brightness-110 flex items-center justify-center gap-2">
+                <button id="btn-do-cancel" onclick="executeCancelTicket()" class="flex-1 min-h-[44px] py-3 px-4 rounded-xl text-white font-black text-xs uppercase tracking-wider shadow-lg hover:brightness-110 flex items-center justify-center gap-2 transition-all" style="background: #DC3545;">
                     <i class="fa-solid fa-check"></i>
                     <span>Xác nhận hủy</span>
                 </button>
@@ -362,6 +362,7 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="../js/utils/storage.js"></script>
     <script src="../js/utils/toast.js"></script>
+    <script src="../js/components/modal.js"></script>
     <script src="../js/config/api.js"></script>
     <script src="../js/services/auth.service.js"></script>
     <script src="../js/services/booking.service.js"></script>
@@ -373,11 +374,16 @@
         let allTicketsData = [];
         let pendingCancelTicket = null;
         let activeModalTicket = null;
+        let isCancellingTicket = false;
 
-        function showToast(message, type = 'success') {
+        function showTicketBanner(message, type = 'success') {
+            if (typeof window.showToast === 'function') {
+                window.showToast(message, type);
+            }
             const banner = document.getElementById('toast-banner');
             const text = document.getElementById('toast-text');
             const icon = document.getElementById('toast-icon');
+            if (!banner || !text || !icon) return;
 
             text.innerText = message;
             if (type === 'success') {
@@ -391,7 +397,8 @@
         }
 
         function dismissToast() {
-            document.getElementById('toast-banner').classList.add('hidden');
+            const banner = document.getElementById('toast-banner');
+            if (banner) banner.classList.add('hidden');
         }
 
         function setTab(tab, btn) {
@@ -673,8 +680,22 @@
 
         function copyTicketCode() {
             if (!activeModalTicket) return;
-            navigator.clipboard.writeText(activeModalTicket.booking_code);
-            showToast(`Đã sao chép mã vé: ${activeModalTicket.booking_code}`, 'success');
+            const code = activeModalTicket.booking_code;
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(code).then(() => {
+                    window.showToast(`Đã sao chép mã vé: ${code}`, 'success');
+                }).catch(() => {
+                    window.showToast('Không thể sao chép mã vé.', 'warning');
+                });
+            } else {
+                const input = document.createElement('input');
+                input.value = code;
+                document.body.appendChild(input);
+                input.select();
+                document.execCommand('copy');
+                document.body.removeChild(input);
+                window.showToast(`Đã sao chép mã vé: ${code}`, 'success');
+            }
         }
 
         function printTicket() {
@@ -709,6 +730,7 @@
         }
 
         function closeCancelConfirmModal() {
+            if (isCancellingTicket) return;
             const modal = document.getElementById('cancel-confirm-modal');
             modal.classList.add('opacity-0');
             setTimeout(() => {
@@ -717,29 +739,57 @@
             }, 300);
         }
 
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && !isCancellingTicket) {
+                const cancelModal = document.getElementById('cancel-confirm-modal');
+                if (cancelModal && !cancelModal.classList.contains('hidden')) {
+                    closeCancelConfirmModal();
+                }
+            }
+        });
+
         async function executeCancelTicket() {
-            if (!pendingCancelTicket) return;
+            if (!pendingCancelTicket || isCancellingTicket) return;
+            isCancellingTicket = true;
             const ticketId = pendingCancelTicket.id;
             const ticketCode = pendingCancelTicket.booking_code;
             const btn = document.getElementById('btn-do-cancel');
+            const keepBtn = document.getElementById('btn-cancel-keep');
 
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang hủy vé & trả ghế...';
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang hủy vé & trả ghế...';
+            }
+            if (keepBtn) keepBtn.disabled = true;
 
-            const res = await window.BookingService.cancelBooking(ticketId);
+            try {
+                const res = await window.BookingService.cancelBooking(ticketId);
 
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fa-solid fa-check"></i> <span>Xác nhận hủy</span>';
-            closeCancelConfirmModal();
+                isCancellingTicket = false;
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fa-solid fa-check"></i> <span>Xác nhận hủy</span>';
+                }
+                if (keepBtn) keepBtn.disabled = false;
+                closeCancelConfirmModal();
 
-            if (res.success) {
-                const released = res.data?.released_seats?.join(', ') || '';
-                const msg = `Hủy thành công đơn vé #${ticketCode}! Ghế [${released}] đã được trả về trạng thái trống.`;
-                showToast(msg, 'success');
-                // Tải lại danh sách vé ngay lập tức
-                loadTickets();
-            } else {
-                showToast(res.message || 'Hủy vé không thành công. Vui lòng kiểm tra lại điều kiện hủy trước 2 tiếng.', 'error');
+                if (res.success) {
+                    const released = res.data?.released_seats?.join(', ') || '';
+                    const msg = `Hủy thành công đơn vé #${ticketCode}! Ghế [${released}] đã được trả về trạng thái trống.`;
+                    showTicketBanner(msg, 'success');
+                    loadTickets();
+                } else {
+                    showTicketBanner(res.message || 'Hủy vé không thành công. Vui lòng kiểm tra lại điều kiện hủy trước 2 tiếng.', 'error');
+                }
+            } catch (err) {
+                isCancellingTicket = false;
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fa-solid fa-check"></i> <span>Xác nhận hủy</span>';
+                }
+                if (keepBtn) keepBtn.disabled = false;
+                closeCancelConfirmModal();
+                showTicketBanner(err.message || 'Lỗi kết nối máy chủ khi hủy vé!', 'error');
             }
         }
 

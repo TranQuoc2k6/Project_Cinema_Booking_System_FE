@@ -21,12 +21,10 @@ function getPosterFullUrl(url) {
   return `${base}${cleanPath}`;
 }
 
-// Helper: Toast message
+// Helper: Toast message (dùng hệ thống Toast toàn cục)
 function notify(message, type = 'info') {
   if (typeof window.showToast === 'function') {
     window.showToast(message, type);
-  } else if (typeof window.alert === 'function') {
-    window.alert(message);
   } else {
     console.log(`[Toast ${type}] ${message}`);
   }
@@ -664,92 +662,151 @@ window.handleShowtimeSubmit = async function (e) {
 
 // Hủy / Xóa suất chiếu
 window.deleteShowtime = async function (id) {
-  if (!confirm(`Bạn có chắc chắn muốn hủy / xóa suất chiếu #${id} khỏi hệ thống?`)) {
-    return;
-  }
+  if (typeof window.showConfirmModal !== 'function') return;
 
-  try {
-    const res = await window.ShowtimeService.adminDeleteShowtime(id, false);
-    if (res && res.success) {
-      notify(res.data?.message || `Đã xóa suất chiếu #${id} thành công!`, 'success');
-      await loadShowtimesFromApi();
-    } else {
-      // Nếu có vé đã thanh toán, hỏi xem có muốn force delete không
-      const errMsg = res ? res.message : 'Lỗi khi xóa suất chiếu';
-      if (errMsg.includes('vé đã thanh toán') || errMsg.includes('vé được thanh toán')) {
-        const forceConfirm = confirm(`${errMsg}\n\nBạn có muốn BẮT BUỘC hủy (force delete) suất chiếu này không?`);
-        if (forceConfirm) {
+  let needForceConfirmMsg = null;
+
+  const confirmed = await window.showConfirmModal({
+    type: 'danger',
+    title: 'Xác nhận xóa suất chiếu',
+    message: `Bạn có chắc chắn muốn hủy / xóa suất chiếu #${id} khỏi hệ thống không?`,
+    cancelText: 'Hủy',
+    confirmText: 'Xóa',
+    variant: 'danger',
+    dangerous: true,
+    loadingText: 'Đang xóa suất chiếu...',
+    onConfirm: async () => {
+      try {
+        const res = await window.ShowtimeService.adminDeleteShowtime(id, false);
+        if (res && res.success) {
+          notify(res.data?.message || `Đã xóa suất chiếu #${id} thành công!`, 'success');
+          await loadShowtimesFromApi();
+          return;
+        }
+
+        const errMsg = res ? res.message : 'Lỗi khi xóa suất chiếu';
+        if (errMsg.includes('vé đã thanh toán') || errMsg.includes('vé được thanh toán')) {
+          needForceConfirmMsg = errMsg;
+          return;
+        }
+        notify(errMsg, 'error');
+      } catch (err) {
+        console.error('[Showtimes Admin] Delete error:', err);
+        notify(err.message || 'Không thể xóa suất chiếu', 'error');
+      }
+    }
+  });
+
+  if (confirmed && needForceConfirmMsg) {
+    await window.showConfirmModal({
+      type: 'danger',
+      title: 'Xác nhận bắt buộc hủy suất chiếu',
+      message: `${needForceConfirmMsg}\n\nBạn có muốn BẮT BUỘC hủy (force delete) suất chiếu #${id} không? Hành động này không thể hoàn tác.`,
+      cancelText: 'Hủy',
+      confirmText: 'Bắt buộc hủy',
+      variant: 'danger',
+      dangerous: true,
+      loadingText: 'Đang hủy suất chiếu...',
+      onConfirm: async () => {
+        try {
           const forceRes = await window.ShowtimeService.adminDeleteShowtime(id, true);
           if (forceRes && forceRes.success) {
             notify(`Đã bắt buộc xóa suất chiếu #${id} thành công!`, 'warning');
             await loadShowtimesFromApi();
-            return;
+          } else {
+            notify(forceRes ? forceRes.message : 'Không thể bắt buộc hủy suất chiếu', 'error');
           }
+        } catch (err) {
+          notify(err.message || 'Không thể bắt buộc hủy suất chiếu', 'error');
         }
       }
-      notify(errMsg, 'danger');
-    }
-  } catch (err) {
-    console.error('[Showtimes Admin] Delete error:', err);
-    notify(err.message || 'Không thể xóa suất chiếu', 'danger');
+    });
   }
 };
 
-// Tự động sinh suất chiếu thông minh cho các ngày tiếp theo
+// Tự động sinh suất chiếu thông minh cho các ngày tiếp theo (dùng Custom Input Modal)
 window.autoGenerateShowtimes = async function () {
-  const days = prompt("Hệ thống sẽ tự động lập lịch phân bổ phim cho các phòng chiếu mà không bị trùng giờ.\n\nNhập số ngày tiếp theo cần sinh suất chiếu (từ 1 đến 14 ngày):", "7");
-  if (!days) return;
+  if (typeof window.showPromptModal !== 'function') return;
 
-  const numDays = parseInt(days, 10);
-  if (isNaN(numDays) || numDays < 1 || numDays > 14) {
-    notify("Số ngày không hợp lệ! Vui lòng nhập từ 1 đến 14.", "warning");
-    return;
-  }
-
-  notify(`Đang tiến hành tự động phân bổ và sinh suất chiếu cho ${numDays} ngày tiếp theo...`, "info");
-
-  try {
-    if (window.ShowtimeService && typeof window.ShowtimeService.adminAutoGenerateShowtimes === 'function') {
-      const res = await window.ShowtimeService.adminAutoGenerateShowtimes({ days: numDays });
-      if (res && res.success) {
-        const msg = res.data?.message || `Đã tự động tạo thành công ${res.data?.created_count || 0} suất chiếu!`;
-        notify(msg, "success");
-        await loadShowtimesFromApi();
-      } else {
-        notify(res ? res.message : "Không thể tự động sinh suất chiếu", "danger");
+  await window.showPromptModal({
+    type: 'info',
+    title: 'Tự động sinh suất chiếu',
+    message: 'Hệ thống sẽ tự động lập lịch phân bổ phim cho các phòng chiếu mà không bị trùng giờ.',
+    inputLabel: 'Số ngày tiếp theo cần sinh suất chiếu (1 - 14 ngày)',
+    inputType: 'number',
+    min: 1,
+    max: 14,
+    step: 1,
+    defaultValue: '7',
+    placeholder: 'Nhập số ngày từ 1 đến 14',
+    cancelText: 'Hủy',
+    confirmText: 'Sinh suất chiếu',
+    loadingText: 'Đang sinh lịch...',
+    validator: (val) => {
+      const trimmed = String(val || '').trim();
+      if (!trimmed) return 'Vui lòng nhập số ngày cần sinh suất chiếu!';
+      const numDays = parseInt(trimmed, 10);
+      if (isNaN(numDays) || numDays < 1 || numDays > 14 || String(numDays) !== trimmed) {
+        return 'Số ngày không hợp lệ! Vui lòng nhập số nguyên từ 1 đến 14.';
       }
-    } else {
-      notify("ShowtimeService chưa hỗ trợ API auto-generate", "warning");
+      return null;
+    },
+    onConfirm: async (val) => {
+      const numDays = parseInt(String(val).trim(), 10);
+      notify(`Đang tiến hành tự động phân bổ và sinh suất chiếu cho ${numDays} ngày tiếp theo...`, 'info');
+      try {
+        if (window.ShowtimeService && typeof window.ShowtimeService.adminAutoGenerateShowtimes === 'function') {
+          const res = await window.ShowtimeService.adminAutoGenerateShowtimes({ days: numDays });
+          if (res && res.success) {
+            const msg = res.data?.message || `Đã tự động tạo thành công ${res.data?.created_count || 0} suất chiếu!`;
+            notify(msg, 'success');
+            await loadShowtimesFromApi();
+          } else {
+            notify(res ? res.message : 'Không thể tự động sinh suất chiếu', 'error');
+          }
+        } else {
+          notify('ShowtimeService chưa hỗ trợ API auto-generate', 'warning');
+        }
+      } catch (err) {
+        console.error('[Showtimes Admin] Auto-generate error:', err);
+        notify(err.message || 'Lỗi khi tự động sinh suất chiếu', 'error');
+      }
     }
-  } catch (err) {
-    console.error('[Showtimes Admin] Auto-generate error:', err);
-    notify(err.message || "Lỗi khi tự động sinh suất chiếu", "danger");
-  }
+  });
 };
 
 // Dọn dẹp các suất chiếu phim cũ đã kết thúc
 window.cleanupPastShowtimes = async function () {
-  if (!confirm("Bạn có chắc chắn muốn dọn dẹp các suất chiếu cũ trước hôm nay không có vé đã đặt?")) {
-    return;
-  }
+  if (typeof window.showConfirmModal !== 'function') return;
 
-  notify("Đang tiến hành dọn dẹp các suất chiếu cũ...", "info");
-
-  try {
-    if (window.ShowtimeService && typeof window.ShowtimeService.adminCleanupPastShowtimes === 'function') {
-      const res = await window.ShowtimeService.adminCleanupPastShowtimes({ days: 0 });
-      if (res && res.success) {
-        const msg = res.data?.message || `Đã dọn dẹp thành công các suất chiếu cũ!`;
-        notify(msg, "success");
-        await loadShowtimesFromApi();
-      } else {
-        notify(res ? res.message : "Không thể dọn dẹp suất chiếu cũ", "danger");
+  await window.showConfirmModal({
+    type: 'warning',
+    title: 'Xác nhận dọn dẹp suất chiếu cũ',
+    message: 'Bạn có chắc chắn muốn dọn dẹp các suất chiếu cũ trước hôm nay không có vé đã đặt không?',
+    cancelText: 'Hủy',
+    confirmText: 'Dọn dẹp',
+    variant: 'danger',
+    dangerous: true,
+    loadingText: 'Đang dọn dẹp...',
+    onConfirm: async () => {
+      notify('Đang tiến hành dọn dẹp các suất chiếu cũ...', 'info');
+      try {
+        if (window.ShowtimeService && typeof window.ShowtimeService.adminCleanupPastShowtimes === 'function') {
+          const res = await window.ShowtimeService.adminCleanupPastShowtimes({ days: 0 });
+          if (res && res.success) {
+            const msg = res.data?.message || 'Đã dọn dẹp thành công các suất chiếu cũ!';
+            notify(msg, 'success');
+            await loadShowtimesFromApi();
+          } else {
+            notify(res ? res.message : 'Không thể dọn dẹp suất chiếu cũ', 'error');
+          }
+        } else {
+          notify('ShowtimeService chưa hỗ trợ API cleanup', 'warning');
+        }
+      } catch (err) {
+        console.error('[Showtimes Admin] Cleanup error:', err);
+        notify(err.message || 'Lỗi khi dọn dẹp suất chiếu cũ', 'error');
       }
-    } else {
-      notify("ShowtimeService chưa hỗ trợ API cleanup", "warning");
     }
-  } catch (err) {
-    console.error('[Showtimes Admin] Cleanup error:', err);
-    notify(err.message || "Lỗi khi dọn dẹp suất chiếu cũ", "danger");
-  }
+  });
 };

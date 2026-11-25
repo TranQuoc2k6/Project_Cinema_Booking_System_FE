@@ -256,6 +256,7 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="../js/utils/storage.js"></script>
     <script src="../js/utils/toast.js"></script>
+    <script src="../js/components/modal.js"></script>
     <script src="../js/config/api.js"></script>
     <script src="../js/utils/validation.js"></script>
     <script src="../js/services/auth.service.js"></script>
@@ -333,6 +334,13 @@
 
             if (!fullName || fullName.length < 2) {
                 showAlert(alertEl, 'Họ và tên phải có ít nhất 2 ký tự!', 'error');
+                document.getElementById('edit-fullname')?.focus();
+                return;
+            }
+
+            if (phone && window.Validation && !window.Validation.isValidPhone(phone)) {
+                showAlert(alertEl, 'Số điện thoại không hợp lệ (10 chữ số, bắt đầu bằng 0 hoặc +84)!', 'error');
+                document.getElementById('edit-phone')?.focus();
                 return;
             }
 
@@ -345,17 +353,21 @@
                 avatar: avatar || null
             };
 
-            const result = await window.UserService.updateProfile(payload);
+            try {
+                const result = await window.UserService.updateProfile(payload);
 
-            btn.disabled = false;
-            btn.innerHTML = '💾 LƯU THAY ĐỔI HỒ SƠ';
-
-            if (result.success) {
-                showAlert(alertEl, 'Cập nhật thông tin hồ sơ thành công!', 'success');
-                // Cập nhật lại giao diện
-                loadProfile();
-            } else {
-                showAlert(alertEl, result.message || 'Cập nhật thất bại!', 'error');
+                if (result.success) {
+                    showAlert(alertEl, 'Cập nhật thông tin hồ sơ thành công!', 'success');
+                    // Cập nhật lại giao diện
+                    loadProfile();
+                } else {
+                    showAlert(alertEl, result.message || 'Cập nhật thất bại!', 'error');
+                }
+            } catch (err) {
+                showAlert(alertEl, 'Không thể kết nối máy chủ. Vui lòng thử lại!', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '💾 LƯU THAY ĐỔI HỒ SƠ';
             }
         }
 
@@ -415,15 +427,27 @@
             }
         }
 
-        function handleLogout() {
-            if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
-                if (typeof window.showToast === 'function') {
-                    window.showToast('Đang đăng xuất khỏi hệ thống...', 'info', 1500);
-                }
-                setTimeout(() => {
-                    window.AuthService.logout('login.html');
-                }, 250);
+        async function handleLogout() {
+            const confirmed = typeof window.showConfirmModal === 'function'
+                ? await window.showConfirmModal({
+                    type: 'warning',
+                    title: 'Xác nhận đăng xuất',
+                    message: 'Bạn có chắc chắn muốn đăng xuất khỏi tài khoản không?',
+                    cancelText: 'Hủy',
+                    confirmText: 'Đăng xuất',
+                    variant: 'primary',
+                    closeOnBackdrop: true
+                })
+                : false;
+
+            if (!confirmed) return;
+
+            if (typeof window.showToast === 'function') {
+                window.showToast('Đang đăng xuất khỏi hệ thống...', 'info', 1500);
             }
+            setTimeout(() => {
+                window.AuthService.logout('login.html');
+            }, 250);
         }
 
         window.onload = loadProfile;

@@ -271,7 +271,16 @@ window.handlePosterFileSelect = function (event) {
   const isMimeValid = !file.type || file.type.startsWith('image/');
 
   if (!isExtValid) {
-    alert(`Định dạng file không được hỗ trợ! Vui lòng chỉ chọn ảnh có định dạng .jpg, .jpeg, hoặc .png.`);
+    if (window.showAlertModal) {
+      window.showAlertModal({
+        type: 'warning',
+        title: 'Định dạng không hỗ trợ',
+        message: 'Định dạng file không được hỗ trợ! Vui lòng chỉ chọn ảnh có định dạng .jpg, .jpeg, hoặc .png.',
+        confirmText: 'Đã hiểu'
+      });
+    } else if (window.showToast) {
+      window.showToast('Định dạng file không được hỗ trợ! Vui lòng chỉ chọn .jpg, .jpeg, hoặc .png.', 'warning');
+    }
     event.target.value = '';
     return;
   }
@@ -280,13 +289,24 @@ window.handlePosterFileSelect = function (event) {
   const MAX_SIZE = 5 * 1024 * 1024; // 5MB
   if (file.size > MAX_SIZE) {
     const curMB = (file.size / (1024 * 1024)).toFixed(2);
-    alert(`Dung lượng ảnh (${curMB}MB) vượt quá giới hạn tối đa 5MB cho phép!\nVui lòng nén hoặc chọn ảnh khác có dung lượng nhỏ hơn 5MB.`);
+    if (window.showAlertModal) {
+      window.showAlertModal({
+        type: 'warning',
+        title: 'Dung lượng ảnh quá lớn',
+        message: `Dung lượng ảnh (${curMB}MB) vượt quá giới hạn tối đa 5MB cho phép! Vui lòng nén hoặc chọn ảnh khác có dung lượng nhỏ hơn 5MB.`,
+        confirmText: 'Đã hiểu'
+      });
+    } else if (window.showToast) {
+      window.showToast(`Dung lượng ảnh (${curMB}MB) vượt quá giới hạn tối đa 5MB!`, 'warning');
+    }
     event.target.value = '';
     return;
   }
 
   if (file.size === 0) {
-    alert('File ảnh trống (0 bytes). Vui lòng chọn file ảnh hợp lệ!');
+    if (window.showToast) {
+      window.showToast('File ảnh trống (0 bytes). Vui lòng chọn file ảnh hợp lệ!', 'warning');
+    }
     event.target.value = '';
     return;
   }
@@ -464,15 +484,18 @@ window.handleMovieSubmit = async function (e) {
 
   // Validation ràng buộc
   if (!title) {
-    alert('Vui lòng nhập tên phim!');
+    if (window.showToast) window.showToast('Vui lòng nhập tên phim!', 'warning');
+    document.getElementById('movie-title')?.focus();
     return;
   }
   if (!duration || duration <= 0) {
-    alert('Thời lượng phim bắt buộc phải lớn hơn 0 phút!');
+    if (window.showToast) window.showToast('Thời lượng phim bắt buộc phải lớn hơn 0 phút!', 'warning');
+    document.getElementById('movie-duration')?.focus();
     return;
   }
   if (!release_date) {
-    alert('Vui lòng chọn ngày khởi chiếu đúng định dạng YYYY-MM-DD!');
+    if (window.showToast) window.showToast('Vui lòng chọn ngày khởi chiếu đúng định dạng YYYY-MM-DD!', 'warning');
+    document.getElementById('movie-release-date')?.focus();
     return;
   }
 
@@ -489,7 +512,9 @@ window.handleMovieSubmit = async function (e) {
 
       const uploadRes = await window.MovieService.uploadPoster(selectedPosterFile);
       if (!uploadRes.success) {
-        alert('Lỗi upload ảnh poster: ' + (uploadRes.message || 'Không thể tải ảnh lên máy chủ. Vui lòng thử lại!'));
+        if (window.showToast) {
+          window.showToast('Lỗi upload ảnh poster: ' + (uploadRes.message || 'Không thể tải ảnh lên máy chủ. Vui lòng thử lại!'), 'error');
+        }
         if (saveBtn) {
           saveBtn.disabled = false;
           saveBtn.innerHTML = originalBtnHtml;
@@ -532,33 +557,35 @@ window.handleMovieSubmit = async function (e) {
       const res = await window.MovieService.adminUpdateMovie(parseInt(editId, 10), payload);
       if (res.success) {
         if (window.showToast) {
-          window.showToast('Cập nhật thông tin phim "' + title + '" thành công!');
-        } else {
-          alert('Cập nhật thông tin phim "' + title + '" thành công!');
+          window.showToast('Cập nhật thông tin phim "' + title + '" thành công!', 'success');
         }
         closeMovieModal();
         await loadMoviesFromApi();
       } else {
-        alert('Lỗi cập nhật phim: ' + (res.message || 'Không thể cập nhật'));
+        if (window.showToast) {
+          window.showToast('Lỗi cập nhật phim: ' + (res.message || 'Không thể cập nhật'), 'error');
+        }
       }
     } else {
       // Thêm phim mới (POST /api/admin/movies)
       const res = await window.MovieService.adminCreateMovie(payload);
       if (res.success) {
         if (window.showToast) {
-          window.showToast('Đã thêm thành công phim mới: ' + title);
-        } else {
-          alert('Đã thêm thành công phim mới: ' + title);
+          window.showToast('Đã thêm thành công phim mới: ' + title, 'success');
         }
         closeMovieModal();
         await loadMoviesFromApi();
       } else {
-        alert('Lỗi thêm phim mới: ' + (res.message || 'Không thể tạo phim'));
+        if (window.showToast) {
+          window.showToast('Lỗi thêm phim mới: ' + (res.message || 'Không thể tạo phim'), 'error');
+        }
       }
     }
   } catch (err) {
     console.error('[handleMovieSubmit error]', err);
-    alert('Lỗi kết nối máy chủ: ' + err.message);
+    if (window.showToast) {
+      window.showToast('Lỗi kết nối máy chủ: ' + err.message, 'error');
+    }
   } finally {
     if (saveBtn) {
       saveBtn.disabled = false;
@@ -599,19 +626,36 @@ window.editMovie = function (id) {
 // Ngừng chiếu phim (PATCH /api/admin/movies/{id}/stop)
 window.endMovieShowing = async function (id) {
   const m = moviesList.find(x => x.id === id);
-  if (m && confirm(`Bạn có chắc chắn muốn ngừng chiếu bộ phim "${m.title}" không?`)) {
-    try {
-      const res = await window.MovieService.adminStopMovie(id);
-      if (res.success) {
-        window.showToast(`Đã chuyển trạng thái phim "${m.title}" sang Đã kết thúc (Ended).`, 'danger');
-        await loadMoviesFromApi();
-      } else {
-        alert('Lỗi ngừng chiếu phim: ' + (res.message || 'Không thể cập nhật'));
+  if (!m || typeof window.showConfirmModal !== 'function') return;
+
+  await window.showConfirmModal({
+    type: 'warning',
+    title: 'Xác nhận ngừng chiếu',
+    message: `Bạn có chắc chắn muốn ngừng chiếu bộ phim "${m.title}" không?`,
+    cancelText: 'Hủy',
+    confirmText: 'Ngừng chiếu',
+    variant: 'primary',
+    loadingText: 'Đang cập nhật...',
+    onConfirm: async () => {
+      try {
+        const res = await window.MovieService.adminStopMovie(id);
+        if (res.success) {
+          if (window.showToast) {
+            window.showToast(`Đã chuyển trạng thái phim "${m.title}" sang Đã kết thúc (Ended).`, 'success');
+          }
+          await loadMoviesFromApi();
+        } else {
+          if (window.showToast) {
+            window.showToast('Lỗi ngừng chiếu phim: ' + (res.message || 'Không thể cập nhật'), 'error');
+          }
+        }
+      } catch (err) {
+        if (window.showToast) {
+          window.showToast('Lỗi kết nối máy chủ: ' + err.message, 'error');
+        }
       }
-    } catch (err) {
-      alert('Lỗi kết nối máy chủ: ' + err.message);
     }
-  }
+  });
 };
 
 // Chiếu lại phim (PATCH /api/admin/movies/{id}/status)
@@ -621,13 +665,19 @@ window.restartMovieShowing = async function (id) {
     try {
       const res = await window.MovieService.adminUpdateStatus(id, 'now_showing');
       if (res.success) {
-        window.showToast(`Đã đưa phim "${m.title}" trở lại danh sách Đang chiếu!`);
+        if (window.showToast) {
+          window.showToast(`Đã đưa phim "${m.title}" trở lại danh sách Đang chiếu!`, 'success');
+        }
         await loadMoviesFromApi();
       } else {
-        alert('Lỗi đổi trạng thái phim: ' + (res.message || 'Không thể cập nhật'));
+        if (window.showToast) {
+          window.showToast('Lỗi đổi trạng thái phim: ' + (res.message || 'Không thể cập nhật'), 'error');
+        }
       }
     } catch (err) {
-      alert('Lỗi kết nối máy chủ: ' + err.message);
+      if (window.showToast) {
+        window.showToast('Lỗi kết nối máy chủ: ' + err.message, 'error');
+      }
     }
   }
 };
@@ -635,17 +685,35 @@ window.restartMovieShowing = async function (id) {
 // Xóa phim vĩnh viễn (DELETE /api/admin/movies/{id})
 window.deleteMovie = async function (id) {
   const m = moviesList.find(x => x.id === id);
-  if (m && confirm(`CẢNH BÁO: Bạn có chắc chắn muốn xoá vĩnh viễn phim "${m.title}" khỏi cơ sở dữ liệu?`)) {
-    try {
-      const res = await window.MovieService.adminDeleteMovie(id);
-      if (res.success) {
-        window.showToast(`Đã xoá bộ phim thành công!`, 'danger');
-        await loadMoviesFromApi();
-      } else {
-        alert('Lỗi xoá phim: ' + (res.message || 'Không thể xóa'));
+  if (!m || typeof window.showConfirmModal !== 'function') return;
+
+  await window.showConfirmModal({
+    type: 'danger',
+    title: 'Xác nhận xóa phim',
+    message: `Bạn có chắc chắn muốn xóa vĩnh viễn phim "${m.title}" khỏi cơ sở dữ liệu không? Hành động này có thể không khôi phục được.`,
+    cancelText: 'Hủy',
+    confirmText: 'Xóa',
+    variant: 'danger',
+    dangerous: true,
+    loadingText: 'Đang xóa phim...',
+    onConfirm: async () => {
+      try {
+        const res = await window.MovieService.adminDeleteMovie(id);
+        if (res.success) {
+          if (window.showToast) {
+            window.showToast(`Đã xóa phim "${m.title}" thành công!`, 'success');
+          }
+          await loadMoviesFromApi();
+        } else {
+          if (window.showToast) {
+            window.showToast('Lỗi xóa phim: ' + (res.message || 'Không thể xóa'), 'error');
+          }
+        }
+      } catch (err) {
+        if (window.showToast) {
+          window.showToast('Lỗi kết nối máy chủ: ' + err.message, 'error');
+        }
       }
-    } catch (err) {
-      alert('Lỗi kết nối máy chủ: ' + err.message);
     }
-  }
+  });
 };

@@ -94,7 +94,7 @@
               <input type="checkbox" id="login-remember" checked class="rounded text-[#ff5e1e] focus:ring-0">
               <span>Ghi nhớ đăng nhập</span>
             </label>
-            <a href="#" onclick="if(typeof window.showToast==='function'){window.showToast('Vui lòng liên hệ Quản trị viên qua email support@lumen.vn để khôi phục mật khẩu!', 'info');}else{alert('Vui lòng liên hệ Admin để khôi phục mật khẩu!');}" class="text-[#ff5e1e] hover:underline">Quên mật khẩu?</a>
+            <a href="#" onclick="event.preventDefault(); if(typeof window.showAlertModal==='function'){window.showAlertModal({type:'info',title:'Khôi phục mật khẩu',message:'Vui lòng liên hệ Quản trị viên qua email support@lumen.vn để được hỗ trợ khôi phục mật khẩu.',confirmText:'Đã hiểu'});}else if(typeof window.showToast==='function'){window.showToast('Vui lòng liên hệ Quản trị viên qua email support@lumen.vn để khôi phục mật khẩu!', 'info');}" class="text-[#ff5e1e] hover:underline">Quên mật khẩu?</a>
           </div>
 
           <button type="submit" id="btn-login-submit" class="btn-auth-submit">
@@ -235,6 +235,7 @@
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script src="../js/utils/storage.js"></script>
   <script src="../js/utils/toast.js"></script>
+  <script src="../js/components/modal.js"></script>
   <script src="../js/config/api.js"></script>
   <script src="../js/utils/validation.js"></script>
   <script src="../js/services/auth.service.js"></script>
