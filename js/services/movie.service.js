@@ -240,6 +240,13 @@ const MovieService = {
         };
       }
 
+      if (window.ENABLE_MOCK_FALLBACK !== true) {
+        return {
+          success: false,
+          message: error.response?.data?.detail || error.message || 'KhÃ´ng thá»ƒ káº¿t ná»‘i Ä‘áº¿n mÃ¡y chá»§'
+        };
+      }
+
       const mId = parseInt(id, 10);
       const fallback = this._mockMovies.find(m => m.id === mId);
       if (fallback) {
