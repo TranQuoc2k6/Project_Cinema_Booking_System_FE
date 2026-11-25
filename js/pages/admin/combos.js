@@ -232,13 +232,13 @@ async function handleComboSubmit(event) {
   const description = descInput?.value.trim() || null;
 
   if (!name) {
-    alert('Vui lòng nhập tên combo bắp nước!');
+    if (window.showToast) window.showToast('Vui lòng nhập tên combo bắp nước!', 'warning');
     nameInput?.focus();
     return;
   }
 
   if (isNaN(price) || price < 0) {
-    alert('Giá combo phải lớn hơn hoặc bằng 0!');
+    if (window.showToast) window.showToast('Giá combo phải lớn hơn hoặc bằng 0!', 'warning');
     priceInput?.focus();
     return;
   }
@@ -268,12 +268,22 @@ async function handleComboSubmit(event) {
 
     if (res && res.success) {
       closeComboModal();
+      if (window.showToast) {
+        window.showToast(
+          isEdit ? `Đã cập nhật combo "${name}" thành công!` : `Đã thêm combo "${name}" thành công!`,
+          'success'
+        );
+      }
       await loadCombosFromApi();
     } else {
-      alert(res?.message || 'Không thể lưu combo bắp nước. Vui lòng thử lại!');
+      if (window.showToast) {
+        window.showToast(res?.message || 'Không thể lưu combo bắp nước. Vui lòng thử lại!', 'error');
+      }
     }
   } catch (err) {
-    alert('Lỗi hệ thống: ' + (err.message || err));
+    if (window.showToast) {
+      window.showToast('Lỗi hệ thống: ' + (err.message || err), 'error');
+    }
   } finally {
     if (btnSave) {
       btnSave.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Lưu Combo';
@@ -289,36 +299,68 @@ async function toggleComboStatus(comboId, currentStatus) {
       is_active: !currentStatus
     });
     if (res && res.success) {
+      if (window.showToast) {
+        window.showToast(
+          !currentStatus ? 'Đã mở bán lại combo bắp nước!' : 'Đã chuyển combo sang trạng thái tạm ngưng bán!',
+          'success'
+        );
+      }
       await loadCombosFromApi();
     } else {
-      alert(res?.message || 'Không thể cập nhật trạng thái');
+      if (window.showToast) {
+        window.showToast(res?.message || 'Không thể cập nhật trạng thái combo!', 'error');
+      }
     }
   } catch (err) {
-    alert('Lỗi: ' + err.message);
+    if (window.showToast) {
+      window.showToast('Lỗi: ' + err.message, 'error');
+    }
   }
 }
 
-// Mở modal xác nhận xóa
-function promptDeleteCombo(comboId, comboName) {
-  pendingDeleteId = comboId;
-  const modal = document.getElementById('delete-confirm-modal');
-  const msgEl = document.getElementById('delete-confirm-message');
+// Mở modal xác nhận xóa (dùng hệ thống Confirm Modal chuẩn toàn cục)
+async function promptDeleteCombo(comboId, comboName) {
+  if (typeof window.showConfirmModal !== 'function') return;
 
-  if (msgEl) {
-    msgEl.innerHTML = `Bạn có chắc chắn muốn xóa combo <b>"${comboName}"</b>? Nếu combo đã có khách đặt trong quá khứ, hệ thống sẽ tự động chuyển sang trạng thái tạm ngưng bán để đảm bảo toàn vẹn dữ liệu.`;
-  }
-
-  if (modal) modal.classList.add('active');
+  await window.showConfirmModal({
+    type: 'danger',
+    title: 'Xác nhận xóa Combo',
+    message: `Bạn có chắc chắn muốn xóa combo "${comboName}" không? Nếu combo đã có khách đặt trong quá khứ, hệ thống sẽ tự động chuyển sang tạm ngưng bán.`,
+    cancelText: 'Hủy',
+    confirmText: 'Xóa',
+    variant: 'danger',
+    dangerous: true,
+    loadingText: 'Đang xóa...',
+    onConfirm: async () => {
+      try {
+        const res = await window.ComboService.adminDeleteCombo(comboId);
+        if (res && res.success) {
+          if (window.showToast) {
+            window.showToast(`Đã xóa combo "${comboName}" thành công!`, 'success');
+          }
+          await loadCombosFromApi();
+        } else {
+          if (window.showToast) {
+            window.showToast(res?.message || 'Không thể xóa combo bắp nước!', 'error');
+          }
+        }
+      } catch (err) {
+        if (window.showToast) {
+          window.showToast('Lỗi: ' + err.message, 'error');
+        }
+      }
+    }
+  });
 }
 
-// Đóng modal xóa
+// Đóng modal xóa (giữ tương thích nếu HTML vẫn có tham chiếu)
 function closeDeleteModal() {
   pendingDeleteId = null;
   const modal = document.getElementById('delete-confirm-modal');
   if (modal) modal.classList.remove('active');
 }
 
-// Thực hiện xóa combo
+// Thực hiện xóa combo (giữ tương thích)
 async function executeDeleteCombo() {
   if (!pendingDeleteId) return;
 
@@ -332,12 +374,13 @@ async function executeDeleteCombo() {
     const res = await window.ComboService.adminDeleteCombo(pendingDeleteId);
     if (res && res.success) {
       closeDeleteModal();
+      if (window.showToast) window.showToast('Đã xóa combo thành công!', 'success');
       await loadCombosFromApi();
     } else {
-      alert(res?.message || 'Không thể xóa combo bắp nước!');
+      if (window.showToast) window.showToast(res?.message || 'Không thể xóa combo bắp nước!', 'error');
     }
   } catch (err) {
-    alert('Lỗi: ' + err.message);
+    if (window.showToast) window.showToast('Lỗi: ' + err.message, 'error');
   } finally {
     if (btnDelete) {
       btnDelete.innerHTML = '<i class="fa-solid fa-trash-can mr-1"></i> Xóa Combo';

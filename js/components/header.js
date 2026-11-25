@@ -773,25 +773,37 @@
   }
 
   // Xử lý sự kiện đăng xuất người dùng
-  window.handleUserLogout = function () {
-    if (confirm('Bạn có chắc chắn muốn đăng xuất khỏi tài khoản?')) {
-      const prefixes = getPathPrefixes();
-      if (typeof window.showToast === 'function') {
-        window.showToast('Đăng xuất thành công. Hẹn gặp lại quý khách!', 'info', 1500);
-      }
-      setTimeout(() => {
-        if (window.AuthService && typeof window.AuthService.logout === 'function') {
-          window.AuthService.logout(`${prefixes.root}index.html`);
-        } else if (window.StorageService) {
-          window.StorageService.clearAuth();
-          window.location.href = `${prefixes.root}index.html`;
-        } else {
-          localStorage.clear();
-          sessionStorage.clear();
-          window.location.reload();
-        }
-      }, 250);
+  window.handleUserLogout = async function () {
+    const confirmed = typeof window.showConfirmModal === 'function'
+      ? await window.showConfirmModal({
+          type: 'warning',
+          title: 'Xác nhận đăng xuất',
+          message: 'Bạn có chắc chắn muốn đăng xuất khỏi tài khoản không?',
+          cancelText: 'Hủy',
+          confirmText: 'Đăng xuất',
+          variant: 'primary',
+          closeOnBackdrop: true
+        })
+      : false;
+
+    if (!confirmed) return;
+
+    const prefixes = getPathPrefixes();
+    if (typeof window.showToast === 'function') {
+      window.showToast('Đăng xuất thành công. Hẹn gặp lại quý khách!', 'info', 1500);
     }
+    setTimeout(() => {
+      if (window.AuthService && typeof window.AuthService.logout === 'function') {
+        window.AuthService.logout(`${prefixes.root}index.html`);
+      } else if (window.StorageService) {
+        window.StorageService.clearAuth();
+        window.location.href = `${prefixes.root}index.html`;
+      } else {
+        localStorage.clear();
+        sessionStorage.clear();
+        window.location.reload();
+      }
+    }, 250);
   };
 
   // Xuất API toàn cục

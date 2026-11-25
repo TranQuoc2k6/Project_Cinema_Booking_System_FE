@@ -72,7 +72,22 @@ const MoviesPage = {
 
       const logoutBtn = document.getElementById('logout-btn');
       if (logoutBtn) {
-        logoutBtn.addEventListener('click', () => {
+        logoutBtn.addEventListener('click', async () => {
+          if (typeof window.handleUserLogout === 'function') {
+            window.handleUserLogout();
+            return;
+          }
+          const confirmed = typeof window.showConfirmModal === 'function'
+            ? await window.showConfirmModal({
+                type: 'warning',
+                title: 'Xác nhận đăng xuất',
+                message: 'Bạn có chắc chắn muốn đăng xuất khỏi tài khoản không?',
+                cancelText: 'Hủy',
+                confirmText: 'Đăng xuất',
+                variant: 'primary'
+              })
+            : false;
+          if (!confirmed) return;
           if (window.AuthService && typeof window.AuthService.logout === 'function') {
             window.AuthService.logout('login.html');
           } else {

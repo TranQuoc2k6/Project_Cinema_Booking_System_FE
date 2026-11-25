@@ -310,6 +310,12 @@ window.handleCinemaSubmit = async function (e) {
   const city = document.getElementById('cinema-city').value.trim();
   const phone = document.getElementById('cinema-phone').value.trim();
 
+  if (!name) {
+    showToast('Vui lòng nhập tên cụm rạp!', 'warning');
+    document.getElementById('cinema-name')?.focus();
+    return;
+  }
+
   const payload = { name, address, city, phone };
 
   if (editId) {
@@ -351,22 +357,34 @@ window.deleteCinema = async function (id) {
   const c = cinemasList.find(x => x.id === id);
   if (!c) return;
 
-  if (confirm(`Xóa cụm rạp "${c.name}" sẽ xóa tất cả phòng chiếu và dữ liệu ghế của rạp này. Bạn có chắc chắn muốn xóa?`)) {
-    if (window.CinemaService) {
-      const res = await window.CinemaService.deleteCinema(id);
-      if (!res.success) {
-        showToast(res.message || 'Xóa cụm rạp thất bại', 'danger');
-        return;
+  if (typeof window.showConfirmModal !== 'function') return;
+
+  await window.showConfirmModal({
+    type: 'danger',
+    title: 'Xác nhận xóa cụm rạp',
+    message: `Xóa cụm rạp "${c.name}" sẽ xóa tất cả phòng chiếu và dữ liệu ghế của rạp này. Hành động này không thể khôi phục.`,
+    cancelText: 'Hủy',
+    confirmText: 'Xóa',
+    variant: 'danger',
+    dangerous: true,
+    loadingText: 'Đang xóa...',
+    onConfirm: async () => {
+      if (window.CinemaService) {
+        const res = await window.CinemaService.deleteCinema(id);
+        if (!res.success) {
+          showToast(res.message || 'Xóa cụm rạp thất bại', 'error');
+          return;
+        }
       }
+      cinemasList = cinemasList.filter(x => x.id !== id);
+      roomsList = roomsList.filter(x => x.cinema_id !== id);
+      renderCinemas();
+      renderRooms();
+      populateCinemaSelect();
+      populateFilterOptions();
+      showToast(`Đã xóa cụm rạp "${c.name}" thành công!`, 'success');
     }
-    cinemasList = cinemasList.filter(x => x.id !== id);
-    roomsList = roomsList.filter(x => x.cinema_id !== id);
-    renderCinemas();
-    renderRooms();
-    populateCinemaSelect();
-    populateFilterOptions();
-    showToast('Đã xóa cụm rạp!', 'danger');
-  }
+  });
 };
 
 // ==========================================================================
@@ -418,6 +436,17 @@ window.handleRoomSubmit = async function (e) {
   const name = document.getElementById('room-name').value.trim();
   const room_type = document.getElementById('room-type').value;
   const total_seats = parseInt(document.getElementById('room-seats').value, 10);
+
+  if (!cinema_id || !name) {
+    showToast('Vui lòng chọn cụm rạp và nhập tên phòng chiếu!', 'warning');
+    document.getElementById('room-name')?.focus();
+    return;
+  }
+  if (isNaN(total_seats) || total_seats <= 0) {
+    showToast('Tổng số ghế phòng chiếu phải lớn hơn 0!', 'warning');
+    document.getElementById('room-seats')?.focus();
+    return;
+  }
 
   const payload = { cinema_id, name, room_type, total_seats };
 
@@ -472,19 +501,32 @@ window.handleRoomSubmit = async function (e) {
 };
 
 window.deleteRoom = async function (id) {
-  if (confirm('Bạn có chắc chắn muốn xóa phòng chiếu này kèm toàn bộ sơ đồ ghế?')) {
-    if (window.CinemaService) {
-      const res = await window.CinemaService.deleteRoom(id);
-      if (!res.success) {
-        showToast(res.message || 'Xóa phòng chiếu thất bại', 'danger');
-        return;
+  const room = roomsList.find(x => x.id === id);
+  if (typeof window.showConfirmModal !== 'function') return;
+
+  await window.showConfirmModal({
+    type: 'danger',
+    title: 'Xác nhận xóa phòng chiếu',
+    message: `Bạn có chắc chắn muốn xóa phòng chiếu ${room ? `"${room.name}"` : 'này'} kèm toàn bộ sơ đồ ghế không? Hành động này có thể không khôi phục được.`,
+    cancelText: 'Hủy',
+    confirmText: 'Xóa',
+    variant: 'danger',
+    dangerous: true,
+    loadingText: 'Đang xóa...',
+    onConfirm: async () => {
+      if (window.CinemaService) {
+        const res = await window.CinemaService.deleteRoom(id);
+        if (!res.success) {
+          showToast(res.message || 'Xóa phòng chiếu thất bại', 'error');
+          return;
+        }
       }
+      roomsList = roomsList.filter(x => x.id !== id);
+      updateCinemaRoomCounts();
+      renderRooms();
+      showToast('Đã xóa phòng chiếu thành công!', 'success');
     }
-    roomsList = roomsList.filter(x => x.id !== id);
-    updateCinemaRoomCounts();
-    renderRooms();
-    showToast('Đã xóa phòng chiếu!', 'danger');
-  }
+  });
 };
 
 // ==========================================================================
@@ -528,11 +570,18 @@ window.openSeatMapModal = async function (roomId) {
   updateSeatStatsDisplay();
 };
 
-window.closeSeatMapModal = function () {
-  if (modifiedSeats.size > 0) {
-    if (!confirm('Bạn có các thay đổi loại ghế chưa lưu. Bạn có chắc muốn đóng?')) {
-      return;
-    }
+window.closeSeatMapModal = async function () {
+  if (modifiedSeats.size > 0 && typeof window.showConfirmModal === 'function') {
+    const confirmed = await window.showConfirmModal({
+      type: 'warning',
+      title: 'Thay đổi chưa được lưu',
+      message: 'Bạn có các thay đổi loại ghế chưa lưu. Bạn có chắc muốn đóng mà không lưu không?',
+      cancelText: 'Tiếp tục sửa',
+      confirmText: 'Đóng không lưu',
+      variant: 'primary',
+      closeOnBackdrop: true
+    });
+    if (!confirmed) return;
   }
   document.getElementById('seat-map-modal').classList.remove('show');
   currentRoom = null;
@@ -831,27 +880,37 @@ window.handleGenerateSeatMap = async function (e) {
 
 // Xóa toàn bộ sơ đồ ghế
 window.handleClearRoomSeats = async function () {
-  if (!currentRoom) return;
+  if (!currentRoom || typeof window.showConfirmModal !== 'function') return;
 
-  if (confirm(`Bạn có chắc chắn muốn xóa toàn bộ ${currentSeats.length} ghế của "${currentRoom.name}"? Thao tác này không thể hoàn tác.`)) {
-    if (window.SeatService) {
-      const res = await window.SeatService.clearRoomSeats(currentRoom.id);
-      if (!res.success) {
-        showToast(res.message || 'Không thể xóa sơ đồ ghế', 'danger');
-        return;
+  await window.showConfirmModal({
+    type: 'danger',
+    title: 'Xác nhận xóa sơ đồ ghế',
+    message: `Bạn có chắc chắn muốn xóa toàn bộ ${currentSeats.length} ghế của "${currentRoom.name}" không? Thao tác này không thể hoàn tác.`,
+    cancelText: 'Hủy',
+    confirmText: 'Xóa toàn bộ',
+    variant: 'danger',
+    dangerous: true,
+    loadingText: 'Đang xóa ghế...',
+    onConfirm: async () => {
+      if (window.SeatService) {
+        const res = await window.SeatService.clearRoomSeats(currentRoom.id);
+        if (!res.success) {
+          showToast(res.message || 'Không thể xóa sơ đồ ghế', 'error');
+          return;
+        }
       }
+
+      currentSeats = [];
+      modifiedSeats.clear();
+      selectedSeatIds.clear();
+      currentRoom.total_seats = 0;
+
+      renderSeatMatrix();
+      updateSeatStatsDisplay();
+      renderRooms();
+      showToast('Đã xóa trắng sơ đồ ghế phòng chiếu!', 'success');
     }
-
-    currentSeats = [];
-    modifiedSeats.clear();
-    selectedSeatIds.clear();
-    currentRoom.total_seats = 0;
-
-    renderSeatMatrix();
-    updateSeatStatsDisplay();
-    renderRooms();
-    showToast('Đã xóa trắng sơ đồ ghế phòng chiếu!', 'danger');
-  }
+  });
 };
 
 // Hàm tiện ích tạo mock seats khi offline
@@ -882,28 +941,9 @@ function generateMockSeats(rows, cols, vipRows, coupleRows, roomId) {
   return seats;
 }
 
-// Toast helper
+// Toast helper: sử dụng hệ thống Toast toàn cục (js/utils/toast.js)
 function showToast(message, type = 'success') {
-  if (window.showToast) {
+  if (typeof window.showToast === 'function') {
     window.showToast(message, type);
-    return;
   }
-  const toast = document.createElement('div');
-  toast.className = `alert alert-${type}`;
-  toast.style.cssText = `
-    position: fixed;
-    top: 24px;
-    right: 24px;
-    z-index: 9999;
-    padding: 12px 20px;
-    border-radius: 8px;
-    background: ${type === 'danger' ? '#ef4444' : '#10b981'};
-    color: #fff;
-    font-weight: 600;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.4);
-    animation: fadeIn 0.3s ease;
-  `;
-  toast.textContent = message;
-  document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 3500);
 }

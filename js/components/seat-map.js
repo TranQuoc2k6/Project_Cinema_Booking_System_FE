@@ -355,8 +355,13 @@ class SeatMap {
         } else {
           if (typeof window.showToast === 'function') {
             window.showToast(`Bạn chỉ được chọn tối đa ${this.maxSeats} ghế mỗi lần đặt!`, 'warning');
-          } else {
-            alert(`Bạn chỉ được chọn tối đa ${this.maxSeats} ghế mỗi lần đặt!`);
+          } else if (typeof window.showAlertModal === 'function') {
+            window.showAlertModal({
+              type: 'warning',
+              title: 'Giới hạn chọn ghế',
+              message: `Bạn chỉ được chọn tối đa ${this.maxSeats} ghế mỗi lần đặt!`,
+              confirmText: 'Đã hiểu'
+            });
           }
         }
         return;
@@ -458,10 +463,15 @@ class SeatMap {
     if (typeof this.onExpired === 'function') {
       this.onExpired();
     } else {
-      if (typeof window.showToast === 'function') {
+      if (typeof window.showAlertModal === 'function') {
+        window.showAlertModal({
+          type: 'warning',
+          title: 'Hết thời gian giữ ghế',
+          message: 'Đã hết thời gian giữ ghế (10 phút). Danh sách ghế đã chọn đã được hủy để giải phóng ghế. Vui lòng chọn lại!',
+          confirmText: 'Đã hiểu'
+        });
+      } else if (typeof window.showToast === 'function') {
         window.showToast('Đã hết thời gian giữ ghế (10 phút). Danh sách ghế đã chọn đã được hủy để giải phóng ghế. Vui lòng chọn lại!', 'error');
-      } else {
-        alert('Đã hết thời gian giữ ghế (10 phút). Danh sách ghế đã chọn đã được hủy để giải phóng ghế. Vui lòng chọn lại!');
       }
       if (this.seatData && this.seatData.showtime_id) {
         this.load(this.seatData.showtime_id);
