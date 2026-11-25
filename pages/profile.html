@@ -255,6 +255,7 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="../js/utils/storage.js"></script>
+    <script src="../js/utils/toast.js"></script>
     <script src="../js/config/api.js"></script>
     <script src="../js/utils/validation.js"></script>
     <script src="../js/services/auth.service.js"></script>
@@ -403,15 +404,25 @@
         }
 
         function showAlert(el, msg, type = 'error') {
-            el.className = type === 'success'
-                ? 'p-3 rounded-xl text-xs mb-4 bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 block'
-                : 'p-3 rounded-xl text-xs mb-4 bg-rose-500/20 text-rose-400 border border-rose-500/40 block';
-            el.innerText = msg;
+            if (el) {
+                el.className = type === 'success'
+                    ? 'p-3 rounded-xl text-xs mb-4 bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 block'
+                    : 'p-3 rounded-xl text-xs mb-4 bg-rose-500/20 text-rose-400 border border-rose-500/40 block';
+                el.innerText = msg;
+            }
+            if (typeof window.showToast === 'function') {
+                window.showToast(msg, type === 'success' ? 'success' : 'error');
+            }
         }
 
         function handleLogout() {
             if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
-                window.AuthService.logout('login.html');
+                if (typeof window.showToast === 'function') {
+                    window.showToast('Đang đăng xuất khỏi hệ thống...', 'info', 1500);
+                }
+                setTimeout(() => {
+                    window.AuthService.logout('login.html');
+                }, 250);
             }
         }
 

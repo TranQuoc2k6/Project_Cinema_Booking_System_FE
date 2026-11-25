@@ -783,7 +783,11 @@ function initTrailerModal() {
 
             const targetUrl = getYouTubeEmbedUrl(movie.trailer_url || movie.trailer, true) || movie.trailer_url;
             if (!targetUrl) {
-                alert('Trailer cho tác phẩm này hiện đang được cập nhật.');
+                if (typeof window.showToast === 'function') {
+                    window.showToast('Trailer cho tác phẩm này hiện đang được cập nhật.', 'info');
+                } else {
+                    alert('Trailer cho tác phẩm này hiện đang được cập nhật.');
+                }
                 return;
             }
 

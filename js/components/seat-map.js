@@ -156,7 +156,7 @@ class SeatMap {
         </div>
 
         <!-- Khung các hàng ghế -->
-        <div class="seat-grid-container w-full max-w-2xl flex flex-col items-center gap-2.5 overflow-x-auto py-2">
+        <div class="seat-grid-container w-full max-w-2xl flex flex-col items-center gap-2 sm:gap-2.5 overflow-x-auto py-2 px-1 scroll-smooth">
     `;
 
     rowKeys.forEach(rowName => {
@@ -164,11 +164,11 @@ class SeatMap {
       const isCoupleRow = seatList.some(s => s.seat_type === 'couple');
 
       html += `
-        <div class="seat-row flex items-center justify-center gap-2 sm:gap-3 w-full" data-row="${rowName}">
+        <div class="seat-row flex items-center justify-center gap-1 min-[390px]:gap-2 sm:gap-3 w-full shrink-0" data-row="${rowName}">
           <span class="row-label w-5 text-center text-xs font-mono font-bold ${isCoupleRow ? 'text-purple-400' : 'text-slate-400'}">
             ${rowName}
           </span>
-          <div class="seats-in-row flex items-center gap-1.5 sm:gap-2">
+          <div class="seats-in-row flex items-center gap-1 min-[390px]:gap-1.5 sm:gap-2">
       `;
 
       seatList.forEach(seat => {
@@ -263,8 +263,8 @@ class SeatMap {
    */
   _getSeatClasses(seat, isSelected) {
     const baseDimensions = seat.seat_type === 'couple'
-      ? 'w-16 sm:w-20 h-8 sm:h-9 rounded-lg'
-      : 'w-7 h-7 sm:w-8 sm:h-8 rounded-lg text-[10px] font-bold';
+      ? 'w-14 min-[390px]:w-16 sm:w-20 h-7 min-[390px]:h-8 sm:h-9 rounded-lg'
+      : 'w-[25px] h-[25px] min-[390px]:w-7 min-[390px]:h-7 sm:w-8 sm:h-8 rounded-md sm:rounded-lg text-[9px] min-[390px]:text-[10px] font-bold';
 
     // 1. Đang chọn (Ưu tiên cao nhất)
     if (isSelected) {
@@ -353,7 +353,11 @@ class SeatMap {
         if (typeof this.onMaxExceeded === 'function') {
           this.onMaxExceeded(this.maxSeats);
         } else {
-          alert(`Bạn chỉ được chọn tối đa ${this.maxSeats} ghế mỗi lần đặt!`);
+          if (typeof window.showToast === 'function') {
+            window.showToast(`Bạn chỉ được chọn tối đa ${this.maxSeats} ghế mỗi lần đặt!`, 'warning');
+          } else {
+            alert(`Bạn chỉ được chọn tối đa ${this.maxSeats} ghế mỗi lần đặt!`);
+          }
         }
         return;
       }
@@ -454,7 +458,11 @@ class SeatMap {
     if (typeof this.onExpired === 'function') {
       this.onExpired();
     } else {
-      alert('Đã hết thời gian giữ ghế (10 phút). Danh sách ghế đã chọn đã được hủy để giải phóng ghế. Vui lòng chọn lại!');
+      if (typeof window.showToast === 'function') {
+        window.showToast('Đã hết thời gian giữ ghế (10 phút). Danh sách ghế đã chọn đã được hủy để giải phóng ghế. Vui lòng chọn lại!', 'error');
+      } else {
+        alert('Đã hết thời gian giữ ghế (10 phút). Danh sách ghế đã chọn đã được hủy để giải phóng ghế. Vui lòng chọn lại!');
+      }
       if (this.seatData && this.seatData.showtime_id) {
         this.load(this.seatData.showtime_id);
       }
