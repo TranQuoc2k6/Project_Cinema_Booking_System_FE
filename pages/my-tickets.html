@@ -259,6 +259,17 @@
                 </div>
             </div>
 
+            <!-- Mã vé từng ghế (Rule 9) -->
+            <div id="modal-individual-tickets-container" class="p-3.5 rounded-2xl bg-black/30 border border-white/5 mb-5 text-left text-xs">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-slate-400 text-[11px] font-bold uppercase tracking-wider">
+                        <i class="fa-solid fa-ticket text-[#ff5e1e] mr-1"></i> Mã Vé Riêng Từng Ghế (Quy định 9)
+                    </span>
+                    <span class="text-[10px] text-slate-500 font-mono">Dùng để kiểm tra soát vé khi vào rạp</span>
+                </div>
+                <div id="modal-individual-tickets-list" class="space-y-1.5 font-mono text-xs"></div>
+            </div>
+
             <!-- QR Code Section (Task T3C72CC: Bonus Mã QR vé điện tử) -->
             <div class="text-center py-3 px-4 rounded-2xl bg-white/5 border border-white/5 mb-5">
                 <div class="flex items-center justify-between mb-2">
@@ -595,6 +606,28 @@
             document.getElementById('modal-seats-count').innerText = `${ticket.seats.length} ghế`;
             document.getElementById('modal-total-price').innerText = `${Number(ticket.total_price).toLocaleString('vi-VN')} đ`;
 
+            // Mã vé riêng từng ghế (Rule 9)
+            const individualTicketsContainer = document.getElementById('modal-individual-tickets-container');
+            const individualTicketsList = document.getElementById('modal-individual-tickets-list');
+            if (individualTicketsContainer && individualTicketsList) {
+                if (ticket.seats && ticket.seats.length > 0) {
+                    individualTicketsList.innerHTML = ticket.seats.map(s => {
+                        const code = s.ticket_code || `TK-${ticket.booking_code}-${s.seat_number}`;
+                        return `
+                            <div class="flex items-center justify-between py-1 px-2.5 rounded-lg bg-white/5 border border-white/5">
+                                <span class="text-slate-300 font-bold flex items-center gap-1.5">
+                                    <i class="fa-solid fa-couch text-[10px] text-[#d4ff00]"></i> Ghế ${s.seat_number} (${s.seat_type === 'vip' ? 'VIP' : (s.seat_type === 'couple' ? 'Đôi' : 'Thường')}):
+                                </span>
+                                <span class="text-[#d4ff00] font-black tracking-wider select-all">${code}</span>
+                            </div>
+                        `;
+                    }).join('');
+                    individualTicketsContainer.classList.remove('hidden');
+                } else {
+                    individualTicketsContainer.classList.add('hidden');
+                }
+            }
+
             // Combo bắp nước (Task T3C72E6)
             const modalCombosContainer = document.getElementById('modal-combos-container');
             const modalCombosList = document.getElementById('modal-combos-list');
@@ -622,7 +655,7 @@
             // QR Code (Task T3C72CC: Chứa link trực tiếp đến trang tra cứu / xác nhận vé)
             const checkUrl = window.BookingService && window.BookingService.generateTicketCheckUrl
                 ? window.BookingService.generateTicketCheckUrl(ticket.booking_code)
-                : `${window.location.origin}/pages/ticket-check.html?code=${encodeURIComponent(ticket.booking_code)}`;
+                : `ticket-check.html?code=${encodeURIComponent(ticket.booking_code)}`;
 
             const qrImgUrl = window.BookingService && window.BookingService.generateQrCodeImageUrl
                 ? window.BookingService.generateQrCodeImageUrl(ticket.booking_code)
